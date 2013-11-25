@@ -27,5 +27,4 @@ class ReReAdmin extends CWebModule
     {
         $this->assetsDir = Yii::app()->assetManager->publish(YiiBase::getPathOfAlias('admin.assets'), false, -1, YII_DEBUG);
     }
-
 }

@@ -1,6 +1,7 @@
 @import "lesshat";
 @import "elements";
 @import "normalize";
+@import "jcrop";
 @import "main";
 
 @colorGreyf7: #f7f7f7;
@@ -280,7 +281,7 @@ section.main {
   .gridActions {
     display: none;
   }
-  form > .row {
+  .row {
     margin: 15px 17px;
     &.justi {
       text-align: justify;
@@ -584,9 +585,11 @@ section.main {
     padding: 20px 50px 20px 78px;
   }
 }
-form#edit-form{
+
+form#edit-form {
   padding-bottom: 70px;
 }
+
 #tabs {
   height: 100%;
   padding-top: 54px;
@@ -851,6 +854,10 @@ form {
     }
   }
   &.active {
+    .thumb{
+      background: @colorWhite;
+      opacity: 0.5;
+    }
     .additional {
       display: block;
     }
@@ -994,4 +1001,16 @@ button {
 
 .ui-state-highlight {
   background: @colorGrey3b;
+}
+
+#dropzone {
+  margin: 0 20px 20px;
+  padding: 40px;
+  text-align: center;
+  color: @colorGrey9;
+  border: 2px dashed @colorGreyc;
+}
+
+body.in {
+  opacity: 0.7;
 }
