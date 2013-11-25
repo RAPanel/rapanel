@@ -11,7 +11,7 @@ class ReReAdmin extends CWebModule
 
     public function __construct($id, $parent, $config = null)
     {
-        YiiBase::setPathOfAlias('admin', YiiBase::getPathOfAlias('application.modules.rapanel'));
+        YiiBase::setPathOfAlias('admin', __DIR__);
         $configPath = YiiBase::getPathOfAlias('admin.config') . '/admin.php';
         $config = file_exists($configPath) ? require($configPath) : null;
         parent::__construct($id, $parent, $config);
