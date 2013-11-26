@@ -42,7 +42,7 @@ function modalIFrame(e) {
     });
     modal.modal().open({
         onClose: function (el, options) {
-
+            $('section.main form').submit();
 //            $('body').yiiGridView.update(e.attr('data-update'));
         }
     });
