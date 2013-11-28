@@ -49,9 +49,10 @@ class ContentBehavior extends AdminBehavior
             $criteria = $this->getSearchCriteria($criteria);
             $this->_dataProvider = new CActiveDataProvider($this->owner, compact('criteria', 'pagination', 'sort'));
 
-            /*$count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
+           /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
             if($count === false){
-                $count = $this->owner->getCommandBuilder()->createCountCommand($this->owner->getTableSchema(),$criteria,$this->owner->getTableAlias())->queryScalar();
+                if($_GET['q'])
+                    else $count = $this->owner->getCommandBuilder()->createCountCommand($this->owner->getTableSchema(),$criteria,$this->owner->getTableAlias())->queryScalar();
                 Yii::app()->cache->set($id, $count, 5*60);
             }
             $this->_dataProvider->setTotalItemCount($count);*/
@@ -129,6 +130,8 @@ class ContentBehavior extends AdminBehavior
                 'label' => Yii::t('admin.grid', ucfirst($button)),
                 'url' => 'CHtml::normalizeUrl(array("' . $button . '", "url"=>"' . $this->getModule()->url . '", "id"=>$data->id))',
                 'imageUrl' => false,
+                'crop' => $this->adminSettings['crop'],
+                'max' => $this->adminSettings['photos'],
                 'options' => array(
                     'class' => "button" . ucfirst($button),
                     'onclick' => 'modalIFrame(this);return false;',
@@ -174,6 +177,8 @@ class ContentBehavior extends AdminBehavior
             $result['photos']['photo'] = Yii::app()->controller->widget('ext.RFileUpload.RFileUpload', array(
                 'model' => $this->owner,
                 'attribute' => 'photos',
+                'crop' => $this->adminSettings['crop'],
+                'max' => $this->adminSettings['photos'],
                 'options' => array(
                     'url' => array('content/upload'),
                 ),

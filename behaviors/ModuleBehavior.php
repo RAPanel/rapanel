@@ -176,15 +176,27 @@ class ModuleBehavior extends AdminBehavior
                 'delete' => 'Удаление',
             ),
         );
-        if (in_array('photos', array_keys($model->relations())))
+        if (in_array('photos', array_keys($model->relations()))) {
             $elements['config[photos]'] = array(
-            'label' => 'Максимальное количество фотографий',
-            'type' => 'number',
-            'attributes'=>array(
-                'min'=>0,
-                'max'=>99,
-            ),
-        );
+                'label' => 'Максимальное количество фотографий',
+                'type' => 'number',
+                'attributes' => array(
+                    'min' => 0,
+                    'max' => 99,
+                ),
+            );
+
+            $elements['config[crop]'] = array(
+                'label' => 'Коэфициент обрезки',
+                'hint' => 'Расчитывается делением `width` на `height`',
+                'type' => 'number',
+                'attributes' => array(
+                    'min' => 0,
+                    'max' => 10,
+                    'step' => 0.01,
+                ),
+            );
+        }
 
         $elements[] = '<div class="clearfix"></div>';
         return array(
