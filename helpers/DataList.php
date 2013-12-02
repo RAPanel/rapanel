@@ -22,7 +22,7 @@ class DataList
     static function parentsTree($module_id)
     {
         $result = $parents = array();
-        $data = Page::model()->findAll(array('with' => array('rName'), 'order' => 't.lft', 'condition' => 't.module_id=:module_id', 'params' => compact('module_id')));
+        $data = Page::model()->findAll(array('with' => array('rName'), 'order' => 't.lft', 'condition' => 't.module_id=:module_id AND t.lft>0', 'params' => compact('module_id')));
         foreach ($data as $row) {
             $parents[$row->id] = $row->name;
             if (empty($parents[$row->parent_id])) $result[$row->id] = $row->name;
