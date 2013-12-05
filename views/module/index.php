@@ -10,7 +10,7 @@ echo CHtml::htmlButton('Создать новый модуль', array(
     'data-url' => $this->createUrl('edit'),
 ));
 
-echo CHtml::beginForm(array('change'));
+//echo CHtml::beginForm(array('change'));
 
 $this->widget('zii.widgets.grid.CGridView', array(
     'id' => 'modulesGrid',
@@ -24,4 +24,4 @@ $this->widget('zii.widgets.grid.CGridView', array(
 if (method_exists($model, 'status'))
     echo CHtml::dropDownList('status_id', null, $model::status(), array('empty' => 'сменить статус', 'onchange' => 'fastChange(this)'));
 
-echo CHtml::endForm();
+//echo CHtml::endForm();
