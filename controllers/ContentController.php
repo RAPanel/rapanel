@@ -23,6 +23,24 @@ class ContentController extends RAdminController
         parent::init();
     }
 
+    public function actionSeo()
+    {
+        $criteria = new CDbCriteria();
+        $criteria->limit = 10;
+        $i = 0;
+        $time = time();
+        while ($data = Page::model()->findAll($criteria)) {
+            $criteria->offset = $criteria->offset + $criteria->limit;
+            /** @var $model PageBase */
+            foreach ($data as $model) {
+                $i++;
+                $model->setSeo();
+                $model->save();
+            }
+        }
+        var_dump((time() - $time), $i);
+    }
+
     public function actionAutocompete($tag = false, $term = false, $class = false, $attr = false, $sql = false, array $params = array())
     {
         if ($tag && is_numeric($tag)) {
@@ -75,7 +93,7 @@ class ContentController extends RAdminController
     public function actionIndex($url = null, $type = null)
     {
         $module = Module::model()->findByAttributes(compact('url'));
-        if (empty($module))  throw new CHttpException(404, 'Модуль не найден');
+        if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
         $model = new $module->className('grid');
         /** @var $model ContentBehavior */
         $model->attachBehavior('column', 'ContentBehavior');
@@ -183,6 +201,6 @@ class ContentController extends RAdminController
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
         $model = RActiveRecord::model($module->className)->findByPk($id);
-        if($model->href) $this->redirect($model->href);
+        if ($model->href) $this->redirect($model->href);
     }
 }
