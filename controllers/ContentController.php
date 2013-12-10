@@ -117,7 +117,7 @@ class ContentController extends RAdminController
      * param string $url URL модуля
      * param string $id ID модели
      */
-    public function actionEdit($url = null, $id = null)
+    public function actionEdit($url = null, $id = null, $type = null)
     {
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
@@ -127,6 +127,9 @@ class ContentController extends RAdminController
         /** @var $model ContentBehavior */
         $model->attachBehavior('contentBehavior', 'ContentBehavior');
         $model->setModule($module);
+        if($type == 'category'){
+            $model->is_category = 1;
+        }
 
         $this->performAjaxValidation($model);
         if (isset($_POST[get_class($model)])) {

@@ -5,7 +5,6 @@
  * @var $model RActiveRecord
  * @var $module RActiveRecord
  */
-
 echo CHtml::beginForm($this->createUrl('change', compact('url')));
 ?>
     <div class="clearfix"></div>
@@ -43,7 +42,12 @@ echo CHtml::beginForm($this->createUrl('change', compact('url')));
                 'onclick' => 'modalIFrame(this)',
                 'href' => $this->createUrl('edit', compact('url')),
                 'title' => 'добавить запись',
-            ))
+            ));
+            if($module->type_id ==1) echo CHtml::htmlButton('+ категория', array(
+                'onclick' => 'modalIFrame(this)',
+                'href' => $this->createUrl('edit', compact('url')+array('type'=>'category')),
+                'title' => 'добавить категорию',
+            ));
             ?></div>
         <div style="display: none" class="go-page"><?=
             CHtml::htmlButton('назад', array('name' => 'prev', 'onclick' => 'goPage("prev")', 'disabled' => 1, 'title' => 'предыдущяя страница')) .
