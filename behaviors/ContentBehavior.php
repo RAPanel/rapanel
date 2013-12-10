@@ -209,6 +209,7 @@ class ContentBehavior extends AdminBehavior
         $data = array(
             'name' => $row['url'],
             'label' => $row['name'],
+            'class' => 'input-' . $row['inputType'],
         );
         switch ($row['inputType']):
             case 'tags':
@@ -216,7 +217,6 @@ class ContentBehavior extends AdminBehavior
                     'type' => 'ext.RTagsInput.RTagsInput',
                     'query' => '.input-' . $row['inputType'],
                     'autoComplete' => array('autocompete', 'tag' => $row['id']),
-                    'class' => 'input-' . $row['inputType'],
                 );
             case 'wysiwyg':
                 return $data + array(
@@ -234,7 +234,6 @@ class ContentBehavior extends AdminBehavior
             case 'boolean':
                 return $data + array(
                     'type' => 'checkbox',
-                    'class' => 'input-' . $row['inputType'],
                 );
             case 'fromlist':
                 $items = array();
@@ -246,7 +245,6 @@ class ContentBehavior extends AdminBehavior
                     'query' => '.input-' . $row['inputType'],
                     'data' => $items,
 //                    'autoCompleteUrl' => array('autocompete'),
-                    'class' => 'input-' . $row['inputType'],
                     'options' => array(
                         'disable_search_threshold' => 10,
                     ),
@@ -255,7 +253,11 @@ class ContentBehavior extends AdminBehavior
             case 'numeric':
                 return $data + array(
                     'type' => 'number',
-                    'class' => 'input-' . $row['inputType'],
+                );
+            case 'price':
+                return $data + array(
+                    'type' => 'number',
+                    'step' => '0.01',
                 );
             default:
                 return $data + array(

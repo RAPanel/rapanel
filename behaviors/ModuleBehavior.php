@@ -121,12 +121,12 @@ class ModuleBehavior extends AdminBehavior
 
     public function getConfigForm()
     {
-        // @var $model RActiveRecord
+        /** @var $model RActiveRecord|PageBase */
         $model = new $this->owner->className();
         $lines = $data = array();
 
         if (method_exists((new $this->owner->className), 'getCharacterNames'))
-            $lines['characters'] = $model->getCharacterNames(true);
+            $lines['characters'] = $model->getCharacterNames(true, true);
         $lines['elements'] = array_keys($model->tableSchema->columns);
         $lines['columns'] = isset($lines['characters']) ? array_merge($lines['elements'], $lines['characters']) : $lines['elements'];
 

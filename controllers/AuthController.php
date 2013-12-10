@@ -4,7 +4,7 @@ class AuthController extends RAdminController
 {
     public function actionLogin()
     {
-        $model = new User('login');
+        $model = new UserBase('login');
         $this->performAjaxValidation($model);
         if (isset($_POST[get_class($model)])) {
             $model->attributes = $_POST[get_class($model)];

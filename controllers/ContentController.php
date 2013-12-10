@@ -119,12 +119,14 @@ class ContentController extends RAdminController
      */
     public function actionEdit($url = null, $id = null, $type = null)
     {
+        /** @var $module Module */
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
+        /** @var $model RActiveRecord */
         $model = RActiveRecord::model($module->className)->findByPk($id);
         if (empty($model)) $model = new $module->className('insert');
         else $model->scenario = 'edit';
-        /** @var $model ContentBehavior */
+        /** @var $model RActiveRecord|ContentBehavior */
         $model->attachBehavior('contentBehavior', 'ContentBehavior');
         $model->setModule($module);
         if($type == 'category'){
@@ -159,18 +161,21 @@ class ContentController extends RAdminController
 
     public function actionDelete($url, $id)
     {
-        /** @var ModuleAdmin $module */
-        $module = $this->recordExists('ModuleAdmin', array('url' => $url), 'Модуль не найден');
-        /** @var SiteModule $model */
-        $model = $module->getModel('Admin');
-        $model->applyModule($module->url);
-        if ($model = $model->findByPk($id)) {
-            $model->delete();
+        /** @var $module Module */
+        $module = Module::model()->findByAttributes(compact('url'));
+        if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
+
+        /** @var $model RActiveRecord */
+        $model = RActiveRecord::model($module->className)->findByPk($id);
+        if (empty($model)) throw new CHttpException(404, 'Запись не найдена');
+
+        if ($model->delete()) {
             $this->flash('success content-delete', 'Object successfully deleted');
         } else {
             $this->flash('error content-delete', 'Object not found');
         }
-        Yii::app()->history->back(false, array('/admin/index'));
+
+        $this->redirect(Yii::app()->user->returnUrl);
     }
 
     public function actionSaveOrder($url = null)
