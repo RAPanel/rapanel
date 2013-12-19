@@ -61,6 +61,7 @@ class ContentBehavior extends AdminBehavior
         return $this->_dataProvider;
     }
 
+    /** @var $criteria CDbCriteria */
     public function getSearchCriteria($criteria)
     {
         if ($q = $_GET['q']) {
@@ -96,6 +97,9 @@ class ContentBehavior extends AdminBehavior
 
     public function getColumns()
     {
+        /** @var $owner PageBase */
+        $owner = $this->getOwner();
+
         $default = array();
         $default['order'] = array(
             'name' => '#',
@@ -107,7 +111,7 @@ class ContentBehavior extends AdminBehavior
         );
         foreach ((array)$this->adminSettings['columns'] as $column) {
             $default[$column] = array(
-                'header' => $this->getOwner()->getAttributeLabel($column),
+                'header' => $owner->getAttributeLabel($column),
                 'value' => '$data->' . $column . '',
             );
             if ($column == 'user_id') $default[$column]['value'] = '$data->user->username';
@@ -209,7 +213,6 @@ class ContentBehavior extends AdminBehavior
         $data = array(
             'name' => $row['url'],
             'label' => $row['name'],
-            'class' => 'input-' . $row['inputType'],
         );
         switch ($row['inputType']):
             case 'tags':
@@ -217,12 +220,14 @@ class ContentBehavior extends AdminBehavior
                     'type' => 'ext.RTagsInput.RTagsInput',
                     'query' => '.input-' . $row['inputType'],
                     'autoComplete' => array('autocompete', 'tag' => $row['id']),
+                    'class' => 'input-' . $row['inputType'],
                 );
             case 'wysiwyg':
                 return $data + array(
                     'type' => 'ext.RTinyMCE.RTinyMCE',
                     'query' => '.input-' . $row['inputType'],
                     'attributes' => array('class' => 'input-' . $row['inputType']),
+                    'class' => 'input-' . $row['inputType'],
                 );
             case 'autocomplete':
                 return $data + array(
@@ -234,6 +239,7 @@ class ContentBehavior extends AdminBehavior
             case 'boolean':
                 return $data + array(
                     'type' => 'checkbox',
+                    'class' => 'input-' . $row['inputType'],
                 );
             case 'fromlist':
                 $items = array();
@@ -249,15 +255,18 @@ class ContentBehavior extends AdminBehavior
                         'disable_search_threshold' => 10,
                     ),
                     'cssFile' => false,
+                    'class' => 'input-' . $row['inputType'],
                 );
             case 'numeric':
                 return $data + array(
                     'type' => 'number',
+                    'class' => 'input-' . $row['inputType'],
                 );
             case 'price':
                 return $data + array(
                     'type' => 'number',
                     'step' => '0.01',
+                    'class' => 'input-' . $row['inputType'],
                 );
             default:
                 return $data + array(
