@@ -224,25 +224,23 @@ class ContentController extends RAdminController
 
     public function fixPage($module_id)
     {
-        $data = Page::model()->findAllByAttributes(compact('module_id'), array('order' => 'level desc, lft'));
+        $data = Page::model()->findAllByAttributes(compact('module_id'), array('select' => 'id, parent_id, lft, rgt', 'order' => 'lft'));
         $items = array();
         foreach ($data as $row) {
             $items[$row->parent_id][] = $row;
         }
-
-
         $lft = 1;
-        $rgt = count($data) * 2;
-        $this->addIndex(0, $items, $lft, $rgt);
+        $this->addIndex(0, $items, $lft);
     }
 
-    public function addIndex($parent_id, $items, &$lft, &$rgt)
+    public function addIndex($parent_id, $items, &$lft)
     {
         if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) {
+
             $row->lft = $lft++;
-            $row->rgt = $rgt--;
-            $row->save(false, array('lft', 'rgt'));
-            $this->addIndex($row->id, $items, $lft, $rgt);
+            $this->addIndex($row->id, $items, $lft);
+            $row->rgt = $lft++;
+            $row->saveNode(false, array('lft', 'rgt'));
         }
     }
 }
