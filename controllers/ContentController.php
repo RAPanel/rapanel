@@ -175,6 +175,8 @@ class ContentController extends RAdminController
             $this->flash('error content-delete', 'Object not found');
         }
 
+        if($_GET['iframe']) Yii::app()->end('<script>parent.$.modal().close();</script>');
+
         $this->redirect(Yii::app()->user->returnUrl);
     }
 
