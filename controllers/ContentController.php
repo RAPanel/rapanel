@@ -1,8 +1,8 @@
 <?php
+
 /**
  * Created by Anatoly Rugalev <anatoly.rugalev@gmail.com>
  */
-
 class ContentController extends RAdminController
 {
     public $returnActions = array('index');
@@ -129,7 +129,7 @@ class ContentController extends RAdminController
         /** @var $model RActiveRecord|ContentBehavior */
         $model->attachBehavior('contentBehavior', 'ContentBehavior');
         $model->setModule($module);
-        if($type == 'category'){
+        if ($type == 'category') {
             $model->is_category = 1;
         }
 
@@ -169,13 +169,15 @@ class ContentController extends RAdminController
         $model = RActiveRecord::model($module->className)->findByPk($id);
         if (empty($model)) throw new CHttpException(404, 'Запись не найдена');
 
-        if ($model->delete()) {
+        $func = isset($model->NestedSetBehavior) ? 'deleteNode' : 'delete';
+
+        if ($model->{$func}()) {
             $this->flash('success content-delete', 'Object successfully deleted');
         } else {
             $this->flash('error content-delete', 'Object not found');
         }
 
-        if($_GET['iframe']) Yii::app()->end('<script>parent.$.modal().close();</script>');
+        if ($_GET['iframe']) Yii::app()->end('<script>parent.$.modal().close();</script>');
 
         $this->redirect(Yii::app()->user->returnUrl);
     }
@@ -212,5 +214,35 @@ class ContentController extends RAdminController
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
         $model = RActiveRecord::model($module->className)->findByPk($id);
         if ($model->href) $this->redirect($model->href);
+    }
+
+    public function actionFix($id = false, $url = false)
+    {
+        if (!$id) $id = Module::getIdByUrl($url);
+        $this->fixPage($id);
+    }
+
+    public function fixPage($module_id)
+    {
+        $data = Page::model()->findAllByAttributes(compact('module_id'), array('order' => 'level desc, lft'));
+        $items = array();
+        foreach ($data as $row) {
+            $items[$row->parent_id][] = $row;
+        }
+
+
+        $lft = 1;
+        $rgt = count($data) * 2;
+        $this->addIndex(0, $items, $lft, $rgt);
+    }
+
+    public function addIndex($parent_id, $items, &$lft, &$rgt)
+    {
+        if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) {
+            $row->lft = $lft++;
+            $row->rgt = $rgt--;
+            $row->save(false, array('lft', 'rgt'));
+            $this->addIndex($row->id, $items, $lft, $rgt);
+        }
     }
 }
