@@ -229,18 +229,18 @@ class ContentController extends RAdminController
         foreach ($data as $row) {
             $items[$row->parent_id][] = $row;
         }
-        $lft = 1;
-        $this->addIndex(0, $items, $lft);
+        $this->addIndex(0, $items);
     }
 
-    public function addIndex($parent_id, $items, &$lft)
+    public function addIndex($parent_id, $items, $lft = 1)
     {
         if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) {
 
             $row->lft = $lft++;
-            $this->addIndex($row->id, $items, $lft);
+            $lft = $this->addIndex($row->id, $items, $lft);
             $row->rgt = $lft++;
             $row->saveNode(false, array('lft', 'rgt'));
         }
+        return $lft;
     }
 }
