@@ -49,13 +49,13 @@ class ContentBehavior extends AdminBehavior
             $criteria = $this->getSearchCriteria($criteria);
             $this->_dataProvider = new CActiveDataProvider($this->owner, compact('criteria', 'pagination', 'sort'));
 
-           /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
-            if($count === false){
-                if($_GET['q'])
-                    else $count = $this->owner->getCommandBuilder()->createCountCommand($this->owner->getTableSchema(),$criteria,$this->owner->getTableAlias())->queryScalar();
-                Yii::app()->cache->set($id, $count, 5*60);
-            }
-            $this->_dataProvider->setTotalItemCount($count);*/
+            /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
+             if($count === false){
+                 if($_GET['q'])
+                     else $count = $this->owner->getCommandBuilder()->createCountCommand($this->owner->getTableSchema(),$criteria,$this->owner->getTableAlias())->queryScalar();
+                 Yii::app()->cache->set($id, $count, 5*60);
+             }
+             $this->_dataProvider->setTotalItemCount($count);*/
         }
 
         return $this->_dataProvider;
@@ -83,9 +83,9 @@ class ContentBehavior extends AdminBehavior
                 $condition[] = "cv.value LIKE :textSearch";
                 $criteria->params['textSearch'] = "%{$q}%";
             }
-            if(count($criteria->with)) foreach (array('user', 'currentUrl') as $val) if (in_array($val, array_keys($criteria->with)) && !empty($criteria->with[$val]['select'])){
+            if (count($criteria->with)) foreach (array('user', 'currentUrl') as $val) if (in_array($val, array_keys($criteria->with)) && !empty($criteria->with[$val]['select'])) {
                 $condition[] = "{$val}.{$criteria->with[$val]['select']} LIKE :textSearch";
-                $criteria->with[$val]['together']=true;
+                $criteria->with[$val]['together'] = true;
                 $criteria->params['textSearch'] = "%{$q}%";
             }
             $criteria->addCondition(implode(' OR ', $condition));
@@ -168,15 +168,15 @@ class ContentBehavior extends AdminBehavior
             if (in_array($row, array_keys($this->getOwner()->tableSchema->columns))) {
                 $result['main'][$row] = $elements[$row] ? $elements[$row] : array();
             }
-        if (method_exists($this->getOwner(), 'getUrl'))
-            $result['seo']['url'] = $this->getCharacterElement(array(
-                'url' => 'url',
-                'label' => 'url',
-                'inputType' => 'text',
-            ));
         if (method_exists($this->getOwner(), 'getCharacterNames'))
-            foreach (Characters::getDataByUrls($this->getOwner()->getCharacterNames()) as $row)
+            foreach (Characters::getDataByUrls($this->getOwner()->getCharacterNames(1)) as $row)
                 $result[$row['position']][$row['url']] = $this->getCharacterElement($row);
+        if (method_exists($this->getOwner(), 'getUrl') && is_array($result['seo']))
+            $result['seo'] = CMap::mergeArray(array('url' => $this->getCharacterElement(array(
+                    'url' => 'url',
+                    'label' => 'url',
+                    'inputType' => 'text',
+                ))), $result['seo']);
         if ($this->adminSettings['photos'] > 0) {
             $result['photos']['photo'] = Yii::app()->controller->widget('ext.RFileUpload.RFileUpload', array(
                 'model' => $this->owner,
