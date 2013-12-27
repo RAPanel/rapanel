@@ -226,7 +226,6 @@ class ContentBehavior extends AdminBehavior
                 return $data + array(
                     'type' => 'ext.RTinyMCE.RTinyMCE',
                     'query' => '.input-' . $row['inputType'],
-                    'attributes' => array('class' => 'input-' . $row['inputType']),
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'autocomplete':
@@ -239,6 +238,7 @@ class ContentBehavior extends AdminBehavior
             case 'boolean':
                 return $data + array(
                     'type' => 'checkbox',
+                    'layout' => '{input}{label}{hint}{error}',
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'fromlist':

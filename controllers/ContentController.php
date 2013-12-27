@@ -1,8 +1,8 @@
 <?php
-
 /**
  * Created by Anatoly Rugalev <anatoly.rugalev@gmail.com>
  */
+
 class ContentController extends RAdminController
 {
     public $returnActions = array('index');
