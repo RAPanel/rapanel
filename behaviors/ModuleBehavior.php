@@ -5,7 +5,7 @@ class ModuleBehavior extends AdminBehavior
     public function getClassList()
     {
         $result = array();
-        foreach (array('Page', 'User', 'Character', 'Answer') as $class) {
+        foreach (array('Page', 'User', 'Character', 'Answer', 'Form') as $class) {
             $result[$class] = $class;
         }
         return $result;

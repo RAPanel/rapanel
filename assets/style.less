@@ -768,6 +768,14 @@ section.main {
         &.created-column, &.lastmod-column {
           display: none;
         }
+        &.info-column {
+          padding: 10px;
+          white-space: normal;
+          margin-left: -10px;
+          height: auto;
+          z-index: 100;
+          background: @colorGreyf0;
+        }
       }
     }
     .slick-cell {
@@ -777,6 +785,12 @@ section.main {
       &.id-column {
         color: @colorGrey9;
         text-align: center;
+      }
+      &.info-column {
+        padding: 10px 0;
+        line-height: 1;
+        overflow: hidden;
+        box-sizing: border-box;
       }
       &.checkboxSel {
         text-align: center;
