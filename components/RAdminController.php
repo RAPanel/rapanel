@@ -11,6 +11,12 @@ abstract class RAdminController extends RController
         );
     }
 
+    public function init()
+    {
+        if(isset($_GET['iframe'])) $this->layout = 'iframe';
+        parent::init();
+    }
+
     /*public function createWidget($className, $properties = array())
     {
         $widget = $this->module->getComponent('widgetFactory')->createWidget($this, $className, $properties);
