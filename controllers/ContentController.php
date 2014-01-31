@@ -1,8 +1,8 @@
 <?php
+
 /**
  * Created by Anatoly Rugalev <anatoly.rugalev@gmail.com>
  */
-
 class ContentController extends RAdminController
 {
     public $returnActions = array('index');
@@ -11,8 +11,9 @@ class ContentController extends RAdminController
     {
         return array(
             'upload' => array(
-                'class' => 'ext.RFileUpload.RFileUploadAction',
-                'savePath' => 'data/_tmp',
+                'class' => 'ext.RUpload.RFileUploadAction',
+                'model' => $_GET['type'],
+                'savePath' => 'data/' . ($_GET['type'] == 'UserFiles' ? '_files' : '_tmp'),
             ),
         );
     }
@@ -136,8 +137,6 @@ class ContentController extends RAdminController
         $this->performAjaxValidation($model);
         if (isset($_POST[get_class($model)])) {
             $model->attributes = $_POST[get_class($model)];
-            if (isset($_POST[get_class($model)]['photos']))
-                $model->photos = $_POST[get_class($model)]['photos'];
             if ($model->save()) {
                 if ($_GET['iframe']) exit('<script>parent.$.modal().close();</script>');
                 $this->flash('success content-edit', Yii::t('admin.result', 'Module successfully saved'));

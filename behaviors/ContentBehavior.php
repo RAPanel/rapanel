@@ -24,9 +24,12 @@ class ContentBehavior extends AdminBehavior
             if (method_exists($this->getOwner(), 'getCharacterNames')) {
                 $characters = array_intersect((array)$this->adminSettings['columns'], $this->getOwner()->getCharacterNames());
                 foreach ($characters as $character) $criteria->with[] = Characters::getRelationByUrl($character);
-                $criteria->with['photo'] = array('select' => 'name');
+                if ((int)$this->adminSettings['photos'] > 0)
+                    $criteria->with['photo'] = array('select' => 'name');
                 $criteria->with['currentUrl'] = array('select' => 'value');
-                if (in_array('user_id', $columns)) $criteria->with['user'] = array('select' => 'username');
+                if (in_array('user_id', $columns) && $this->owner->hasRelated('user')) $criteria->with['user'] = array('select' => 'username');
+                if (in_array('page_id', $columns) && $this->owner->hasRelated('page')) $criteria->with['page'] = array('select' => false, 'with' => array('rName'));
+                if (in_array('parent_id', $columns) && $this->owner->hasRelated('parent')) $criteria->with['parent'] = array('select' => false, 'with' => array('rName'));
                 $criteria->compare('`t`.`module_id`', $this->getModule()->id);
             }
             if ($_GET['limit']) {
@@ -115,6 +118,8 @@ class ContentBehavior extends AdminBehavior
                 'value' => '$data->' . $column . '',
             );
             if ($column == 'user_id') $default[$column]['value'] = '$data->user->username';
+            if ($column == 'page_id') $default[$column]['value'] = '$data->page->name';
+            if ($column == 'parent_id') $default[$column]['value'] = '$data->parent->name';
             if ($column == 'status_id') $default[$column]['value'] = '$data->status';
         }
         $default['buttons'] = array(
@@ -160,6 +165,9 @@ class ContentBehavior extends AdminBehavior
         );
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getElements()
     {
         $result = array();
@@ -169,25 +177,41 @@ class ContentBehavior extends AdminBehavior
                 $result['main'][$row] = $elements[$row] ? $elements[$row] : array();
             }
         if (method_exists($this->getOwner(), 'getCharacterNames'))
-            foreach (Characters::getDataByUrls($this->getOwner()->getCharacterNames(1)) as $row)
+            foreach (Characters::getDataByUrls($this->getOwner()->getCharacterNames(true)) as $row)
                 $result[$row['position']][$row['url']] = $this->getCharacterElement($row);
-        if (method_exists($this->getOwner(), 'getUrl') && is_array($result['seo']))
-            $result['seo'] = CMap::mergeArray(array('url' => $this->getCharacterElement(array(
-                    'url' => 'url',
-                    'label' => 'url',
-                    'inputType' => 'text',
-                ))), $result['seo']);
+        if (method_exists($this->getOwner(), 'settingNames'))
+            foreach ($this->getOwner()->settingNames() as $row)
+                $result['additional'][$row] = array(
+                    'name' => $row,
+                    'type' => 'text',
+                );
         if ($this->adminSettings['photos'] > 0) {
-            $result['photos']['photo'] = Yii::app()->controller->widget('ext.RFileUpload.RFileUpload', array(
+            $result['photos']['photo'] = Yii::app()->controller->widget('ext.RUpload.RPhotoUpload', array(
                 'model' => $this->owner,
                 'attribute' => 'photos',
                 'crop' => $this->adminSettings['crop'],
                 'max' => $this->adminSettings['photos'],
                 'options' => array(
-                    'url' => array('content/upload'),
+                    'url' => array('content/upload', 'model'=>'Photo'),
                 ),
             ), 1);
         }
+        if ($this->adminSettings['files'] > 0) {
+            $result['files']['file'] = Yii::app()->controller->widget('ext.RUpload.RFileUpload', array(
+                'model' => $this->owner,
+                'attribute' => 'files',
+                'max' => $this->adminSettings['files'],
+                'options' => array(
+                    'url' => array('content/upload', 'type'=>'UserFiles'),
+                ),
+            ), 1);
+        }
+        if (method_exists($this->getOwner(), 'getUrl'))
+            $result['seo']['url'] = $this->getCharacterElement(array(
+                'url' => 'url',
+                'label' => 'url',
+                'inputType' => 'text',
+            ));
 
         if (count($keys = array_keys($result)) == 1)
             return current($result);
@@ -242,18 +266,24 @@ class ContentBehavior extends AdminBehavior
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'fromlist':
-                $items = array();
-                if (strstr('SELECT', $row['data']) === false) {
-                    foreach (explode(',', $row['data']) as $item) $items[trim($item)] = trim($item);
-                }
                 return $data + array(
                     'type' => 'ext.RChosen.RChosen',
                     'query' => '.input-' . $row['inputType'],
-                    'data' => $items,
+                    'data' => $this->getDataList($row['data']),
 //                    'autoCompleteUrl' => array('autocompete'),
                     'options' => array(
                         'disable_search_threshold' => 10,
                     ),
+                    'cssFile' => false,
+                    'class' => 'input-' . $row['inputType'],
+                );
+            case 'tagsList':
+                return $data + array(
+                    'type' => 'ext.RChosen.RChosen',
+                    'empty' => '',
+                    'multiple' => true,
+                    'query' => '.input-' . $row['inputType'],
+                    'data' => $this->getDataList($row['data']),
                     'cssFile' => false,
                     'class' => 'input-' . $row['inputType'],
                 );
@@ -296,5 +326,24 @@ class ContentBehavior extends AdminBehavior
     public function getIsCategory()
     {
         return $this->_isCategory;
+    }
+
+    /**
+     * @return RActiveRecord.
+     */
+    public function getOwner()
+    {
+        return parent::getOwner();
+    }
+
+    public function getDataList($data)
+    {
+        if (stristr($data, 'SELECT') === false) {
+            $items = array();
+            foreach (explode(',', $data) as $item) $items[trim($item)] = trim($item);
+        } else {
+            $items = CHtml::listData(Yii::app()->db->createCommand($data)->queryAll(), 'key', 'value');
+        }
+        return $items;
     }
 }

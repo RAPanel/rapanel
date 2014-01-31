@@ -5,9 +5,12 @@ class ModuleBehavior extends AdminBehavior
     public function getClassList()
     {
         $result = array();
-        foreach (array('Page', 'User', 'Character', 'Answer', 'Form') as $class) {
-            $result[$class] = $class;
-        }
+        $dir = Yii::getPathOfAlias('application.models') . DIRECTORY_SEPARATOR ;
+        foreach (scandir($dir) as $file)
+            if (is_file($dir . $file)) {
+                $class = current(explode('.', $file));
+                $result[$class] = $class;
+            }
         return $result;
     }
 
@@ -194,6 +197,16 @@ class ModuleBehavior extends AdminBehavior
                     'min' => 0,
                     'max' => 10,
                     'step' => 0.01,
+                ),
+            );
+        }
+        if (in_array('files', array_keys($model->relations()))) {
+            $elements['config[files]'] = array(
+                'label' => 'Максимальное количество файлов',
+                'type' => 'number',
+                'attributes' => array(
+                    'min' => 0,
+                    'max' => 99,
                 ),
             );
         }

@@ -1160,29 +1160,40 @@ form {
   background: #ffffff url(loading.gif) no-repeat center;
 }
 
-#photos {
-  #photos-progress {
-    height: 5px;
+#photos-progress, #files-progress {
+  height: 5px;
+  position: absolute;
+  left: 0;
+  bottom: 70px;
+  width: 100%;
+  .progress-bar {
     position: absolute;
-    left: 0;
-    bottom: 70px;
-    width: 100%;
-    .progress-bar {
-      position: absolute;
-      width: 0%;
-      height: 100%;
-      background: @colorGreen;
-    }
+    width: 0%;
+    height: 100%;
+    background: @colorGreen;
   }
 }
 
-#photos-data {
+#photos-data, #files-data {
   font-size: 0;
   padding: 10px;
   position: relative;
   width: 100%;
   overflow: hidden;
   .box-sizing(border-box);
+}
+
+.file-item{
+  margin: 10px;
+  input[type="text"]{
+    width: 50%;
+  }
+  span{
+    font-size: 14px;
+  }
+  button{
+    margin-left: 30px;
+  }
 }
 
 .photo-item {
@@ -1319,7 +1330,7 @@ form {
   }
 }
 
-.photo-upload-wrapper {
+.photo-upload-wrapper, .files-upload-wrapper {
   position: absolute;
   bottom: 20px;
   right: 160px;
