@@ -12,7 +12,7 @@ class ContentController extends RAdminController
         return array(
             'upload' => array(
                 'class' => 'ext.RUpload.RFileUploadAction',
-                'model' => $_GET['type'],
+                'model' => $_GET['type'] ? $_GET['type'] : 'Photo',
                 'savePath' => 'data/' . ($_GET['type'] == 'UserFiles' ? '_files' : '_tmp'),
             ),
         );
