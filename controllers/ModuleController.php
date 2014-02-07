@@ -106,6 +106,8 @@ class ModuleController extends RAdminController
 
     public function actionChange()
     {
+        $this->redirect(Yii::app()->user->returnUrl);
+
         $id=$model=$attr=$value=false;
         foreach ($_POST as $key => $val)
             if ($val == end($_POST)) {

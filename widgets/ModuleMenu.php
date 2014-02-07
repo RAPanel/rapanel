@@ -6,6 +6,7 @@
  */
 
 YiiBase::import('zii.widgets.CMenu');
+
 class ModuleMenu extends CMenu
 {
     public $id = 'modules-menu';
@@ -13,12 +14,12 @@ class ModuleMenu extends CMenu
 
     public function init()
     {
-        $data = Module::model()->active()->order()->findAll();
+        $data = Module::model()->cache(60 * 60 * 24, Module::dependency())->active()->order()->findAll();
         $this->items = $items = array();
         foreach ($data as $row)
-            $items[$row->groupName?$row->groupName:'Прочее'][] = array('label' => $row->name, 'url' => array("/".Yii::app()->controller->module->id."/content/index", 'url' => $row->url));
+            $items[$row->groupName ? $row->groupName : 'Прочее'][] = array('label' => $row->name, 'url' => array("/" . Yii::app()->controller->module->id . "/content/index", 'url' => $row->url));
         foreach ($items as $key => $val) {
-            $this->items[] = array('label' => $key, 'items' => $val, 'itemOptions'=>array('class'=>'menu-' . Text::cyrillicToLatin($key)));
+            $this->items[] = array('label' => $key, 'items' => $val, 'itemOptions' => array('class' => 'menu-' . Text::cyrillicToLatin($key)));
         }
         parent::init();
     }

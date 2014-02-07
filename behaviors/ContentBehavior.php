@@ -274,7 +274,7 @@ class ContentBehavior extends AdminBehavior
                     'options' => array(
                         'disable_search_threshold' => 10,
                     ),
-                    'cssFile' => false,
+//                    'cssFile' => false,
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'tagsList':
@@ -284,7 +284,7 @@ class ContentBehavior extends AdminBehavior
                     'multiple' => true,
                     'query' => '.input-' . $row['inputType'],
                     'data' => $this->getDataList($row['data']),
-                    'cssFile' => false,
+//                    'cssFile' => false,
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'numeric':

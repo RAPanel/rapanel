@@ -210,6 +210,10 @@ class ModuleBehavior extends AdminBehavior
                 ),
             );
         }
+        $elements['config[parent_id]'] = array(
+            'label' => 'Номер родителя по умолчанию',
+            'type' => 'number',
+        );
 
         $elements[] = '<div class="clearfix"></div>';
         return array(

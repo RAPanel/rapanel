@@ -97,17 +97,18 @@ class ContentController extends RAdminController
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
         $model = new $module->className('grid');
         /** @var $model ContentBehavior */
-        $model->attachBehavior('column', 'ContentBehavior');
+        $model->attachBehavior('contentBehavior', 'ContentBehavior');
         $model->setModule($module);
         if ($type == 'categories') $model->setIsCategory(true);
         if (Yii::app()->request->isAjaxRequest) {
+            $provider = $model->contentBehavior->getDataProvider();
             Yii::import('ext.RSlickGrid.RSlickGrid');
             echo json_encode(array(
-                'hits' => $model->getDataProvider()->getTotalItemCount(),
+                'hits' => $provider->getTotalItemCount(),
                 'request' => array(
                     'start' => (int)$_GET['start'],
                 ),
-                'results' => CJavaScript::jsonDecode(RSlickGrid::getValues($model->getDataProvider(), $model->getColumns())),
+                'results' => CJavaScript::jsonDecode(RSlickGrid::getValues($provider, $model->contentBehavior->getColumns())),
             ));
         } else $this->render($this->action->id, compact('model', 'module', 'url'));
     }
@@ -181,24 +182,19 @@ class ContentController extends RAdminController
         $this->redirect(Yii::app()->user->returnUrl);
     }
 
-    public function actionSaveOrder($url = null)
+    public function actionSaveOrder($id, $prev = null, $next = null)
     {
-        $module = Module::model()->findByAttributes(compact('url'));
-        if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
-        if (isset($_POST['id'])) {
-            $data = array();
-            foreach ($_POST['id'] as $key => $val) if ($val)
-                $data[] = array(
-                    'id' => $val,
-                    'num' => $key,
-                );
-            $table = RActiveRecord::model($module->className)->tableName();
-            SaveDAO::execute($table, $data, 'num');
+        $result = 0;
+        $move = Page::model()->findByPk($id);
+        if ($before = Page::model()->findByPk($prev)) {
+            if ($move->parent_id == $before->id || $before->level > $move->level)
+                $result = $move->moveAsFirst($before);
+            elseif ($move->id != $before->parent_id)
+                $result = $move->moveAfter($before);
+        } elseif ($after = Page::model()->findByPk($next)) {
+            $result = $move->moveBefore($after);
         }
-        if (!Yii::app()->request->isAjaxRequest)
-            $this->redirect(Yii::app()->user->returnUrl);
-        else
-            echo Yii::t('admin.result', 'Modules move success');
+        echo $result;
     }
 
     public function actionPageSize($size)

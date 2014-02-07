@@ -59,18 +59,18 @@ function sortableTable() {
     }).disableSelection();
 }
 
-/*
- function fastChange(e) {
- e=$(e);
- var form = e.parents('form');
- var data = form.serializeArray();
- $.post(form.attr('action'), data, function(data){
- if(parseInt(data)>0) $('body').yiiGridView.update(form.find('.grid-view').attr('id'));
- e.val(null);
- });
- return false;
- }
 
+function fastChange(e) {
+    e = $(e);
+    var form = e.parents('form');
+    var data = form.serializeArray();
+    $.post(form.attr('action'), data, function (data) {
+        if (parseInt(data) > 0) $('body').yiiGridView.update(form.find('.grid-view').attr('id'));
+        e.val(null);
+    });
+    return false;
+}
+/*
  $(document).ready(function () {
  sortableTable();
  $(document).ajaxComplete(function () {

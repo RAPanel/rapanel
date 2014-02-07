@@ -12,7 +12,7 @@ echo CHtml::beginForm($this->createUrl('change', compact('url')));
         CHtml::tag('div', array('class' => 'elements'), strtr('<span class="count">{count}</span>', array(
             '{from}' => 0,
             '{to}' => 0,
-            '{count}' => $model->getDataProvider()->getTotalItemCount(),
+            '{count}' => $model->contentBehavior->getDataProvider()->getTotalItemCount(),
         )))
         ?><?
         $this->widget('zii.widgets.CMenu', array(
