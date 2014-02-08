@@ -36,6 +36,9 @@ $(function () {
     }
 });
 
+function viewMenu (e) {
+        $(e).nextAll('.hiddenMenu').slideToggle(100);
+}
 
 function sortableTable() {
     var block = '.grid-view tbody';

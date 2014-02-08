@@ -41,6 +41,10 @@ input[type="checkbox"], input[type="checkbox"] + label {
   cursor: pointer;
 }
 
+button {
+  outline: none;
+}
+
 header.main {
   background: @colorGrey3;
   color: @colorWhite;
@@ -90,6 +94,7 @@ aside.main {
       cursor: col-resize;
       width: 5px;
       background: @colorGrey5;
+      z-index: 5;
     }
     .hide {
       z-index: 2;
@@ -141,6 +146,7 @@ aside.main {
         cursor: pointer;
         line-height: 1;
         position: relative;
+        width: 80px;
         height: 70px;
         overflow: hidden;
         z-index: 10;
@@ -148,7 +154,7 @@ aside.main {
         vertical-align: middle;
         &:before {
           content: '';
-          display: block;
+          display: block !important;
           margin: 5px auto;
         }
         &:hover {
@@ -245,9 +251,6 @@ aside.main {
           background: @colorGrey3b;
           color: #808080;
         }
-        > ul {
-          display: block;
-        }
       }
       &:hover {
         > ul {
@@ -257,6 +260,9 @@ aside.main {
       &.active {
         span {
           color: @colorGreen;
+        }
+        > ul {
+          display: block;
         }
       }
       > ul {
@@ -613,24 +619,31 @@ section.main {
     background: @colorGreen;
     .border-radius(2px);
     position: relative;
-    &:before {
-      content: '';
-      border-left: 1px solid #bbd64d;
-      height: 34px;
-      position: absolute;
-      right: 34px;
-    }
     button {
       text-transform: uppercase;
       color: @colorWhite;
       position: relative;
-      padding-right: 40px;
+      .inline-block(middle);
+    }
+    .arrow {
+      width: 32px;
+      height: 32px;
       &:before {
+        content: '';
+        border-left: 1px solid #bbd64d;
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 32px;
+      }
+      &:after {
         content: '';
         .sprite-arrow-down-white();
         position: absolute;
-        top: 12px;
-        right: 10px;
+        top: 50%;
+        letter-spacing: 50%;
+        margin-top: -5px;
+        margin-left: -6px;
       }
     }
   }
@@ -800,10 +813,12 @@ section.main {
           height: 15px;
           margin-left: -15px;
           .opacity(0);
+          margin-top: -3px;
         }
         &:before {
           content: '';
           .sprite-checkbox();
+          margin-top: -3px;
         }
         &:hover:before {
           .sprite-checkboxHover();
@@ -968,14 +983,14 @@ form#edit-form {
   .ui-tabs-panel {
     display: block;
     height: 100%;
-    overflow: auto;
+    //    overflow: auto;
   }
   > ul {
     position: absolute;
     z-index: 1;
     top: 0;
     left: 0;
-    width: 100%;
+    right: 0;
     list-style: none;
     margin: 0;
     padding: 0 6px;
@@ -1019,7 +1034,6 @@ form#edit-form {
 }
 
 form {
-
   .row {
     margin: 12px;
     > label {
@@ -1048,6 +1062,18 @@ form {
       height: 70px;
     }
   }
+  .field_rememberMe {
+    label, input {
+      .inline-block(middle);
+    }
+    label {
+      cursor: pointer;
+    }
+    input {
+      height: auto;
+    }
+  }
+
   input[type="text"], input[type="password"], input[type="number"], textarea, select, .chosen-container .chosen-single, .tagsinput {
     width: 100%;
     color: @colorGrey3;
@@ -1183,15 +1209,15 @@ form {
   .box-sizing(border-box);
 }
 
-.file-item{
+.file-item {
   margin: 10px;
-  input[type="text"]{
+  input[type="text"] {
     width: 50%;
   }
-  span{
+  span {
     font-size: 14px;
   }
-  button{
+  button {
     margin-left: 30px;
   }
 }
@@ -1299,6 +1325,7 @@ form {
         color: @colorGreen;
       }
     }
+
     .button-block {
       text-align: right;
       button {
@@ -1677,4 +1704,58 @@ body.in {
       }
     }
   }
+}
+
+.hiddenMenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: @colorGreen;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 5;
+  width: 200px;
+  left: 0;
+  margin-top: 0px;
+  background: #EFEFEF;
+  display: none;
+  li {
+    border-bottom: 1px solid #D6D6D4;
+    text-transform: uppercase;
+    font-size: 14px;
+    &:last-child {
+      border: none;
+    }
+    &:hover a {
+      color: #7b7b7b;
+    }
+    a {
+      display: block;
+      padding: 8px 20px;
+      color: #999999;
+      text-decoration: none;
+    }
+  }
+}
+
+input[type='checkbox'].input-boolean {
+   .inline-block(middle);
+   margin-right: 7px;
+   & + label {
+     .inline-block(middle);
+   }
+ }
+
+label.main {
+  input {
+    .inline-block(middle);
+    margin-left: 5px;
+    position: relative;
+    top: -1px;
+  }
+}
+
+select {
+  height: 26px;
 }
