@@ -21,17 +21,31 @@ class ContentBehavior extends AdminBehavior
             $criteria = new CDbCriteria();
             $criteria->addCondition('`t`.`id` > 0');
 
+            if (isset($this->owner->module_id))
+                $criteria->compare('`t`.`module_id`', $this->getModule()->id);
+
             if (method_exists($this->getOwner(), 'getCharacterNames')) {
                 $characters = array_intersect((array)$this->adminSettings['columns'], $this->getOwner()->getCharacterNames());
                 foreach ($characters as $character) $criteria->with[] = Characters::getRelationByUrl($character);
                 if ((int)$this->adminSettings['photos'] > 0)
                     $criteria->with['photo'] = array('select' => 'name');
                 $criteria->with['currentUrl'] = array('select' => 'value');
-                if (in_array('user_id', $columns) && $this->owner->hasRelated('user')) $criteria->with['user'] = array('select' => 'username');
-                if (in_array('page_id', $columns) && $this->owner->hasRelated('page')) $criteria->with['page'] = array('select' => false, 'with' => array('rName'));
-                if (in_array('parent_id', $columns) && $this->owner->hasRelated('parent')) $criteria->with['parent'] = array('select' => false, 'with' => array('rName'));
-                $criteria->compare('`t`.`module_id`', $this->getModule()->id);
             }
+
+            $relations = array_keys($this->owner->relations());
+            if (in_array('user_id', $columns) && in_array('user', $relations))
+                $criteria->with['user'] = array('select' => 'username');
+            if (in_array('page_id', $columns) && in_array('page', $relations))
+                $criteria->with['page'] = array('select' => false, 'with' => array('rName' => array('alias' => 'pName')));
+            if (in_array('parent_id', $columns) && in_array('parent', $relations))
+                $criteria->with['parent'] = array('with' => array('rName' => array('alias' => 'pName')));
+
+            foreach ($criteria->with as $key => $with)
+                if (is_array($with))
+                    $criteria->with[$key] = array_merge($with, array('together' => false));
+                else
+                    $criteria->with[$with] = array('together' => false);
+
             if ($_GET['limit']) {
                 $_GET['myPage'] = floor($_GET['start'] / $_GET['limit']) + 1;
                 $pagination = array(
@@ -48,8 +62,11 @@ class ContentBehavior extends AdminBehavior
                 $criteria->order = '`t`.`num` ASC, `t`.`id`';
             else
                 $sort = array('defaultOrder' => 't.id DESC');
+            $criteria->group = '`t`.`id`';
+            $criteria->limit = 50;
 
             $criteria = $this->getSearchCriteria($criteria);
+//            CVarDumper::dump($criteria,10,1);die;
             $this->_dataProvider = new CActiveDataProvider($this->owner, compact('criteria', 'pagination', 'sort'));
 
             /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
@@ -192,7 +209,7 @@ class ContentBehavior extends AdminBehavior
                 'crop' => $this->adminSettings['crop'],
                 'max' => $this->adminSettings['photos'],
                 'options' => array(
-                    'url' => array('content/upload', 'model'=>'Photo'),
+                    'url' => array('content/upload', 'model' => 'Photo'),
                 ),
             ), 1);
         }
@@ -202,7 +219,7 @@ class ContentBehavior extends AdminBehavior
                 'attribute' => 'files',
                 'max' => $this->adminSettings['files'],
                 'options' => array(
-                    'url' => array('content/upload', 'type'=>'UserFiles'),
+                    'url' => array('content/upload', 'type' => 'UserFiles'),
                 ),
             ), 1);
         }
