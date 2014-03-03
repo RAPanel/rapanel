@@ -206,7 +206,7 @@ class ContentBehavior extends AdminBehavior
                 ),
             ), 1);
         }
-        if (method_exists($this->getOwner(), 'getUrl'))
+        if (method_exists($this->getOwner(), 'getUrl') && count($result['seo']))
             $result['seo']['url'] = $this->getCharacterElement(array(
                 'url' => 'url',
                 'label' => 'url',
