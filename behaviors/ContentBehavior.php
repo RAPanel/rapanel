@@ -43,11 +43,11 @@ class ContentBehavior extends AdminBehavior
             $sort = false;
 
             if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || ($this->getModule()->type_id == Module::TYPE_NESTED && $this->getIsCategory() == true))
-                $criteria->order = '`t`.`lft` ASC';
+                $criteria->order = '`t`.`lft` ASC, `t`.`id` DESC';
             if (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
-                $criteria->order = '`t`.`num` ASC, `t`.`id`';
+                $criteria->order = '`t`.`num` ASC, `t`.`id` ASC';
             else
-                $sort = array('defaultOrder' => 't.id DESC');
+                $sort = array('defaultOrder' => 't.lft ASC, t.id DESC');
 
             $criteria = $this->getSearchCriteria($criteria);
             $this->_dataProvider = new CActiveDataProvider($this->owner, compact('criteria', 'pagination', 'sort'));
