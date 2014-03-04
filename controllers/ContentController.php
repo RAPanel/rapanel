@@ -182,17 +182,44 @@ class ContentController extends RAdminController
         $this->redirect(Yii::app()->user->returnUrl);
     }
 
-    public function actionSaveOrder($id, $prev = null, $next = null)
+    public function actionSaveOrder($id, $prev = null, $next = null, $href = null)
     {
         $result = 0;
-        $move = Page::model()->findByPk($id);
-        if ($before = Page::model()->findByPk($prev)) {
-            if ($move->parent_id == $before->id || $before->level > $move->level)
-                $result = $move->moveAsFirst($before);
-            elseif ($move->id != $before->parent_id)
-                $result = $move->moveAfter($before);
-        } elseif ($after = Page::model()->findByPk($next)) {
-            $result = $move->moveBefore($after);
+
+        preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->user->returnUrl, $url);
+        $class = Module::model()->findByPk(Module::getIdByUrl($url[1]))->className;
+
+        $move = RActiveRecord::model($class)->findByPk($id);
+        if ($move->hasAttribute('lft') && $move->lft > 0) {
+            if ($before = Page::model()->findByPk($prev)) {
+                if ($move->parent_id == $before->id || $before->level > $move->level)
+                    $result = $move->moveAsFirst($before);
+                elseif ($move->id != $before->parent_id)
+                    $result = $move->moveAfter($before);
+            } elseif ($after = Page::model()->findByPk($next)) {
+                $result = $move->moveBefore($after);
+            }
+        } elseif ($move->hasAttribute('num')) {
+            $before = RActiveRecord::model($class)->findByPk($prev);
+            $after = RActiveRecord::model($class)->findByPk($next);
+            if (!$before) {
+                RActiveRecord::model($class)->updateCounters(array('num' => 1));
+                $move->num = 0;
+                $result = $move->save(false, array('num'));
+            } elseif (!$after) {
+                $move->num = $before->num + 1;
+                $result = $move->save(false, array('num'));
+            } else {
+                if ($after->num - $before->num < 2) {
+                    $count = -($after->num - $before->num - 2);
+                    $criteria = new CDbCriteria(array('order' => 'num, id'));
+                    $criteria->addCondition('num>' . $before->num);
+                    $criteria->addCondition('num=' . $before->num . ' AND id>' . $before->id, 'OR');
+                    RActiveRecord::model($class)->updateCounters(array('num' => $count), $criteria);
+                }
+                $move->num = $before->num + 1;
+                $result = $move->save(false, array('num'));
+            }
         }
         echo $result;
     }

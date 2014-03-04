@@ -57,16 +57,15 @@ class ContentBehavior extends AdminBehavior
             $sort = false;
 
             if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || ($this->getModule()->type_id == Module::TYPE_NESTED && $this->getIsCategory() == true))
-                $criteria->order = '`t`.`lft` ASC';
+                $criteria->order = '`t`.`lft` ASC, `t`.`id` DESC';
             if (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
-                $criteria->order = '`t`.`num` ASC, `t`.`id`';
+                $criteria->order = '`t`.`num` ASC, `t`.`id` ASC';
             else
-                $sort = array('defaultOrder' => 't.id DESC');
+                $sort = array('defaultOrder' => 't.lft ASC, t.id DESC');
             $criteria->group = '`t`.`id`';
-            $criteria->limit = 50;
+            $criteria->limit = 50;                        
 
             $criteria = $this->getSearchCriteria($criteria);
-//            CVarDumper::dump($criteria,10,1);die;
             $this->_dataProvider = new CActiveDataProvider($this->owner, compact('criteria', 'pagination', 'sort'));
 
             /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
@@ -209,7 +208,7 @@ class ContentBehavior extends AdminBehavior
                 'crop' => $this->adminSettings['crop'],
                 'max' => $this->adminSettings['photos'],
                 'options' => array(
-                    'url' => array('content/upload', 'model' => 'Photo'),
+                    'url' => array('content/upload', 'model'=>'Photo'),
                 ),
             ), 1);
         }
@@ -219,7 +218,7 @@ class ContentBehavior extends AdminBehavior
                 'attribute' => 'files',
                 'max' => $this->adminSettings['files'],
                 'options' => array(
-                    'url' => array('content/upload', 'type' => 'UserFiles'),
+                    'url' => array('content/upload', 'type'=>'UserFiles'),
                 ),
             ), 1);
         }
