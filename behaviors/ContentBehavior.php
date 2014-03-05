@@ -40,11 +40,13 @@ class ContentBehavior extends AdminBehavior
             if (in_array('parent_id', $columns) && in_array('parent', $relations))
                 $criteria->with['parent'] = array('with' => array('rName' => array('alias' => 'pName')));
 
-            foreach ($criteria->with as $key => $with)
+            foreach ((array)$criteria->with as $key => $with)
                 if (is_array($with))
                     $criteria->with[$key] = array_merge($with, array('together' => false));
-                else
+                else{
+                    unset($criteria->with[$key]);
                     $criteria->with[$with] = array('together' => false);
+                }
 
             if ($_GET['limit']) {
                 $_GET['myPage'] = floor($_GET['start'] / $_GET['limit']) + 1;
@@ -61,7 +63,7 @@ class ContentBehavior extends AdminBehavior
             if (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
                 $criteria->order = '`t`.`num` ASC, `t`.`id` ASC';
             else
-                $sort = array('defaultOrder' => 't.lft ASC, t.id DESC');
+                $sort = array('defaultOrder' => 't.id DESC');
             $criteria->group = '`t`.`id`';
             $criteria->limit = 50;                        
 
@@ -109,7 +111,6 @@ class ContentBehavior extends AdminBehavior
             }
             $criteria->addCondition(implode(' OR ', $condition));
         }
-//        CVarDumper::dump($criteria,10,1);
 
         return $criteria;
     }
@@ -258,6 +259,7 @@ class ContentBehavior extends AdminBehavior
             case 'tags':
                 return $data + array(
                     'type' => 'ext.RTagsInput.RTagsInput',
+                    'cssFile' => false,
                     'query' => '.input-' . $row['inputType'],
                     'autoComplete' => array('autocompete', 'tag' => $row['id']),
                     'class' => 'input-' . $row['inputType'],
@@ -275,6 +277,14 @@ class ContentBehavior extends AdminBehavior
                     'sourceUrl' => array('autocompete', 'tag' => $row['id']),
                     'cssFile' => false,
                 );
+            case 'date':
+                return $data + array(
+                    'type' => 'zii.widgets.jui.CJuiDatePicker',
+                    'options'=>array('dateFormat'=>'dd.mm.yy'),
+                    'htmlOptions'=>array('class'=>'datePicker'),
+//                    'options'=>array('dateFormat'=>'dd.mm.yy', 'altFormat'=>'@'),
+                    'cssFile' => false,
+                );
             case 'boolean':
                 return $data + array(
                     'type' => 'checkbox',
@@ -290,7 +300,7 @@ class ContentBehavior extends AdminBehavior
                     'options' => array(
                         'disable_search_threshold' => 10,
                     ),
-//                    'cssFile' => false,
+                    'cssFile' => false,
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'tagsList':
@@ -300,7 +310,7 @@ class ContentBehavior extends AdminBehavior
                     'multiple' => true,
                     'query' => '.input-' . $row['inputType'],
                     'data' => $this->getDataList($row['data']),
-//                    'cssFile' => false,
+                    'cssFile' => false,
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'numeric':

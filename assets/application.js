@@ -1,4 +1,15 @@
 $(function () {
+    $('.datePicker').each(function(){
+        var time = $(this).val()? $(this).val()*1000: Date.now();
+        var d =  new Date(time);
+        var date = [ d.getDate(), d.getMonth() + 1, d.getFullYear() ];
+        for ( var i = 0; i < 2; i++ ) {
+            if ( date[i] < 10 ) {
+                date[i] = "0" + date[i];
+            }
+        }
+        $(this).val(date.join("."));
+    });
     $('.contentLoading').hide();
     var block = $('aside.main');
     var oldTime, time = 200;
