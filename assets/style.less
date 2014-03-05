@@ -4,6 +4,7 @@
 @import "jcrop";
 @import "main";
 @import "sprite";
+@import "chosen";
 
 @colorGreyf7: #f7f7f7;
 @colorGreyf0: #f0f0f0;
@@ -1162,10 +1163,11 @@ form {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   width: 100%;
-  border: 1px solid #aaa;
-  border-top: 0;
-  background: #fff;
+  border: 1px solid #cccccc;
+  background: #cccccc;
   box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+  .border-radius(2px);
+  margin-top: 1px;
 }
 
 .chosen-container.chosen-with-drop .chosen-drop {
@@ -1740,12 +1742,12 @@ body.in {
 }
 
 input[type='checkbox'].input-boolean {
-   .inline-block(middle);
-   margin-right: 7px;
-   & + label {
-     .inline-block(middle);
-   }
- }
+  .inline-block(middle);
+  margin-right: 7px;
+  & + label {
+    .inline-block(middle);
+  }
+}
 
 label.main {
   input {
@@ -1788,3 +1790,65 @@ select {
 .ui-helper-hidden-accessible {
   display: none;
 }
+
+div.tagsinput {
+  border: 1px solid #CCC;
+  background: #FFF;
+  padding: 5px;
+  width: 300px;
+  height: 100px;
+  overflow-y: auto;
+  span.tag {
+    border: 1px solid #a5d24a;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    display: block;
+    float: left;
+    padding: 1px 20px 1px 5px;
+    text-decoration: none;
+    background: #bad64c;
+    color: #1a1a1a;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    position: relative;
+    a {
+      font-size: 14px;
+      text-indent: -9999px;
+      background: url(/app/modules/rapanel/assets/chosenRemove.png) no-repeat center;
+      width: 18px;
+      height: 18px;
+      position: absolute;
+      top: 2px;
+      right: 1px;
+    }
+  }
+  input {
+    width: 80px;
+    margin: 0px;
+    font-size: 14px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #000;
+    outline: 0px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  div {
+    display: block;
+    float: left;
+  }
+}
+
+.tags_clear {
+  clear: both;
+  width: 100%;
+  height: 0px;
+}
+
+.not_valid {
+  background: #FBD8DB !important;
+  color: #90111A !important;
+}
+
+
