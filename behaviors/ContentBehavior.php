@@ -43,7 +43,7 @@ class ContentBehavior extends AdminBehavior
             foreach ((array)$criteria->with as $key => $with)
                 if (is_array($with))
                     $criteria->with[$key] = array_merge($with, array('together' => false));
-                else{
+                else {
                     unset($criteria->with[$key]);
                     $criteria->with[$with] = array('together' => false);
                 }
@@ -65,7 +65,7 @@ class ContentBehavior extends AdminBehavior
             else
                 $sort = array('defaultOrder' => 't.id DESC');
             $criteria->group = '`t`.`id`';
-            $criteria->limit = 50;                        
+            $criteria->limit = 50;
 
             $criteria = $this->getSearchCriteria($criteria);
             $this->_dataProvider = new CActiveDataProvider($this->owner, compact('criteria', 'pagination', 'sort'));
@@ -209,7 +209,7 @@ class ContentBehavior extends AdminBehavior
                 'crop' => $this->adminSettings['crop'],
                 'max' => $this->adminSettings['photos'],
                 'options' => array(
-                    'url' => array('content/upload', 'model'=>'Photo'),
+                    'url' => array('content/upload', 'model' => 'Photo'),
                 ),
             ), 1);
         }
@@ -219,7 +219,7 @@ class ContentBehavior extends AdminBehavior
                 'attribute' => 'files',
                 'max' => $this->adminSettings['files'],
                 'options' => array(
-                    'url' => array('content/upload', 'type'=>'UserFiles'),
+                    'url' => array('content/upload', 'type' => 'UserFiles'),
                 ),
             ), 1);
         }
@@ -280,9 +280,15 @@ class ContentBehavior extends AdminBehavior
             case 'date':
                 return $data + array(
                     'type' => 'zii.widgets.jui.CJuiDatePicker',
-                    'options'=>array('dateFormat'=>'dd.mm.yy'),
-                    'htmlOptions'=>array('class'=>'datePicker'),
-//                    'options'=>array('dateFormat'=>'dd.mm.yy', 'altFormat'=>'@'),
+                    'language' => Yii::app()->language,
+                    'options' => array(
+                        'dateFormat' => 'dd.mm.yy',
+                        'changeMonth' => 'true',
+                        'changeYear' => 'true',
+                        'firstDay' => '1',
+                    ),
+                    'htmlOptions' => array('class' => 'datePicker'),
+                    'layout' => '{label}{input}{hint}{error}',
                     'cssFile' => false,
                 );
             case 'boolean':
