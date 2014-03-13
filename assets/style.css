@@ -1247,7 +1247,10 @@ nav ul li {
   }
 }
 .datePicker {
-  background: url(/app/modules/rapanel/assets/calendarIco.png) no-repeat;
+  background: url(/app/modules/rapanel/assets/calendarIco.png) no-repeat 848px 0 !important;
+}
+.datePicker:focus {
+  background: url(/app/modules/rapanel/assets/calendarIco.png) no-repeat 848px -23px !important;
 }
 .ui-datepicker {
   width: 265px;
@@ -1286,7 +1289,7 @@ nav ul li {
   height: 9px;
   position: absolute;
   top: 50%;
-  margin-top: -3px;
+  margin-top: -4px;
 }
 .ui-datepicker .ui-datepicker-prev {
   left: -10px;
