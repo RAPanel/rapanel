@@ -8,21 +8,26 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
 ?>
 
     <header class="main">
-        <div class="logo"><?= CHtml::link('RA-panel.sitename', array('module/index')) ?></div>
+        <div class="logo"><?= CHtml::link('RA-panel '.Yii::app()->name, array('module/index')) ?></div>
         <nav class="menu">
             <? $this->widget('zii.widgets.CMenu', array(
                 'id' => 'topMenu',
                 'items' => array(
-                    array('label' => 'eng', 'url' => '#'),
+//                    array('label' => 'eng', 'url' => '#'),
                     array('label' => 'на сайт', 'url' => Yii::app()->homeUrl),
-                    array('label' => 'сервис', 'url' => '#'),
-                    array('label' => 'выход', 'url' => '#'),
+                    array('label' => 'сервис', 'url' => array('clear/index'), 'items' => array(
+                        array('label' => 'очистить assets', 'url' => array('clear/assets')),
+                        array('label' => 'очистить images', 'url' => array('clear/images')),
+                        array('label' => 'очистить cache', 'url' => array('clear/cache')),
+                    ), 'visible' => Yii::app()->user->checkAccess('root')),
+                    array('label' => 'выход', 'url' => array('auth/logout'), 'visible' => !Yii::app()->user->isGuest),
                 ),
             ))?>
         </nav>
         <div class="clearfix"></div>
     </header>
 
+<? if (Yii::app()->user->checkAccess('moderator')): ?>
     <aside class="main">
         <div class="wrapper">
             <? $this->widget('admin.widgets.ModuleMenu') ?>
@@ -32,6 +37,7 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
             <span class="resize"></span>
         </div>
     </aside>
+<? endif ?>
 
     <section class="main">
         <div class="wrapper">
@@ -39,7 +45,7 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
         </div>
     </section>
 
-<div class="contentLoading"></div>
+    <div class="contentLoading"></div>
 
 <?
 $this->widget('admin.widgets.FlashWidget');

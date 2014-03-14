@@ -42,7 +42,11 @@ function modalIFrame(e) {
     });
     modal.modal().open({
         onClose: function (el, options) {
-            $('section.main form').submit();
+            if( parent.modalChange){
+                $('section.main form').submit();
+                parent.modalChange = false;
+            }
+            parent.confirmClose = false;
 //            $('body').yiiGridView.update(e.attr('data-update'));
         }
     });

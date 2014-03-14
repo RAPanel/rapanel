@@ -1,10 +1,13 @@
+var modalChange = false;
+var confirmClose = false;
+
 $(function () {
-    $('.datePicker').each(function(){
-        var time = $(this).val()? $(this).val()*1000: Date.now();
-        var d =  new Date(time);
+    $('.datePicker').each(function () {
+        var time = $(this).val() ? $(this).val() * 1000 : Date.now();
+        var d = new Date(time);
         var date = [ d.getDate(), d.getMonth() + 1, d.getFullYear() ];
-        for ( var i = 0; i < 2; i++ ) {
-            if ( date[i] < 10 ) {
+        for (var i = 0; i < 2; i++) {
+            if (date[i] < 10) {
                 date[i] = "0" + date[i];
             }
         }
@@ -45,10 +48,33 @@ $(function () {
         time = 0;
         $('.hide', block).trigger('click');
     }
+
+    $('#iframe').find('#edit-form').each(function () {
+        $(this).find('input, select, textarea').change(function () {
+            parent.modalChange = true;
+            parent.$.modal({
+                onBeforeClose: function (el, options) {
+                    if (confirm("Вы уверены, что хотите закрыть это окно?\nВсе не сохраненные данные будут утеряны!")) {
+                        parent.modalChange = false;
+                        return true;
+                    } else return false;
+                }
+            });
+        });
+        $(this).submit(function () {
+            parent.confirmClose = false;
+            parent.modalChange = true;
+            parent.$.modal({
+                onBeforeClose: function (el, options) {
+                    return true;
+                }
+            });
+        });
+    });
 });
 
-function viewMenu (e) {
-        $(e).nextAll('.hiddenMenu').slideToggle(100);
+function viewMenu(e) {
+    $(e).nextAll('.hiddenMenu').slideToggle(100);
 }
 
 function sortableTable() {

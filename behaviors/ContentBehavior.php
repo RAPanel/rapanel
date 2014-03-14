@@ -38,7 +38,7 @@ class ContentBehavior extends AdminBehavior
             if (in_array('page_id', $columns) && in_array('page', $relations))
                 $criteria->with['page'] = array('select' => false, 'with' => array('rName' => array('alias' => 'pName')));
             if (in_array('parent_id', $columns) && in_array('parent', $relations))
-                $criteria->with['parent'] = array('with' => array('rName' => array('alias' => 'pName')));
+                $criteria->with['parent'] = array('select' => false, 'with' => array('rName' => array('alias' => 'pName')));
 
             foreach ((array)$criteria->with as $key => $with)
                 if (is_array($with))
@@ -104,8 +104,13 @@ class ContentBehavior extends AdminBehavior
                 $condition[] = "cv.value LIKE :textSearch";
                 $criteria->params['textSearch'] = "%{$q}%";
             }
-            if (count($criteria->with)) foreach (array('user', 'currentUrl') as $val) if (in_array($val, array_keys($criteria->with)) && !empty($criteria->with[$val]['select'])) {
+            if (count($criteria->with)) foreach (array('user', 'currentUrl') as $val) if (isset($criteria->with[$val]) && !empty($criteria->with[$val]['select'])) {
                 $condition[] = "{$val}.{$criteria->with[$val]['select']} LIKE :textSearch";
+                $criteria->with[$val]['together'] = true;
+                $criteria->params['textSearch'] = "%{$q}%";
+            }
+            if (count($criteria->with)) foreach (array('page', 'parent') as $val) if (isset($criteria->with[$val]) && $criteria->with[$val]['with']['rName']) {
+                $condition[] = "pName.value LIKE :textSearch";
                 $criteria->with[$val]['together'] = true;
                 $criteria->params['textSearch'] = "%{$q}%";
             }
