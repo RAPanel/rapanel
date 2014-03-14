@@ -1,4 +1,4 @@
-var modalChange = false;
+var modalChange = true;
 var confirmClose = false;
 
 $(function () {
@@ -50,7 +50,9 @@ $(function () {
     }
 
     $('#iframe').find('#edit-form').each(function () {
-        $(this).find('input, select, textarea').change(function () {
+        var el = $(this).find('input, select, textarea');
+        if (el.length) modalChange = false;
+        el.change(function () {
             parent.modalChange = true;
             parent.$.modal({
                 onBeforeClose: function (el, options) {
