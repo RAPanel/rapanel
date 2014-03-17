@@ -75,8 +75,12 @@ $(function () {
     });
 
     $('nav.menu li > a').click(function () {
-        $(this).parent('li').find('ul').slideToggle();
-        return false;
+        var ul = $(this).next('ul');
+        if (ul.length) {
+            ul.slideToggle(100);
+            return false;
+        }
+
     });
 
 });
