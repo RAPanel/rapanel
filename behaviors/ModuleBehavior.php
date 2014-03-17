@@ -53,7 +53,7 @@ class ModuleBehavior extends AdminBehavior
                 'template' => '{edit} {config}',
                 'buttons' => array(
                     'edit' => array(
-                        'label' => Yii::t('admin.grid', 'Edit'),
+                        'label' => 'edit',
                         'url' => 'CHtml::normalizeUrl(array("edit", "url"=>$data->url))',
                         'options' => array(
                             'onclick' => 'modalIFrame(this);return false;',
@@ -61,7 +61,7 @@ class ModuleBehavior extends AdminBehavior
                         ),
                     ),
                     'config' => array(
-                        'label' => Yii::t('admin.grid', 'Config'),
+                        'label' => 'config',
                         'url' => 'CHtml::normalizeUrl(array("config", "url"=>$data->url))',
                         'options' => array(
                             'onclick' => 'modalIFrame(this);return false;',
@@ -116,7 +116,7 @@ class ModuleBehavior extends AdminBehavior
             'buttons' => array(
                 'send' => array(
                     'type' => 'submit',
-                    'label' => Yii::t('admin.form', $this->owner->isNewRecord ? 'Create' : 'Update'),
+                    'label' => Yii::t('admin', $this->owner->isNewRecord ? 'Create' : 'Update'),
                 ),
             ),
         );
@@ -221,7 +221,7 @@ class ModuleBehavior extends AdminBehavior
             'buttons' => array(
                 'send' => array(
                     'type' => 'submit',
-                    'label' => Yii::t('admin.form', $this->owner->isNewRecord ? 'Create' : 'Update'),
+                    'label' => Yii::t('admin', $this->owner->isNewRecord ? 'Create' : 'Update'),
                 ),
             ),
         );

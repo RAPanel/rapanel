@@ -39,7 +39,7 @@ class ModuleController extends RAdminController
             $model->attributes = $_POST[get_class($model)];
             if ($model->save()) {
                 if ($_GET['iframe']) exit('<script>parent.$.modal().close();</script>');
-                $this->flash('success module-edit', Yii::t('admin.result', 'Module successfully saved'));
+                $this->flash('success module-edit', Yii::t('admin', 'Module successfully saved'));
                 $this->redirect(Yii::app()->user->returnUrl);
             }
         }
@@ -61,7 +61,7 @@ class ModuleController extends RAdminController
             $model->attributes = $_POST[get_class($model)];
             if ($model->save()) {
                 if ($_GET['iframe']) exit('<script>parent.$.modal().close();</script>');
-                $this->flash('success module-config', Yii::t('admin.result', 'Module config successfully update'));
+                $this->flash('success module-config', Yii::t('admin', 'Module config successfully update'));
                 $this->redirect(Yii::app()->user->returnUrl);
             } else {
                 $this->flash('error module-config', 'Module config save error');
@@ -89,7 +89,7 @@ class ModuleController extends RAdminController
         if (!Yii::app()->request->isAjaxRequest)
             $this->redirect(Yii::app()->user->returnUrl);
         else
-            echo Yii::t('admin.result', 'Modules move success');
+            echo Yii::t('admin', 'Modules move success');
     }
 
     public function actionTutorial()

@@ -140,7 +140,7 @@ class ContentController extends RAdminController
             $model->attributes = $_POST[get_class($model)];
             if ($model->save()) {
                 if ($_GET['iframe']) exit('<script>parent.$.modal().close();</script>');
-                $this->flash('success content-edit', Yii::t('admin.result', 'Module successfully saved'));
+                $this->flash('success content-edit', Yii::t('admin', 'Module successfully saved'));
                 $this->redirect(Yii::app()->user->returnUrl);
             }
         }
@@ -222,12 +222,6 @@ class ContentController extends RAdminController
             }
         }
         echo $result;
-    }
-
-    public function actionPageSize($size)
-    {
-        Yii::app()->user->setState('AdminGridView.pageSize', $size);
-        Yii::app()->history->back(false, array('/admin/index'));
     }
 
     public function actionView($id, $url)

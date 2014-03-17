@@ -158,7 +158,7 @@ class ContentBehavior extends AdminBehavior
         $result = array();
         foreach ($this->adminSettings['actions'] as $button) {
             $result[$button] = array(
-                'label' => Yii::t('admin.grid', ucfirst($button)),
+                'label' => ucfirst($button),
                 'url' => 'CHtml::normalizeUrl(array("' . $button . '", "url"=>"' . $this->getModule()->url . '", "id"=>$data->id))',
                 'imageUrl' => false,
                 'crop' => $this->adminSettings['crop'],
@@ -181,7 +181,7 @@ class ContentBehavior extends AdminBehavior
             'buttons' => array(
                 'send' => array(
                     'type' => 'submit',
-                    'label' => Yii::t('admin.form', $this->owner->isNewRecord ? 'Создать' : 'Сохранить'),
+                    'label' => Yii::t('admin', $this->owner->isNewRecord ? 'Create' : 'Save'),
                 ),
             ),
         );

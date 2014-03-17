@@ -10,7 +10,7 @@ class OptionsController extends RAdminController {
 		if(Yii::app()->hasComponent('languages')) {
 			Yii::app()->languages->setCurrentLanguage($id);
 		}
-		Yii::app()->history->back(false, array('/admin/index'));
+		$this->back();
 	}
 
 }

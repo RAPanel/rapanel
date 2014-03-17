@@ -42,7 +42,7 @@ class AuthController extends RAdminController
             'buttons' => array(
                 'send' => array(
                     'type' => 'submit',
-                    'label' => Yii::t('base.auth', 'Log in'),
+                    'label' => 'Log in',
                 ),
             ),
         );

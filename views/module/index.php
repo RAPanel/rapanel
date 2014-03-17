@@ -14,6 +14,7 @@ echo CHtml::beginForm(array('change'));
 
 $this->widget('zii.widgets.grid.CGridView', array(
     'id' => 'modulesGrid',
+    'cssFile' => null,
     'dataProvider' => $model->getDataProvider(),
     'columns' => $model->getColumns(),
     'htmlOptions' => array(

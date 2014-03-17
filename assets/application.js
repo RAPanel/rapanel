@@ -73,6 +73,12 @@ $(function () {
             });
         });
     });
+
+    $('nav.menu li > a').click(function () {
+        $(this).parent('li').find('ul').slideToggle();
+        return false;
+    });
+
 });
 
 function viewMenu(e) {
