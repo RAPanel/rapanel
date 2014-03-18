@@ -36,6 +36,7 @@ class ClearController extends RAdminController
         foreach (Yii::app()->getComponents(false) as $component)
             if (is_subclass_of($component, 'CCache'))
                 $component->flush();
+        $this->deleteFilesRecursive(YiiBase::getPathOfAlias('webroot.app.runtime.cache'));
 
         if ($back) $this->back();
     }
