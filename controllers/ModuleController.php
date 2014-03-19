@@ -84,7 +84,7 @@ class ModuleController extends RAdminController
                     'id' => $val,
                     'num' => $key,
                 );
-            SaveDAO::execute('module', $data, 'num');
+            DAO::execute('module', $data, 'num');
         }
         if (!Yii::app()->request->isAjaxRequest)
             $this->redirect(Yii::app()->user->returnUrl);

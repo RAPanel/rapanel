@@ -14,7 +14,7 @@ class ModuleMenu extends CMenu
 
     public function init()
     {
-        $data = Module::model()->cache(60 * 60 * 24, Module::dependency())->active()->order()->findAll();
+        $data = Module::model()->cache(60 * 60 * 24, new CGlobalStateCacheDependency('settings'))->active()->order()->findAll();
         $this->items = $items = array();
         foreach ($data as $row)
             $items[$row->groupName ? $row->groupName : 'Прочее'][] = array('label' => $row->name, 'url' => array("/" . Yii::app()->controller->module->id . "/content/index", 'url' => $row->url));
