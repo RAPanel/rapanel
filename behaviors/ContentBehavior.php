@@ -68,7 +68,7 @@ class ContentBehavior extends AdminBehavior
             $criteria->limit = 50;
 
             $criteria = $this->getSearchCriteria($criteria);
-            $this->_dataProvider = new CActiveDataProvider($this->owner, compact('criteria', 'pagination', 'sort'));
+            $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency(Module::get($this->owner->module_id))), compact('criteria', 'pagination', 'sort'));
 
             /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
              if($count === false){
