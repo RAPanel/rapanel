@@ -58,9 +58,9 @@ class ContentBehavior extends AdminBehavior
 
             $sort = false;
 
-            if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || ($this->getModule()->type_id == Module::TYPE_NESTED && $this->getIsCategory() == true))
+            if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED)
                 $criteria->order = '`t`.`lft` ASC, `t`.`id` DESC';
-            if (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
+            elseif (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
                 $criteria->order = '`t`.`num` ASC, `t`.`id` ASC';
             else
                 $sort = array('defaultOrder' => 't.id DESC');
