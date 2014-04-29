@@ -68,6 +68,7 @@ class ContentBehavior extends AdminBehavior
             $criteria->limit = 50;
 
             $criteria = $this->getSearchCriteria($criteria);
+
             $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url)), compact('criteria', 'pagination', 'sort'));
 
             /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
@@ -99,7 +100,7 @@ class ContentBehavior extends AdminBehavior
                     $criteria->params['intSearch'] = $q;
                 }
             }
-            if (get_class($this->getOwner()) == 'Page') {
+            if (get_class($this->getOwner()) == 'Page' || $this->getOwner() instanceof Page) {
                 $criteria->join .= ' INNER JOIN `character_varchar` `cv` ON(cv.page_id=t.id)';
                 $condition[] = "cv.value LIKE :textSearch";
                 $criteria->params['textSearch'] = "%{$q}%";
