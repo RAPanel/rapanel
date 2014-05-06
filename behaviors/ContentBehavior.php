@@ -123,7 +123,7 @@ class ContentBehavior extends AdminBehavior
 
     public function getColumns()
     {
-        /** @var $owner PageBase */
+        /** @var $owner RActiveRecord */
         $owner = $this->getOwner();
 
         $default = array();
@@ -144,6 +144,8 @@ class ContentBehavior extends AdminBehavior
             if ($column == 'page_id') $default[$column]['value'] = '$data->page->name';
             if ($column == 'parent_id') $default[$column]['value'] = '$data->parent->name';
             if ($column == 'status_id') $default[$column]['value'] = '$data->status';
+            if(method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes()))
+                $default[$column]['column']['type'] = 'arrayMode';
         }
         $default['buttons'] = array(
             'header' => 'Действия',
