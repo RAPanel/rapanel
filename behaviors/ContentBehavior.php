@@ -14,11 +14,11 @@ class ContentBehavior extends AdminBehavior
         );
     }
 
-    public function getDataProvider()
+    public function getDataProvider($criteria = array())
     {
         if (!$this->_dataProvider) {
             $columns = $this->adminSettings['columns'];
-            $criteria = new CDbCriteria();
+            $criteria = new CDbCriteria($criteria);
             $criteria->addCondition('`t`.`id` > 0');
 
             if (isset($this->owner->module_id))
@@ -76,6 +76,7 @@ class ContentBehavior extends AdminBehavior
             $criteria->limit = 50;
 
             $criteria = $this->getSearchCriteria($criteria);
+            $criteria = $this->getSearchCriteria($criteria);
 
             $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url)), compact('criteria', 'pagination', 'sort'));
 
@@ -110,7 +111,8 @@ class ContentBehavior extends AdminBehavior
                 }
             }
             if (get_class($this->getOwner()) == 'Page' || $this->getOwner() instanceof Page) {
-                $criteria->join .= ' INNER JOIN `character_varchar` `cv` ON(cv.page_id=t.id)';
+                if(stripos($criteria->join, ' `cv`') === false)
+                    $criteria->join .= ' INNER JOIN `character_varchar` `cv` ON(cv.page_id=t.id)';
                 $condition[] = "cv.value LIKE :textSearch";
                 $criteria->params['textSearch'] = "%{$q}%";
             }
@@ -301,7 +303,6 @@ class ContentBehavior extends AdminBehavior
             case 'autocomplete':
                 return $data + array(
                     'type' => 'zii.widgets.jui.CJuiAutoComplete',
-//                    'query' => '.input-' . $row['inputType'],
                     'sourceUrl' => array('autocompete', 'tag' => $row['id']),
                     'cssFile' => false,
                 );
@@ -326,11 +327,9 @@ class ContentBehavior extends AdminBehavior
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'fromlist':
-                return $data + array(
+                return $data + $this->getDataList($row['data']) + array(
                     'type' => 'ext.RChosen.RChosen',
                     'query' => '.input-' . $row['inputType'],
-                    'data' => $this->getDataList($row['data']),
-//                    'autoCompleteUrl' => array('autocompete'),
                     'options' => array(
                         'disable_search_threshold' => 10,
                     ),
@@ -338,12 +337,11 @@ class ContentBehavior extends AdminBehavior
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'tagsList':
-                return $data + array(
+                return $data + $this->getDataList($row['data']) + array(
                     'type' => 'ext.RChosen.RChosen',
                     'empty' => '',
                     'multiple' => true,
                     'query' => '.input-' . $row['inputType'],
-                    'data' => $this->getDataList($row['data']),
                     'cssFile' => false,
                     'class' => 'input-' . $row['inputType'],
                 );
@@ -398,11 +396,15 @@ class ContentBehavior extends AdminBehavior
 
     public function getDataList($data)
     {
-        if (stristr($data, 'SELECT') === false) {
-            $items = array();
-            foreach (explode(',', $data) as $item) $items[trim($item)] = trim($item);
+        $count = substr_count(mb_strtoupper($data), 'SELECT');
+        $items = array();
+        if ($count == 2) {
+            $items['autoCompleteUrl'][] = 'autocompete';
+            list($items['autoCompleteUrl']['sql'], $items['sql']) = preg_split('/\n|\r\n?/', trim($data));
+        } elseif ($count == 1) {
+            $items['data'] = CHtml::listData(Yii::app()->db->createCommand($data)->queryAll(), 'key', 'value');
         } else {
-            $items = CHtml::listData(Yii::app()->db->createCommand($data)->queryAll(), 'key', 'value');
+            foreach (explode(',', $data) as $item) $items['data'][trim($item)] = trim($item);
         }
         return $items;
     }

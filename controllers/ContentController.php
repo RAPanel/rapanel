@@ -52,9 +52,9 @@ class ContentController extends RAdminController
 
         if ($sql && isset($params) && is_array($params)) {
             if ($tag) {
-                echo json_encode(Yii::app()->db->createCommand($sql)->queryAll(1, $params));
+                echo json_encode(Yii::app()->db->createCommand($sql)->limit(100)->queryAll(1, $params));
             } else {
-                $result = CHtml::listData(Yii::app()->db->createCommand($sql)->queryAll(1, $params), 'id', 'value');
+                $result = CHtml::listData(Yii::app()->db->createCommand($sql)->limit(100)->queryAll(1, $params), 'id', 'value');
                 echo json_encode(array('q' => $term, 'results' => $result));
             }
             return true;
@@ -113,6 +113,22 @@ class ContentController extends RAdminController
                 'results' => CJavaScript::jsonDecode(RSlickGrid::getValues($provider, $model->contentBehavior->getColumns())),
             ));
         } else $this->render($this->action->id, compact('model', 'module', 'url'));
+    }
+
+    /**
+     * Список элементов модели
+     *
+     * param string $url URL модуля
+     */
+    public function actionBanner($url = null)
+    {
+        $module = Module::model()->findByAttributes(compact('url'));
+        if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
+        $model = new $module->className('grid');
+        /** @var $model ContentBehavior */
+        $model->attachBehavior('contentBehavior', 'ContentBehavior');
+        $model->setModule($module);
+        $this->render($this->action->id, compact('model', 'module', 'url'));
     }
 
     /**
