@@ -1,5 +1,5 @@
 
-C:\_MY\domains\private.inter-bi.com\app\modules\rapanel\widgets\AdminToolbar\assets>"C:\_MY\domains\!less\tools\\..\node_modules\.bin\node.exe"  "C:\_MY\domains\!less\tools\\..\node_modules\less\bin\lessc" --no-color toolbar.less 
+C:\_MY\domains\sanmix.perm.ru\app\modules\rapanel\widgets\AdminToolbar\assets>"C:\_MY\domains\!less\tools\\..\node_modules\.bin\node.exe"  "C:\_MY\domains\!less\tools\\..\node_modules\less\bin\lessc" --no-color toolbar.less 
 .admin-toolbar {
   font-family: 'Trebuchet MS';
   position: fixed;

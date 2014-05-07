@@ -128,15 +128,15 @@ class ModuleBehavior extends AdminBehavior
         $model = new $this->owner->className();
         $lines = $data = array();
 
-        if (method_exists((new $this->owner->className), 'getCharacterNames'))
-            $lines['characters'] = $model->getCharacterNames(true, true);
+        if (method_exists($model, 'getCharacterNames'))
+            $lines['characters'] = array_values($model->getCharacterNames(true, true));
         $lines['elements'] = array_keys($model->tableSchema->columns);
-        $lines['columns'] = isset($lines['characters']) ? array_merge($lines['elements'], $lines['characters']) : $lines['elements'];
+        $lines['columns'] = isset($this->owner->config['characters']) && is_array($this->owner->config['characters']) ? CMap::mergeArray($lines['elements'], $this->owner->config['characters']) : $lines['elements'];
 
         foreach ($lines as $label => $array) {
             $columns = array_intersect((array)$this->owner->config[$label], $array);
-            foreach (array_merge($columns, $array) as $val) {
-                $data[$label][$val] = $model->getAttributeLabel($val);
+            foreach (CMap::mergeArray($columns, $array) as $val) {
+                $data[$label][$val] = $model->getAttributeLabel($val) . ' / ' . $val;
             }
         }
 
@@ -145,8 +145,8 @@ class ModuleBehavior extends AdminBehavior
                 'label' => 'Колонки',
                 'type' => 'ext.jmultiselect2side.Jmultiselect2side',
                 'autoSort' => false,
-                'labeldx' => 'Доступно',
-                'labelsx' => 'Выбрано',
+                'labeldx' => 'Выбрано',
+                'labelsx' => 'Доступно',
                 'search' => 'Поиск ',
                 'list' => $data['columns'],
             );
@@ -155,8 +155,8 @@ class ModuleBehavior extends AdminBehavior
                 'label' => 'Основные эллементы',
                 'type' => 'ext.jmultiselect2side.Jmultiselect2side',
                 'autoSort' => false,
-                'labeldx' => 'Доступно',
-                'labelsx' => 'Выбрано',
+                'labeldx' => 'Выбрано',
+                'labelsx' => 'Доступно',
                 'search' => 'Поиск ',
                 'list' => $data['elements'],
             );
@@ -165,8 +165,8 @@ class ModuleBehavior extends AdminBehavior
                 'label' => 'Характеристики',
                 'type' => 'ext.jmultiselect2side.Jmultiselect2side',
                 'autoSort' => false,
-                'labeldx' => 'Доступно',
-                'labelsx' => 'Выбрано',
+                'labeldx' => 'Выбрано',
+                'labelsx' => 'Доступно',
                 'search' => 'Поиск ',
                 'list' => $data['characters'],
             );

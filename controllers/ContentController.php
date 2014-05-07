@@ -95,6 +95,8 @@ class ContentController extends RAdminController
     {
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
+        if(!$type && in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)))
+            $this->redirect(array($this->action->id, 'url'=>$url, 'type'=>'folder'));
         $model = new $module->className('grid');
         /** @var $model ContentBehavior */
         $model->attachBehavior('contentBehavior', 'ContentBehavior');
@@ -190,15 +192,44 @@ class ContentController extends RAdminController
         $class = Module::model()->findByPk(Module::getIdByUrl($url[1]))->className;
 
         $move = RActiveRecord::model($class)->findByPk($id);
-        if ($move->hasAttribute('lft') && $move->lft > 0) {
-            if ($before = Page::model()->findByPk($prev)) {
-                if ($move->parent_id == $before->id || $before->level > $move->level)
-                    $result = $move->moveAsFirst($before);
-                elseif ($move->id != $before->parent_id)
-                    $result = $move->moveAfter($before);
-            } elseif ($after = Page::model()->findByPk($next)) {
-                $result = $move->moveBefore($after);
+        if ($move->hasAttribute('lft')) {
+            if($move->lft > 0 && $move->rgt > 0 ||  $move->level > 0){
+                if ($before = Page::model()->findByPk($prev)) {
+                    if ($move->parent_id == $before->id || $before->level > $move->level)
+                        $result = $move->moveAsFirst($before);
+                    elseif ($move->id != $before->parent_id)
+                        $result = $move->moveAfter($before);
+                } elseif ($after = Page::model()->findByPk($next)) {
+                    echo '4';
+                    $result = $move->moveBefore($after);
+                }
+            }else{
+                $criteria = new CDbCriteria();
+                $criteria->compare('parent_id', $move->parent_id);
+                $criteria->compare('module_id', $move->module_id);
+                $criteria->compare('is_category', 0);
+                $before = RActiveRecord::model($class)->findByPk($prev, $criteria);
+                $after = RActiveRecord::model($class)->findByPk($next, $criteria);
+                if (!$before) {
+                    RActiveRecord::model($class)->updateCounters(array('lft' => 1), $criteria);
+                    $move->lft = 0;
+                    $result = $move->save(false, array('lft'));
+                } elseif (!$after) {
+                    $move->lft = $before->lft + 1;
+                    $result = $move->save(false, array('lft'));
+                } else {
+                    if ($after->lft - $before->lft < 2) {
+                        $count = -($after->lft - $before->lft - 2);
+                        $criteria->order = 'lft, id DESC';
+                        $criteria->addCondition('lft>' . $before->lft);
+                        $criteria->addCondition('lft=' . $before->lft . ' AND id<' . $before->id, 'OR');
+                        RActiveRecord::model($class)->updateCounters(array('lft' => $count), $criteria);
+                    }
+                    $move->lft = $before->lft + 1;
+                    $result = $move->save(false, array('lft'));
+                }
             }
+
         } elseif ($move->hasAttribute('num')) {
             $before = RActiveRecord::model($class)->findByPk($prev);
             $after = RActiveRecord::model($class)->findByPk($next);
@@ -238,19 +269,20 @@ class ContentController extends RAdminController
         $this->fixPage($id);
     }
 
-    public function fixPage($module_id, $is_category = 1)
+    public function fixPage($module_id, $is_category = null)
     {
-        $data = Page::model()->findAllByAttributes(compact('module_id', 'is_category'), array('select' => 'id, parent_id, lft, rgt', 'order' => 'lft'));
+        $data = Page::model()->findAllByAttributes(compact('module_id'), array('select' => 'id, parent_id, lft, rgt, level', 'order' => 'lft, id DESC', 'condition'=>$is_category?'is_category>0':''));
         $items = array();
         foreach ($data as $row) {
             $items[$row->parent_id][] = $row;
         }
         $this->addIndex(0, $items);
+        $this->back();
     }
 
     public function addIndex($parent_id, $items, $lft = 1)
     {
-        if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) {
+        if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) if($row->level){
 
             $row->lft = $lft++;
             $lft = $this->addIndex($row->id, $items, $lft);

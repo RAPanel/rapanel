@@ -58,9 +58,17 @@ class ContentBehavior extends AdminBehavior
 
             $sort = false;
 
-            if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED)
-                $criteria->order = '`t`.`lft` ASC, `t`.`id` DESC';
-            elseif (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
+            if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED) {
+                $criteria->order = '`t`.`is_category` DESC, `t`.`lft` ASC, `t`.`id` DESC';
+                if (!isset($_GET['parent_id'])) $_GET['parent_id'] = $this->getModule()->config['parent_id'];
+                if (!empty($_GET['q'])) {
+                    $criteria->join .= ' JOIN page p1 ON(p1.id=:parent_id)';
+                    $criteria->join .= ' JOIN page p2 ON(p2.lft BETWEEN p1.lft AND p1.rgt)';
+                    $criteria->addCondition('t.parent_id=p2.id');
+                    $criteria->params['parent_id'] = $_GET['parent_id'];
+
+                } else $criteria->compare('t.parent_id', $_GET['parent_id']);
+            } elseif (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
                 $criteria->order = '`t`.`num` ASC, `t`.`id` ASC';
             else
                 $sort = array('defaultOrder' => 't.id DESC');
@@ -84,9 +92,10 @@ class ContentBehavior extends AdminBehavior
     }
 
     /** @var $criteria CDbCriteria */
-    public function getSearchCriteria($criteria)
+    public
+    function getSearchCriteria($criteria)
     {
-        if ($q = $_GET['q']) {
+        if (($q = $_GET['q']) && $q != '*') {
             $condition = array();
             foreach ($this->getOwner()->tableSchema->columns as $row) {
                 if (in_array(current(explode('(', $row->dbType)), array('varchar', 'text'))) {
@@ -121,19 +130,29 @@ class ContentBehavior extends AdminBehavior
         return $criteria;
     }
 
-    public function getColumns()
+    public
+    function getColumns()
     {
         /** @var $owner RActiveRecord */
         $owner = $this->getOwner();
 
         $default = array();
-        $default['order'] = array(
-            'name' => '#',
-            'value' => '$data->id',
-        );
+        if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED)
+            $default['order'] = array(
+                'name' => '#',
+                'value' => '$data->id',
+            );
+        else
+            $default['order'] = array(
+                'name' => '#',
+                'value' => '',
+            );
         $default['checkbox'] = array(
             'class' => 'CCheckBoxColumn',
             'selectableRows' => 9999,
+        );
+        if ($this->owner->hasAttribute('is_category')) $default['is_category'] = array(
+            'value' => '$data->is_category?$data->is_category:$data->rgt>$data->lft+1',
         );
         foreach ((array)$this->adminSettings['columns'] as $column) {
             $default[$column] = array(
@@ -238,6 +257,7 @@ class ContentBehavior extends AdminBehavior
                 'inputType' => 'text',
             ));
 
+        if($this->getOwner()->is_category) unset($result['additional']);
         if (count($keys = array_keys($result)) == 1)
             return current($result);
         $data = array();
