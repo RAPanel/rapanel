@@ -259,7 +259,7 @@ class ContentBehavior extends AdminBehavior
                 'inputType' => 'text',
             ));
 
-        if($this->getOwner()->is_category) unset($result['additional']);
+        if(!empty($this->getOwner()->is_category)) unset($result['additional']);
         if (count($keys = array_keys($result)) == 1)
             return current($result);
         $data = array();
