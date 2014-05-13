@@ -76,7 +76,6 @@ class ContentBehavior extends AdminBehavior
             $criteria->limit = 50;
 
             $criteria = $this->getSearchCriteria($criteria);
-            $criteria = $this->getSearchCriteria($criteria);
 
             $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url)), compact('criteria', 'pagination', 'sort'));
 
