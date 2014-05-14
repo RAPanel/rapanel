@@ -79,6 +79,7 @@ echo CHtml::beginForm($this->createUrl('index', compact('url')+array('type'=>'tr
             );
             ?>
             <?if(in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED))) echo CHtml::htmlButton('fix', array('class' => 'gridType', 'title' => 'Исправить индексы', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('fix', array('id'=>$module->id, 'is_category'=>$module->type_id == Module::TYPE_NESTED)))) ?>
+            <?if(in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED))) echo CHtml::htmlButton('edit', array('class' => 'gridType', 'title' => 'редактировать root', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('edit', array('url'=>$url, 'id'=>$module->config['parent_id'])))) ?>
 
         </div>
 
