@@ -170,7 +170,7 @@ class ContentBehavior extends AdminBehavior
         $default['buttons'] = array(
             'header' => 'Действия',
             'class' => 'CButtonColumn',
-            'template' => '{' . implode('} {', $this->adminSettings['actions']) . '}',
+            'template' => '{' . implode('} {', (array)$this->adminSettings['actions']) . '}',
             'buttons' => $this->getButtons(),
         );
         return $default;
@@ -179,7 +179,7 @@ class ContentBehavior extends AdminBehavior
     public function getButtons()
     {
         $result = array();
-        foreach ($this->adminSettings['actions'] as $button) {
+        foreach ((array)$this->adminSettings['actions'] as $button) {
             $result[$button] = array(
                 'label' => ucfirst($button),
                 'url' => 'CHtml::normalizeUrl(array("' . $button . '", "url"=>"' . $this->getModule()->url . '", "id"=>$data->id))',
