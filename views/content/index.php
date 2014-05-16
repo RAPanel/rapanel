@@ -5,7 +5,7 @@
  * @var $model RActiveRecord
  * @var $module RActiveRecord
  */
-echo CHtml::beginForm($this->createUrl('index', compact('url')+array('type'=>'tree')));
+echo CHtml::beginForm($this->createUrl('index', compact('url') + array('type' => 'tree')));
 ?>
     <div class="clearfix"></div>
     <div class="row"><?=
@@ -16,75 +16,92 @@ echo CHtml::beginForm($this->createUrl('index', compact('url')+array('type'=>'tr
         )))
         ?><?
         $additional = array();
-        if($_GET['parent_id']){
+        if ($_GET['parent_id']) {
             $parents = $model->findAll(array(
-                'join'=>'JOIN page p ON(p.lft BETWEEN t.lft AND t.rgt AND p.id=:id)',
-                'condition'=>'t.lft>0 AND t.parent_id>0 AND t.module_id=:module_id',
-                'order'=>'t.lft',
-                'params'=>array('id'=>$_GET['parent_id'], 'module_id'=>$module->id),
+                'join' => 'JOIN page p ON(p.lft BETWEEN t.lft AND t.rgt AND p.id=:id)',
+                'condition' => 't.lft>0 AND t.parent_id>0 AND t.module_id=:module_id',
+                'order' => 't.lft',
+                'params' => array('id' => $_GET['parent_id'], 'module_id' => $module->id),
             ));
-            foreach($parents as $row) $additional[] = array('label' => $row->name, 'url' => array('content/index', 'url' => $module->url, 'type' => $_GET['type'], 'parent_id'=>$row->id));
+            foreach ($parents as $row) $additional[] = array('label' => $row->name, 'url' => array('content/index', 'url' => $module->url, 'type' => $_GET['type'], 'parent_id' => $row->id));
         }
         $this->widget('zii.widgets.CMenu', array(
             'id' => 'breadcrumbs',
             'items' => CMap::mergeArray(array(
-                array('label' => 'RA-panel', 'url' => array('module/index')),
+                    array('label' => 'RA-panel', 'url' => array('module/index')),
 //                array('label' => $module->groupName, 'url' => array('module/index')),
-                array('label' => $module->name, 'url' => array('content/index', 'url' => $module->url)),
-            ), $additional),
+                    array('label' => $module->name, 'url' => array('content/index', 'url' => $module->url)),
+                ), $additional),
         ))
         ?>
     </div>
 
     <div class="row justi">
-        <div class="checkbox"><?=
-            CHtml::checkBox('checkAll', 0, array('id' => 'checkAll1')) . CHtml::label('', 'checkAll1')
-            ?></div>
-        <div class="search"><?=
-            CHtml::textField('search', $_GET['search'], array('placeholder' => 'введите фразу для поиска')) .
-            CHtml::htmlButton('поиск', array(
-                    'type' => 'submit',
-                    'title' => 'найти')
-            );
-            ?></div>
-        <div class="buttons"><?=
-            CHtml::htmlButton('Добавить', array(
-                'onclick' => 'modalIFrame(this)',
-                'href' => $this->createUrl('edit', compact('url')),
-                'title' => 'добавить запись',
-            ));
-            if ($module->type_id == Module::TYPE_NESTED) echo CHtml::htmlButton('+ категория', array(
-                'onclick' => 'modalIFrame(this)',
-                'href' => $this->createUrl('edit', compact('url') + array('type' => 'category')),
-                'title' => 'добавить категорию',
-            ));
-            ?></div>
-        <?if(in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)) && 0):?>
-        <div class="grid-type">
-            <?= CHtml::htmlButton('папки', array('class' => 'gridType', 'title' => 'Отображение по папкам', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('', compact('url') + array('type'=>'folder')))) ?>
-            <?if($module->type_id==Module::TYPE_NESTED) echo CHtml::htmlButton('записи', array('class' => 'gridType', 'title' => 'Отображение по записям', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('', compact('url') + array('type'=>'items'))))?>
-            <?if($module->type_id==Module::TYPE_NESTED) echo CHtml::htmlButton('категории', array('class' => 'gridType', 'title' => 'Отображение по категориям', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('', compact('url') + array('type'=>'cats'))))?>
-            <?//=CHtml::htmlButton('все', array('class' => 'gridType', 'title' => 'Отображение деревом', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('', compact('url') + array('type'=>'tree'))))?>
-            </div>
-    <?endif?>
-        <div style="display: none" class="go-page"><?=
-            CHtml::htmlButton('назад', array('class' => 'prev', 'name' => 'prev', 'onclick' => 'goPage("prev")', 'disabled' => 1, 'title' => 'предыдущяя страница')) .
-            CHtml::htmlButton('вперед', array('class' => 'next', 'name' => 'next', 'onclick' => 'goPage("next")', 'disabled' => 1, 'title' => 'следующая страница'));
-            ?></div>
-        <div class="settings"><?=
-            CHtml::htmlButton('настройка', array(
-                    'onclick' => 'modalIFrame(this)',
-                    'href' => $this->createUrl('module/config', compact('url')),
-                    'title' => 'настроить отображение')
-            );
-            ?>
-            <?if(in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED))) echo CHtml::htmlButton('fix', array('class' => 'gridType', 'title' => 'Исправить индексы', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('fix', array('id'=>$module->id, 'is_category'=>$module->type_id == Module::TYPE_NESTED)))) ?>
-            <?if(in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED))) echo CHtml::htmlButton('edit', array('class' => 'gridType', 'title' => 'редактировать root', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('edit', array('url'=>$url, 'id'=>$module->config['parent_id'])))) ?>
-
+        <div class="leftBlock">
+            <div class="checkbox"><?=
+                CHtml::checkBox('checkAll', 0, array('id' => 'checkAll1')) . CHtml::label('', 'checkAll1')
+                ?></div>
         </div>
-
+        <div class="rightBlock">
+            <div class="buttons"><?=
+                CHtml::htmlButton('Добавить', array(
+                    'onclick' => 'modalIFrame(this)',
+                    'href' => $this->createUrl('edit', compact('url')),
+                    'title' => 'добавить запись',
+                ));?>
+                <? $this->widget('zii.widgets.CMenu', array(
+                    'htmlOptions' => array('class' => 'listAction',),
+                    'items' => array(
+                        array('items' => array(
+                            array('label' => 'добавить запись', 'url' => array('edit') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this)')),
+                            array('label' => 'добавить категорию', 'visible' => $module->type_id == Module::TYPE_NESTED, 'url' => array('edit', 'type' => 'category') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this)')),
+                        )),
+                    ),
+                ));?>
+            </div>
+            <? if (in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)) && 0): ?>
+                <div class="grid-type">
+                    <?= CHtml::htmlButton('папки', array('class' => 'gridType', 'title' => 'Отображение по папкам', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' => $this->createUrl('', compact('url') + array('type' => 'folder')))) ?>
+                    <? if ($module->type_id == Module::TYPE_NESTED) echo CHtml::htmlButton('записи', array('class' => 'gridType', 'title' => 'Отображение по записям', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' => $this->createUrl('', compact('url') + array('type' => 'items')))) ?>
+                    <? if ($module->type_id == Module::TYPE_NESTED) echo CHtml::htmlButton('категории', array('class' => 'gridType', 'title' => 'Отображение по категориям', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' => $this->createUrl('', compact('url') + array('type' => 'cats')))) ?>
+                    <? //=CHtml::htmlButton('все', array('class' => 'gridType', 'title' => 'Отображение деревом', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('', compact('url') + array('type'=>'tree'))))?>
+                </div>
+            <? endif ?>
+            <div style="display: none" class="go-page"><?=
+                CHtml::htmlButton('назад', array('class' => 'prev', 'name' => 'prev', 'onclick' => 'goPage("prev")', 'disabled' => 1, 'title' => 'предыдущяя страница')) .
+                CHtml::htmlButton('вперед', array('class' => 'next', 'name' => 'next', 'onclick' => 'goPage("next")', 'disabled' => 1, 'title' => 'следующая страница'));
+                ?></div>
+            <div class="settings"><?=
+                CHtml::htmlButton('настройка', array(
+                        'onclick' => 'modalIFrame(this)',
+                        'href' => $this->createUrl('module/config', compact('url')),
+                        'title' => 'настроить отображение')
+                );
+                ?>
+                <? $this->widget('zii.widgets.CMenu', array(
+                    'htmlOptions' => array(
+                        'class' => 'listAction',
+                    ),
+                    'items' => array(
+                        array('items' => array(
+                            array('label' => 'настроить отображение', 'url' => array('module/config') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this)')),
+                            array('label' => 'исправить индексы', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('fix', 'id' => $module->id, 'is_category' => $module->type_id == Module::TYPE_NESTED)),
+                            array('label' => 'редактировать root', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('edit', 'url' => $url, 'id' => $module->config['parent_id']), 'linkOptions' => array('onclick' => 'modalIFrame(this)')),
+                        )),
+                    ),
+                ));?>
+            </div>
+        </div>
+        <div class="centerBlock">
+            <div class="search"><?=
+                CHtml::textField('search', $_GET['search'], array('placeholder' => 'введите фразу для поиска')) .
+                CHtml::htmlButton('поиск', array(
+                        'type' => 'submit',
+                        'title' => 'найти')
+                );
+                ?></div>
+        </div>
     </div>
-
     <div class="grid"><?
         $this->widget('ext.RSlickGrid.RSlickGrid' /*'zii.widgets.grid.CGridView'*/, array(
             'id' => 'contentGrid',

@@ -5,7 +5,7 @@
  */
 class ContentController extends RAdminController
 {
-    public $returnActions = array('index');
+    public $returnActions = array('index', 'banner');
 
     public function actions()
     {
@@ -292,14 +292,16 @@ class ContentController extends RAdminController
         foreach ($data as $row) {
             $items[$row->parent_id][] = $row;
         }
+        Yii::app()->db->autoCommit = false;
         $this->addIndex(0, $items);
+        Yii::app()->db->autoCommit = true;
         $this->back();
     }
 
     public function addIndex($parent_id, $items, $lft = 1)
     {
-        if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) if($row->level){
-
+        set_time_limit(10);
+        if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) if($row->level || $row->rgt){
             $row->lft = $lft++;
             $lft = $this->addIndex($row->id, $items, $lft);
             $row->rgt = $lft++;

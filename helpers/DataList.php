@@ -44,4 +44,11 @@ class DataList
         return $remember[$id];
     }
 
+    static function explodeArray($data, $s = ',')
+    {
+        $result = array();
+        foreach(explode($s, $data) as $row) if($row = trim($row)) $result[$row] = $row;
+        return $result;
+    }
+
 } 

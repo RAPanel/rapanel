@@ -80,10 +80,73 @@ $(function () {
             ul.slideToggle(100);
             return false;
         }
+    });
 
+    $('.listAction > li').click(function () {
+        var ul = $(this).find('ul');
+        if (ul.length) {
+            $(this).toggleClass('active');
+            ul.slideToggle(100);
+        }
     });
 
 });
+
+function bannerCreate() {
+    var block
+    if (block = $('.gridBanners')) {
+        var col;
+        var h = 51;
+        var bw = 0;
+        $('.mounth-block > ul > li', block).each(function () {
+            bw += $(this).outerWidth()
+        })
+        var lines = $('<div class="lines">');
+        lines.css('width', bw);
+        $('.mounth-block').css('width', bw);
+
+        var offset = $('.mounth-block .active').position().left;
+        var line = $('<div class="line">');
+        line.css('left', offset + 14);
+        line.appendTo(lines);
+
+        block.scrollLeft(offset-block.width()/3)
+
+        var greenLine = $('<div class="greenLine">');
+        greenLine.appendTo(lines);
+        block.mousemove(function (e) {
+            var x = e.pageX;
+            greenLine.css('left',  block.scrollLeft() + x - block.offset().left - 2);
+        });
+
+        $.each(bannerData, function (key, val) {
+            var item = $('<a href="http://no-job.ru/rapanel/content/edit.html?url=banner&id='+val.id+'" class="item" onclick="modalIFrame(this);return false;">').css('background', val.color).attr('title', val.name);
+            var ico = $('<img>');
+            var title = $('<span class="title">').text(val.name);
+            if (val.ico && val.ico != 'false') ico.attr('src', val.ico).appendTo(item);
+            title.appendTo(item);
+            item.appendTo(lines);
+            item.css({
+                top: h * key + 17,
+                left: bw / val.total * val.from,
+                width: bw / val.total * (val.to - val.from)
+            });
+            col = key;
+        });
+        lines.css('height', h * (col + 1)).appendTo(block);
+        lines.mouseover(function () {
+            greenLine.css('display', 'block');
+        });
+        lines.mouseout(function () {
+            greenLine.css('display', 'none');
+        });
+        setTimeout(function(){
+            var formH = $('section.main form').height();
+            var rowH = $('.row.top').outerHeight();
+            block.css('height', formH - rowH);
+        }, 1)
+    }
+}
 
 function viewMenu(e) {
     $(e).nextAll('.hiddenMenu').slideToggle(100);
