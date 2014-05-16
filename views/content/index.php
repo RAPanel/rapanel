@@ -6,12 +6,11 @@
  * @var $module RActiveRecord
  */
 echo CHtml::beginForm($this->createUrl('index', compact('url') + array('type' => 'tree')));
+$total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
 ?>
     <div class="clearfix"></div>
     <div class="row"><?=
-        CHtml::tag('div', array('class' => 'elements'), strtr('<span class="count">{count}</span>', array(
-            '{from}' => 0,
-            '{to}' => 0,
+        CHtml::tag('div', array('class' => 'elements'), strtr('<span class="count">{count}</span> из <span class="total">{count}</span>', array(
             '{count}' => $model->contentBehavior->getDataProvider()->getTotalItemCount(),
         )))
         ?><?
@@ -48,17 +47,19 @@ echo CHtml::beginForm($this->createUrl('index', compact('url') + array('type' =>
                     'onclick' => 'modalIFrame(this)',
                     'href' => $this->createUrl('edit', compact('url')),
                     'title' => 'добавить запись',
-                ));?>
-                <? $this->widget('zii.widgets.CMenu', array(
-                    'htmlOptions' => array('class' => 'listAction',),
-                    'items' => array(
-                        array('items' => array(
-                            array('label' => 'добавить запись', 'url' => array('edit') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this)')),
-                            array('label' => 'добавить категорию', 'visible' => $module->type_id == Module::TYPE_NESTED, 'url' => array('edit', 'type' => 'category') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this)')),
-                        )),
-                    ),
+                ));
+                $items = array(
+                    array('label' => 'добавить запись', 'url' => array('edit') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this);return false;')),
+                    array('label' => 'добавить категорию', 'visible' => $module->type_id == Module::TYPE_NESTED, 'url' => array('edit', 'type' => 'category') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this);return false;')),
+                );
+                $i = 0;
+                foreach ($items as $row) if (!isset($row['visible']) || $row['visible'] == 1) $i++;
+                if ($i > 1) $this->widget('zii.widgets.CMenu', array(
+                    'htmlOptions' => array('class' => 'listAction'),
+                    'items' => array(compact('items')),
                 ));?>
             </div>
+
             <? if (in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)) && 0): ?>
                 <div class="grid-type">
                     <?= CHtml::htmlButton('папки', array('class' => 'gridType', 'title' => 'Отображение по папкам', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' => $this->createUrl('', compact('url') + array('type' => 'folder')))) ?>
@@ -67,28 +68,30 @@ echo CHtml::beginForm($this->createUrl('index', compact('url') + array('type' =>
                     <? //=CHtml::htmlButton('все', array('class' => 'gridType', 'title' => 'Отображение деревом', 'onclick' => 'location.href=$(this).attr("data-href")', 'data-href' =>  $this->createUrl('', compact('url') + array('type'=>'tree'))))?>
                 </div>
             <? endif ?>
-            <div style="display: none" class="go-page"><?=
-                CHtml::htmlButton('назад', array('class' => 'prev', 'name' => 'prev', 'onclick' => 'goPage("prev")', 'disabled' => 1, 'title' => 'предыдущяя страница')) .
-                CHtml::htmlButton('вперед', array('class' => 'next', 'name' => 'next', 'onclick' => 'goPage("next")', 'disabled' => 1, 'title' => 'следующая страница'));
-                ?></div>
+
+            <? if ($total > 1000): ?>
+                <div class="go-page"><?=
+                    CHtml::htmlButton('назад', array('class' => 'prev', 'name' => 'prev', 'onclick' => 'goPage("prev")', 'disabled' => $_GET['page'] < 2, 'title' => 'предыдущяя страница')) .
+                    CHtml::htmlButton('вперед', array('class' => 'next', 'name' => 'next', 'onclick' => 'goPage("next")', 'disabled' => $_GET['page'] == ceil($total / 1000), 'title' => 'следующая страница'));
+                    ?></div>
+            <? endif ?>
+
             <div class="settings"><?=
                 CHtml::htmlButton('настройка', array(
                         'onclick' => 'modalIFrame(this)',
                         'href' => $this->createUrl('module/config', compact('url')),
                         'title' => 'настроить отображение')
                 );
-                ?>
-                <? $this->widget('zii.widgets.CMenu', array(
-                    'htmlOptions' => array(
-                        'class' => 'listAction',
-                    ),
-                    'items' => array(
-                        array('items' => array(
-                            array('label' => 'настроить отображение', 'url' => array('module/config') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this)')),
-                            array('label' => 'исправить индексы', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('fix', 'id' => $module->id, 'is_category' => $module->type_id == Module::TYPE_NESTED)),
-                            array('label' => 'редактировать root', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('edit', 'url' => $url, 'id' => $module->config['parent_id']), 'linkOptions' => array('onclick' => 'modalIFrame(this)')),
-                        )),
-                    ),
+                $items = array(
+                    array('label' => 'настроить отображение', 'url' => array('module/config') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this);return false;')),
+                    array('label' => 'исправить индексы', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('fix', 'id' => $module->id, 'is_category' => $module->type_id == Module::TYPE_NESTED)),
+                    array('label' => 'редактировать root', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('edit', 'url' => $url, 'id' => $module->config['parent_id']), 'linkOptions' => array('onclick' => 'modalIFrame(this);return false;')),
+                );
+                $i = 0;
+                foreach ($items as $row) if (!isset($row['visible']) || $row['visible'] == 1) $i++;
+                if ($i > 1) $this->widget('zii.widgets.CMenu', array(
+                    'htmlOptions' => array('class' => 'listAction'),
+                    'items' => array(compact('items')),
                 ));?>
             </div>
         </div>
