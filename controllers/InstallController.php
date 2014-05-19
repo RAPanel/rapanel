@@ -100,9 +100,6 @@ class InstallController extends RController
             "null,0,0,0,'Заказы','administrator','order','Order','Магазин','ru',null",
             "null,0,0,0,'Брэнды','administrator','brand','Page','Магазин','ru',null",
             "null,0,0,0,'Акции','administrator','stock','Page','Магазин','ru',null",
-            "null,0,0,0,'Слайдер','administrator','slider','Page','Страницы сайта','ru',null",
-            "null,0,0,0,'Слайдер','administrator','slider','Page','Страницы сайта','ru',null",
-            "null,0,0,0,'Слайдер','administrator','slider','Page','Страницы сайта','ru',null",
             "null,0,0,0,'Характеристики','administrator','characteristics','Character','Настройки','ru',null",
             "null,0,0,0,'Сообщения и переводы','administrator','translater','MessageTranslate','Настройки','ru',null",
         ));
@@ -354,6 +351,10 @@ class InstallController extends RController
             'current' => 'boolean',
             'KEY `page_id` (`page_id`)',
             'KEY `current` (`current`)',
+<<<<<<< HEAD
+=======
+            $this->fk('page_id', 'page'),
+>>>>>>> origin/master
         ));
 
         $this->createTable('user_setting', array(
