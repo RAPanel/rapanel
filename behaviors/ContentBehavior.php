@@ -59,7 +59,7 @@ class ContentBehavior extends AdminBehavior
             $sort = false;
 
             if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED) {
-                $criteria->order = '`t`.`is_category` DESC, `t`.`lft` ASC, `t`.`id` DESC';
+                $criteria->order = '`t`.`is_category` DESC, `t`.`lft` ASC, `t`.`created` DESC, `t`.`id` DESC';
                 if (!isset($_GET['parent_id'])) $_GET['parent_id'] = $this->getModule()->config['parent_id'];
                 if (!empty($_GET['q'])) {
                     $criteria->join .= ' JOIN page p1 ON(p1.id=:parent_id)';
@@ -251,7 +251,7 @@ class ContentBehavior extends AdminBehavior
                 ),
             ), 1);
         }
-        if (method_exists($this->getOwner(), 'getUrl'))
+        if (method_exists($this->getOwner(), 'getUrl') && isset($result['seo']))
             $result['seo']['url'] = $this->getCharacterElement(array(
                 'url' => 'url',
                 'label' => 'url',

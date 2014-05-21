@@ -351,10 +351,7 @@ class InstallController extends RController
             'current' => 'boolean',
             'KEY `page_id` (`page_id`)',
             'KEY `current` (`current`)',
-<<<<<<< HEAD
-=======
             $this->fk('page_id', 'page'),
->>>>>>> origin/master
         ));
 
         $this->createTable('user_setting', array(
