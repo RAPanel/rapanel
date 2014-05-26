@@ -1,6 +1,6 @@
 <?php
 
-class InstallController extends RController
+class InstallController extends CController
 {
     public $lt;
 
@@ -87,7 +87,7 @@ class InstallController extends RController
             'KEY `num` (`num`)',
             'KEY `groupName` (`groupName`)',
         ), array(
-            "null,0,0,0,'Основные страницы','administrator','page','Page','Страницы сайта','ru',null",
+            "null,0,1,0,'Основные страницы','administrator','page','Page','Страницы сайта','ru',null",
             "null,0,0,0,'Статьи','administrator','article','Page','Страницы сайта','ru',null",
             "null,0,0,0,'Слайдер','administrator','slider','Page','Страницы сайта','ru',null",
             "null,0,0,0,'Новости','administrator','news','Page','Страницы сайта','ru',null",
@@ -100,7 +100,7 @@ class InstallController extends RController
             "null,0,0,0,'Заказы','administrator','order','Order','Магазин','ru',null",
             "null,0,0,0,'Брэнды','administrator','brand','Page','Магазин','ru',null",
             "null,0,0,0,'Акции','administrator','stock','Page','Магазин','ru',null",
-            "null,0,0,0,'Характеристики','administrator','characteristics','Character','Настройки','ru',null",
+            "null,0,1,0,'Характеристики','administrator','characteristics','Character','Настройки','ru',null",
             "null,0,0,0,'Сообщения и переводы','administrator','translater','MessageTranslate','Настройки','ru',null",
         ));
 
