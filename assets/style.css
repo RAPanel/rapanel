@@ -1912,7 +1912,6 @@ section.main .wrapper {
 }
 section.main .wrapper form {
   height: 100%;
-  overflow: hidden;
 }
 section.main .gridActions {
   font-size: 0;

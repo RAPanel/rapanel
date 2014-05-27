@@ -100,7 +100,7 @@ function bannerCreate() {
         var bw = 0;
         $('.mounth-block > ul > li', block).each(function () {
             bw += $(this).outerWidth()
-        })
+        });
         var lines = $('<div class="lines">');
         lines.css('width', bw);
         $('.mounth-block').css('width', bw);
@@ -126,10 +126,12 @@ function bannerCreate() {
             if (val.ico && val.ico != 'false') ico.attr('src', val.ico).appendTo(item);
             title.appendTo(item);
             item.appendTo(lines);
+            var k = bw / (val.total);
+            console.log(k * val.from, val.from, val.to, val.data, k);
             item.css({
-                top: h * key + 17,
-                left: bw / val.total * val.from,
-                width: bw / val.total * (val.to - val.from)
+                top: h * val.line + 17,
+                left: k * val.from + k/2,
+                width: k * (val.to - val.from)
             });
             col = key;
         });

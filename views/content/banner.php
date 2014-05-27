@@ -6,18 +6,21 @@
  * @var $module RActiveRecord
  */
 
+
+if(empty($_POST['type'])) $_POST['type'] = 'top';
+if(empty($_POST['city'])) $_POST['city'] = Yii::app()->user->regionId;
 Yii::app()->clientScript->registerScript('bannerCreate', 'bannerCreate()');
 
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $month = date('m') + $page - 1;
 $t = strtotime(date('Y') . '-' . $month . '-01');
-$time[0] = strtotime("first day last month", $t);
-$time[1] = strtotime("first day next month", $t);
+$time[0] = strtotime("first day last month", $t) - 60 * 60 * 24;
+$time[1] = strtotime("first day next month", $t) - 60 * 60 * 24;
 $days = array();
 foreach (array($time[0], $t, $time[1]) as $row) {
-    for ($i = 1; $i <= date('t', $row); $i++) {
+    for ($i = 0; $i < date('t', $row); $i++) {
         $days[] = $day = date('d-m-Y', $row + $i * 60 * 60 * 24);
-        $items[$row][] = array('label' => $i, 'active' => $day == date('d-m-Y', time() + 60 * 60 * 24));
+        $items[$row][] = array('label' => $i+1, 'active' => $day == date('d-m-Y', time()));
     }
     $items[0][] = array('label' => Yii::app()->dateFormatter->format('LLLL, yyyy', $row), 'items' => $items[$row]);
 }
@@ -51,7 +54,7 @@ echo CHtml::beginForm($this->createUrl('banner', compact('url')));
             ?></div>
     </div>
     <div class="center">
-        <?= CHtml::dropDownList('city', $_POST['city'], CHtml::listData(Yii::app()->db->createCommand('SELECT `id_region` `key`, `region_name_ru` `value` FROM `geo_region` WHERE `id_country`=1')->queryAll(), 'key', 'value'), array('class' => 'chosen-container', 'empty' => 'выберите регион', 'onchange' => 'this.form.submit()')) ?>
+        <?= CHtml::dropDownList('city', $_POST['city'], CHtml::listData(Yii::app()->db->createCommand('SELECT `id_region` `key`, `region_name_ru` `value` FROM `geo_region` JOIN `character_tags_values` ctv ON(`value`=`id_region`) JOIN `character_tags` ct ON(ctv.id=ct.`tag_id` AND character_id=66) JOIN page p ON(p.id=page_id AND module_id=464) WHERE `id_country`=1 GROUP BY `id_region`;')->queryAll(), 'key', 'value'), array('class' => 'chosen-container', 'empty' => 'выберите регион', 'onchange' => 'this.form.submit()')) ?>
         <?= CHtml::dropDownList('type', $_POST['type'], DataList::explodeArray(Yii::app()->db->createCommand('SELECT `data` FROM `character` WHERE id=54')->queryScalar()), array('class' => 'chosen-container', 'empty' => 'выберите тип', 'onchange' => 'this.form.submit()')) ?>
         <div class="dateBlock">
             <? /*$this->widget('zii.widgets.jui.CJuiDatePicker', array(
@@ -109,18 +112,26 @@ echo CHtml::beginForm($this->createUrl('banner', compact('url')));
                 'regionId' => $_POST['city'] ? $_POST['city'] : Yii::app()->user->regionId,
             ) + $params,
     ))->data;
-    $list = array();
-    foreach ($data as $row)
-        $list /*[$row->bannerPlace]*/
-        [] = array(
+    $list = $line = array();
+    foreach ($data as $row) {
+        $key = 0;
+        foreach ($line as $key => $val)
+            if ($val < $row->startDate) {
+                break;
+            } else $key++;
+        $line[$key] = $row->endDate;
+        $list[] = array(
+            'line' => $key,
             'from' => array_search(date('d-m-Y', $row->startDate), $days),
             'to' => array_search(date('d-m-Y', $row->endDate), $days),
+            'data' => date('d-m-Y', $row->endDate),
             'total' => count($days),
             'id' => $row->id,
             'name' => $row->name,
             'ico' => $row->getIco('micro', 'link'),
             'color' => sprintf('#%02X%02X%02X', rand(0, 255), rand(0, 255), rand(0, 255)),
         );
+    }
 
     Yii::app()->clientScript->registerScript('jsonData', 'var bannerData=' . CJavaScript::jsonEncode($list), CClientScript::POS_END);
     //        CVarDumper::dump($list, 10, 1);
