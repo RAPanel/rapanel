@@ -367,7 +367,7 @@ class ContentBehavior extends AdminBehavior
     {
         $this->_module = $data;
         if (in_array('module_id', array_keys($this->owner->tableSchema->columns)))
-            $this->owner->module_id = $data->id;
+            $this->owner->setAttribute('module_id', $data->id);
     }
 
     public function getModule()

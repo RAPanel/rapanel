@@ -25,7 +25,8 @@ class ClearController extends RAdminController
     public function actionImages($back = true)
     {
         foreach (array_keys(Yii::app()->imageConverter->formats) as $val)
-            $this->deleteFilesRecursive(YiiBase::getPathOfAlias('webroot.data.' . $val));
+            if ($val[0] != '_')
+                $this->deleteFilesRecursive(YiiBase::getPathOfAlias('webroot.data.' . $val));
 
         if ($back) $this->back();
     }
@@ -43,15 +44,8 @@ class ClearController extends RAdminController
 
     public function deleteFilesRecursive($path)
     {
-        $files = scandir($path);
-        foreach ($files as $file) {
-            if (stripos($file, '.') === 0) continue;
-            $fullPath = $path . DIRECTORY_SEPARATOR . $file;
-            if (is_dir($fullPath))
-                CFileHelper::removeDirectory($fullPath);
-            elseif (is_file($fullPath))
-                @unlink($fullPath);
-        }
+        if (file_exists($path)) CFileHelper::removeDirectory($path);
+        mkdir($path);
     }
 
 }
