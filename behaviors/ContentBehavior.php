@@ -356,6 +356,11 @@ class ContentBehavior extends AdminBehavior
                     'step' => '0.01',
                     'class' => 'input-' . $row['inputType'],
                 );
+            case 'widget':
+                return $data + array(
+                    'type' => $row['data'],
+                    'class' => 'input-' . $row['inputType'],
+                );
             default:
                 return $data + array(
                     'type' => $row['inputType'],
