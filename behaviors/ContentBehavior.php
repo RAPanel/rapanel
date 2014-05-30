@@ -65,9 +65,10 @@ class ContentBehavior extends AdminBehavior
                     $criteria->join .= ' JOIN page p1 ON(p1.id=:parent_id)';
                     $criteria->join .= ' JOIN page p2 ON(p2.lft BETWEEN p1.lft AND p1.rgt)';
                     $criteria->addCondition('t.parent_id=p2.id');
-                    $criteria->params['parent_id'] = $_GET['parent_id'];
-
-                } else $criteria->compare('t.parent_id', $_GET['parent_id']);
+                    $criteria->addCondition('t.id!=:parent_id');
+                } else $criteria->addCondition('t.parent_id=:parent_id');
+                $criteria->addCondition('t.id!=:parent_id');
+                $criteria->params['parent_id'] = $_GET['parent_id'];
             } elseif (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
                 $criteria->order = '`t`.`num` ASC, `t`.`id` ASC';
             else
