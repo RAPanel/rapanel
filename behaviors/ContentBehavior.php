@@ -78,7 +78,7 @@ class ContentBehavior extends AdminBehavior
 
             $criteria = $this->getSearchCriteria($criteria);
 
-            $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url)), compact('criteria', 'pagination', 'sort'));
+            $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url))->resetScope(), compact('criteria', 'pagination', 'sort'));
 
             /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
              if($count === false){
@@ -93,8 +93,7 @@ class ContentBehavior extends AdminBehavior
     }
 
     /** @var $criteria CDbCriteria */
-    public
-    function getSearchCriteria($criteria)
+    public function getSearchCriteria($criteria)
     {
         if (($q = $_GET['q']) && $q != '*') {
             $condition = array();
@@ -111,7 +110,7 @@ class ContentBehavior extends AdminBehavior
                 }
             }
             if (get_class($this->getOwner()) == 'Page' || $this->getOwner() instanceof Page) {
-                if(stripos($criteria->join, ' `cv`') === false)
+                if (stripos($criteria->join, ' `cv`') === false)
                     $criteria->join .= ' INNER JOIN `character_varchar` `cv` ON(cv.page_id=t.id)';
                 $condition[] = "cv.value LIKE :textSearch";
                 $criteria->params['textSearch'] = "%{$q}%";
@@ -132,8 +131,7 @@ class ContentBehavior extends AdminBehavior
         return $criteria;
     }
 
-    public
-    function getColumns()
+    public function getColumns()
     {
         /** @var $owner RActiveRecord */
         $owner = $this->getOwner();
@@ -165,7 +163,7 @@ class ContentBehavior extends AdminBehavior
             if ($column == 'page_id') $default[$column]['value'] = '$data->page->name';
             if ($column == 'parent_id') $default[$column]['value'] = '$data->parent->name';
             if ($column == 'status_id') $default[$column]['value'] = '$data->status';
-            if(method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes()))
+            if (method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes()))
                 $default[$column]['column']['type'] = 'arrayMode';
         }
         $default['buttons'] = array(
@@ -259,7 +257,7 @@ class ContentBehavior extends AdminBehavior
                 'inputType' => 'text',
             ));
 
-        if(!empty($this->getOwner()->is_category)) unset($result['additional']);
+        if (!empty($this->getOwner()->is_category)) unset($result['additional']);
         if (count($keys = array_keys($result)) == 1)
             return current($result);
         $data = array();
