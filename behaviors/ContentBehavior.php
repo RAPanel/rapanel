@@ -137,15 +137,15 @@ class ContentBehavior extends AdminBehavior
         $owner = $this->getOwner();
 
         $default = array();
-        if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED)
+        /*if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED)
             $default['order'] = array(
                 'name' => '#',
                 'value' => '$data->id',
             );
-        else
+        else*/
             $default['order'] = array(
                 'name' => '#',
-                'value' => '',
+                'value' => '$data->id',
             );
         $default['checkbox'] = array(
             'class' => 'CCheckBoxColumn',
