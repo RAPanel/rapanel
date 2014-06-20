@@ -143,6 +143,7 @@ class ContentBehavior extends AdminBehavior
                 'value' => '$data->id',
             );
         else*/
+        if ($owner->hasAttribute('lft') || $owner->hasAttribute('num'))
             $default['order'] = array(
                 'name' => '#',
                 'value' => '$data->id',
