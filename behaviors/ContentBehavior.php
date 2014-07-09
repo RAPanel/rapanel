@@ -329,9 +329,9 @@ class ContentBehavior extends AdminBehavior
                 return $data + $this->getDataList($row['data']) + array(
                     'type' => 'ext.RChosen.RChosen',
                     'query' => '.input-' . $row['inputType'],
-                    'options' => array(
+                    /*'options' => array(
                         'disable_search_threshold' => 10,
-                    ),
+                    ),*/
                     'class' => 'input-' . $row['inputType'],
                     'cssFile' => false,
                 );
