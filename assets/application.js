@@ -2,190 +2,194 @@ var modalChange = true;
 var confirmClose = false;
 
 $(function () {
-    $('.datePicker').each(function () {
-        var time = $(this).val() ? $(this).val() * 1000 : Date.now();
-        var d = new Date(time);
-        var date = [ d.getDate(), d.getMonth() + 1, d.getFullYear() ];
-        for (var i = 0; i < 2; i++) {
-            if (date[i] < 10) {
-                date[i] = "0" + date[i];
-            }
-        }
-        $(this).val(date.join("."));
-    });
-    $('.contentLoading').hide();
-    var block = $('aside.main');
-    var oldTime, time = 200;
-    $('.wrapper>ul >li', block).click(function () {
-        $(this).parent('ul').find('>li.active').not(this).removeClass('active');
-        $(this).addClass('active')
-    });
-    $('.hide', block).click(function () {
-        var l = -block.outerWidth() + 5;
-        if ($(this).hasClass('active')) l = 0;
-        block.animate({'margin-left': l}, time);
-        sessionStorage.setItem("menuLeft", l);
-        $(this).toggleClass('active');
-        $('section.main').animate({'margin-left': l ? 15 : 0}, time, function () {
-            $(window).trigger('resize')
-        });
-        time = oldTime;
-    });
-    $(".resize").draggable({
-        axis: "x",
-        containment: [ 200, 0, 500, 0 ],
-        drag: function (event, ui) {
-            var w = ui.position.left + 5;
-            sessionStorage.setItem("menuWidth", w);
-            block.width(w);
-            $(window).trigger('resize')
-        }
-    });
-    if (sessionStorage.getItem("menuWidth")) {
-        block.width(sessionStorage.getItem("menuWidth"));
-    }
-    if (sessionStorage.getItem("menuLeft") < 0) {
-        time = 0;
-        $('.hide', block).trigger('click');
-    }
+	$('.datePicker').each(function () {
+		var time = $(this).val() ? $(this).val() * 1000 : Date.now();
+		var d = new Date(time);
+		var date = [ d.getDate(), d.getMonth() + 1, d.getFullYear() ];
+		for (var i = 0; i < 2; i++) {
+			if (date[i] < 10) {
+				date[i] = "0" + date[i];
+			}
+		}
+		$(this).val(date.join("."));
+	});
+	$('.contentLoading').hide();
+	var block = $('aside.main');
+	$('.wrapper>ul >li', block).click(function () {
+		$(this).parent('ul').find('>li.active').not(this).removeClass('active');
+		$(this).addClass('active')
+	});
+	$('.hide', block).click(function () {
+		var left;
+		if ($(this).hasClass('active')) {
+			left = 0;
+			$('.resize').draggable({containment: [200, 0, 500, 0]});
+		}
+		else {
+			left = -block.outerWidth() + 5;
+			$('.resize').draggable({containment: [0, 0, 0, 0]});
+		}
+		block.animate({'margin-left': left}, 200);
+		sessionStorage.setItem('asideClosed', true);
+		$(this).toggleClass('active');
+		$('section.main').animate({'margin-left': left ? 15 : 0}, 200, function () {
+			$(window).trigger('resize');
+		});
+	});
+	$(".resize").draggable({
+		axis: "x",
+		containment: [ 200, 0, 500, 0 ],
+		drag: function (event, ui) {
+			var w = ui.position.left + 5;
+			sessionStorage.setItem("menuWidth", w);
+			block.width(w);
+			$(window).trigger('resize');
+		}
+	});
+	if (sessionStorage.getItem("menuWidth")) {
+		block.width(sessionStorage.getItem("menuWidth"));
+	}
+	if (sessionStorage.getItem('asideClosed')) {
+		$('.hide', block).trigger('click');
+	}
 
-    $('#iframe').find('#edit-form').each(function () {
-        var el = $(this).find('input, select, textarea');
-        if (el.length) modalChange = false;
-        el.change(function () {
-            parent.modalChange = true;
-            parent.$.modal({
-                onBeforeClose: function (el, options) {
-                    if (confirm("Вы уверены, что хотите закрыть это окно?\nВсе не сохраненные данные будут утеряны!")) {
-                        parent.modalChange = false;
-                        return true;
-                    } else return false;
-                }
-            });
-        });
-        $(this).submit(function () {
-            parent.confirmClose = false;
-            parent.modalChange = true;
-            parent.$.modal({
-                onBeforeClose: function (el, options) {
-                    return true;
-                }
-            });
-        });
-    });
+	$('#iframe').find('#edit-form').each(function () {
+		var el = $(this).find('input, select, textarea');
+		if (el.length) modalChange = false;
+		el.change(function () {
+			parent.modalChange = true;
+			parent.$.modal({
+				onBeforeClose: function (el, options) {
+					if (confirm("Вы уверены, что хотите закрыть это окно?\nВсе не сохраненные данные будут утеряны!")) {
+						parent.modalChange = false;
+						return true;
+					} else return false;
+				}
+			});
+		});
+		$(this).submit(function () {
+			parent.confirmClose = false;
+			parent.modalChange = true;
+			parent.$.modal({
+				onBeforeClose: function (el, options) {
+					return true;
+				}
+			});
+		});
+	});
 
-    $('nav.menu li > a').click(function () {
-        var ul = $(this).next('ul');
-        if (ul.length) {
-            ul.slideToggle(100);
-            return false;
-        }
-    });
+	$('nav.menu li > a').click(function () {
+		var ul = $(this).next('ul');
+		if (ul.length) {
+			ul.slideToggle(100);
+			return false;
+		}
+	});
 
-    $('.listAction > li').click(function () {
-        var ul = $(this).find('ul');
-        if (ul.length) {
-            $(this).toggleClass('active');
-            ul.slideToggle(100);
-        }
-    });
+	$('.listAction > li').click(function () {
+		var ul = $(this).find('ul');
+		if (ul.length) {
+			$(this).toggleClass('active');
+			ul.slideToggle(100);
+		}
+	});
 
 });
 
 function bannerCreate() {
-    var block
-    if (block = $('.gridBanners')) {
-        var col;
-        var h = 51;
-        var bw = 0;
-        $('.mounth-block > ul > li', block).each(function () {
-            bw += $(this).outerWidth()
-        });
-        var lines = $('<div class="lines">');
-        lines.css('width', bw);
-        $('.mounth-block').css('width', bw);
+	var block
+	if (block = $('.gridBanners')) {
+		var col;
+		var h = 51;
+		var bw = 0;
+		$('.mounth-block > ul > li', block).each(function () {
+			bw += $(this).outerWidth()
+		});
+		var lines = $('<div class="lines">');
+		lines.css('width', bw);
+		$('.mounth-block').css('width', bw);
 
-        var offset = $('.mounth-block .active').position().left;
-        var line = $('<div class="line">');
-        line.css('left', offset + 14);
-        line.appendTo(lines);
+		var offset = $('.mounth-block .active').position().left;
+		var line = $('<div class="line">');
+		line.css('left', offset + 14);
+		line.appendTo(lines);
 
-        block.scrollLeft(offset-block.width()/3)
+		block.scrollLeft(offset - block.width() / 3)
 
-        var greenLine = $('<div class="greenLine">');
-        greenLine.appendTo(lines);
-        block.mousemove(function (e) {
-            var x = e.pageX;
-            greenLine.css('left',  block.scrollLeft() + x - block.offset().left - 2);
-        });
+		var greenLine = $('<div class="greenLine">');
+		greenLine.appendTo(lines);
+		block.mousemove(function (e) {
+			var x = e.pageX;
+			greenLine.css('left', block.scrollLeft() + x - block.offset().left - 2);
+		});
 
-        $.each(bannerData, function (key, val) {
-            var item = $('<a href="http://no-job.ru/rapanel/content/edit.html?url=banner&id='+val.id+'" class="item" onclick="modalIFrame(this);return false;">').css('background', val.color).attr('title', val.name);
-            var ico = $('<img>');
-            var title = $('<span class="title">').text(val.name);
-            if (val.ico && val.ico != 'false') ico.attr('src', val.ico).appendTo(item);
-            title.appendTo(item);
-            item.appendTo(lines);
-            var k = bw / (val.total);
-            console.log(k * val.from, val.from, val.to, val.data, k);
-            item.css({
-                top: h * val.line + 17,
-                left: k * val.from + k/2,
-                width: k * (val.to - val.from)
-            });
-            col = key;
-        });
-        lines.css('height', h * (col + 1)).appendTo(block);
-        lines.mouseover(function () {
-            greenLine.css('display', 'block');
-        });
-        lines.mouseout(function () {
-            greenLine.css('display', 'none');
-        });
-        setTimeout(function(){
-            var formH = $('section.main form').height();
-            var rowH = $('.row.top').outerHeight();
-            block.css('height', formH - rowH);
-        }, 1)
-    }
+		$.each(bannerData, function (key, val) {
+			var item = $('<a href="http://no-job.ru/rapanel/content/edit.html?url=banner&id=' + val.id + '" class="item" onclick="modalIFrame(this);return false;">').css('background', val.color).attr('title', val.name);
+			var ico = $('<img>');
+			var title = $('<span class="title">').text(val.name);
+			if (val.ico && val.ico != 'false') ico.attr('src', val.ico).appendTo(item);
+			title.appendTo(item);
+			item.appendTo(lines);
+			var k = bw / (val.total);
+			console.log(k * val.from, val.from, val.to, val.data, k);
+			item.css({
+				top: h * val.line + 17,
+				left: k * val.from + k / 2,
+				width: k * (val.to - val.from)
+			});
+			col = key;
+		});
+		lines.css('height', h * (col + 1)).appendTo(block);
+		lines.mouseover(function () {
+			greenLine.css('display', 'block');
+		});
+		lines.mouseout(function () {
+			greenLine.css('display', 'none');
+		});
+		setTimeout(function () {
+			var formH = $('section.main form').height();
+			var rowH = $('.row.top').outerHeight();
+			block.css('height', formH - rowH);
+		}, 1)
+	}
 }
 
 function viewMenu(e) {
-    $(e).nextAll('.hiddenMenu').slideToggle(100);
+	$(e).nextAll('.hiddenMenu').slideToggle(100);
 }
 
 function sortableTable() {
-    var block = '.grid-view tbody';
-    $(block).sortable({
-        helper: function (e, ui) {
-            ui.children().each(function () {
-                $(this).width($(this).width());
-            });
-            return ui;
-        },
-        stop: function (event, ui) {
-            var id = [];
-            var i = 0;
-            $(block).find('tr').each(function () {
-                var newClass = (i++ % 2 == 0) ? 'odd' : 'even';
-                id[i] = $(this).removeClass('odd').removeClass('even').addClass(newClass)
-                    .find('.checkbox-column input').val();
-            });
-            $.post($('.grid-view').attr('data-url'), {id: id});
-        }
-    }).disableSelection();
+	var block = '.grid-view tbody';
+	$(block).sortable({
+		helper: function (e, ui) {
+			ui.children().each(function () {
+				$(this).width($(this).width());
+			});
+			return ui;
+		},
+		stop: function (event, ui) {
+			var id = [];
+			var i = 0;
+			$(block).find('tr').each(function () {
+				var newClass = (i++ % 2 == 0) ? 'odd' : 'even';
+				id[i] = $(this).removeClass('odd').removeClass('even').addClass(newClass)
+					.find('.checkbox-column input').val();
+			});
+			$.post($('.grid-view').attr('data-url'), {id: id});
+		}
+	}).disableSelection();
 }
 
 
 function fastChange(e) {
-    e = $(e);
-    var form = e.parents('form');
-    var data = form.serializeArray();
-    $.post(form.attr('action'), data, function (data) {
-        if (parseInt(data) > 0) $('body').yiiGridView.update(form.find('.grid-view').attr('id'));
-        e.val(null);
-    });
-    return false;
+	e = $(e);
+	var form = e.parents('form');
+	var data = form.serializeArray();
+	$.post(form.attr('action'), data, function (data) {
+		if (parseInt(data) > 0) $('body').yiiGridView.update(form.find('.grid-view').attr('id'));
+		e.val(null);
+	});
+	return false;
 }
 /*
  $(document).ready(function () {

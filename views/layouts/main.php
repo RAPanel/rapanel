@@ -16,10 +16,10 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
 //                    array('label' => 'eng', 'url' => '#'),
                     array('label' => 'на сайт', 'url' => Yii::app()->homeUrl),
                     array('label' => 'сервис', 'url' => array('clear/index'), 'items' => array(
-                        array('label' => 'очистить assets', 'url' => array('clear/assets'), 'visible' => Yii::app()->user->checkAccess('root')),
-                        array('label' => 'очистить images', 'url' => array('clear/images'), 'visible' => Yii::app()->user->checkAccess('root')),
+                        array('label' => 'очистить assets', 'url' => array('clear/assets')),
+                        array('label' => 'очистить images', 'url' => array('clear/images')),
                         array('label' => 'очистить cache', 'url' => array('clear/cache')),
-                    ), 'visible' => Yii::app()->user->checkAccess('administrator')),
+                    ), 'visible' => Yii::app()->user->checkAccess('root')),
                     array('label' => 'выход', 'url' => array('auth/logout'), 'visible' => !Yii::app()->user->isGuest),
                 ),
             ))?>

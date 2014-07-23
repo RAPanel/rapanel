@@ -97,10 +97,8 @@ class ContentController extends RAdminController
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
         if(!$type && in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)))
             $this->redirect(array($this->action->id, 'url'=>$url, 'type'=>'folder'));
-        /** @var $model RActiveRecord */
-        $model = new $module->className($module->id);
-        $model->resetScope();
-        /** @var $model RActiveRecord|ContentBehavior */
+        $model = new $module->className('grid');
+        /** @var $model ContentBehavior */
         $model->attachBehavior('contentBehavior', 'ContentBehavior');
         $model->setModule($module);
         if ($type == 'categories') $model->setIsCategory(true);

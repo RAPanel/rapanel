@@ -1,11 +1,10 @@
 <?php
-
 /**
  * Created by ReRe-Design.
  * User: Semyonchick
  * MailTo: webmaster@rere-design.ru
  */
-class DataList extends CComponent
+class DataList
 {
     static $remember;
 
@@ -25,7 +24,7 @@ class DataList extends CComponent
         if ($condition) $condition .= ' AND ';
         $condition .= 't.module_id=:module_id';
         if (stristr('lft', $condition) === false) $condition .= ' AND t.lft>0';
-        $data = Page::model()->cache(60 * 60 * 24, new CGlobalStateCacheDependency(Module::get($module_id)))->findAll(array('with' => array('rName'), 'order' => 't.lft', 'condition' => $condition, 'params' => compact('module_id')));
+        $data = Page::model()->cache(60*60*24, new CGlobalStateCacheDependency(Module::get($module_id)))->findAll(array('with' => array('rName'), 'order' => 't.lft', 'condition' => $condition, 'params' => compact('module_id')));
         foreach ($data as $row) {
             $parents[$row->id] = $row->name;
             if (empty($parents[$row->parent_id])) $result[$row->id] = $row->name;
@@ -48,7 +47,7 @@ class DataList extends CComponent
     static function explodeArray($data, $s = ',')
     {
         $result = array();
-        foreach (explode($s, $data) as $row) if ($row = trim($row)) $result[$row] = $row;
+        foreach(explode($s, $data) as $row) if($row = trim($row)) $result[$row] = $row;
         return $result;
     }
 
