@@ -46,6 +46,7 @@ function modalIFrame(e) {
 				$(".grid-view").each(function () {
 					$(this).yiiGridView.update($(this).attr('id'));
 				});
+                $('section.main form').submit();
 				parent.modalChange = false;
 			}
 			parent.confirmClose = false;
