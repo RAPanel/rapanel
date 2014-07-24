@@ -11,6 +11,7 @@ class ModuleMenu extends CMenu
 {
     public $id = 'modules-menu';
     public $activateParents = true;
+	public $activeCssClass = 'active selected';
 
     public function init()
     {
