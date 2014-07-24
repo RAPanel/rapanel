@@ -13,6 +13,7 @@ $cs->registerCssFile($dir . '/style.css');
 //$cs->registerScriptFile($dir . '/vendor/less-1.3.3.min.js', CClientScript::POS_HEAD);
 //$cs->registerScript('lessWatch', 'less.env = "development";less.watch();', CClientScript::POS_HEAD);
 $cs->registerScriptFile($dir . '/vendor/jquery.the-modal.js');
+$cs->registerScriptFile($dir . '/sidebar.js');
 $cs->registerScriptFile($dir . '/application.js');
 $cs->registerScriptFile($dir . '/plugins.js');
 
