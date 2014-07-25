@@ -28,6 +28,15 @@ class InstallController extends CController
             'KEY `expire` (`expire`)',
         ));
 
+        $this->createTable('config', array(
+            'id' => $id,
+            'module_id' => $int,
+            'category' => 'varchar(64) NOT NULL',
+            'name' => 'varchar(128) NOT NULL',
+            'value' => 'varchar(256) NOT NULL',
+            'lastmod' => $lastmod,
+        ));
+
         $this->createTable('session', array(
             'id' => 'char(32) NOT NULL PRIMARY KEY',
             'expire' => $int,
