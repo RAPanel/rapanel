@@ -5,8 +5,11 @@ class ModuleBehavior extends AdminBehavior
     public function getClassList()
     {
         $result = array();
-        $dir = Yii::getPathOfAlias('application.models') . DIRECTORY_SEPARATOR ;
-        foreach (scandir($dir) as $file)
+        $list = array(
+            Yii::getPathOfAlias('application.models') . DIRECTORY_SEPARATOR,
+            Yii::getPathOfAlias('ext._rere.models') . DIRECTORY_SEPARATOR,
+        );
+        foreach($list as $dir) foreach (scandir($dir) as $file)
             if (is_file($dir . $file)) {
                 $class = current(explode('.', $file));
                 $result[$class] = $class;
