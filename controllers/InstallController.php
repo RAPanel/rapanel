@@ -111,6 +111,7 @@ class InstallController extends CController
             "null,0,0,0,'Акции','administrator','stock','Page','Магазин','ru',null",
             "null,0,1,0,'Характеристики','administrator','characteristics','Character','Настройки','ru',null",
             "null,0,0,0,'Сообщения и переводы','administrator','translater','MessageTranslate','Настройки','ru',null",
+            "null,0,0,0,'Параметры','administrator','config','Config','Настройки','ru',null",
         ));
 
         $this->createTable('user', array(
