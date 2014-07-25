@@ -34,6 +34,13 @@ class ModuleMenu extends CMenu
         foreach ($items as $key => $val) {
             $this->items[] = array('label' => $key, 'items' => $val, 'itemOptions' => array('class' => 'menu-' . Text::cyrillicToLatin($key)));
         }
+	    if(Yii::app()->hasComponent('statisticManager') && Yii::app()->statisticManager->enabled) {
+		    $this->items[] = array('label' => 'Статистика', 'items' => array(
+			    array('label' => 'Просмотры', 'url' => array('statistic/views')),
+			    array('label' => 'Нагрузка', 'url' => array('statistic/load')),
+			    array('label' => 'Параметры', 'url' => array('statistic/preferences')),
+		    ), 'itemOptions' => array('class' => 'menu-statistic'));
+	    }
         parent::init();
     }
 } 
