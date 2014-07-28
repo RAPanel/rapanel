@@ -28,6 +28,15 @@ class InstallController extends CController
             'KEY `expire` (`expire`)',
         ));
 
+        $this->createTable('config', array(
+            'id' => $id,
+            'module_id' => $int,
+            'category' => 'varchar(64) NOT NULL',
+            'name' => 'varchar(128) NOT NULL',
+            'value' => 'varchar(256) NOT NULL',
+            'lastmod' => $lastmod,
+        ));
+
         $this->createTable('session', array(
             'id' => 'char(32) NOT NULL PRIMARY KEY',
             'expire' => $int,
@@ -102,6 +111,7 @@ class InstallController extends CController
             "null,0,0,0,'Акции','administrator','stock','Page','Магазин','ru',null",
             "null,0,1,0,'Характеристики','administrator','characteristics','Character','Настройки','ru',null",
             "null,0,0,0,'Сообщения и переводы','administrator','translater','MessageTranslate','Настройки','ru',null",
+            "null,0,0,0,'Параметры','administrator','config','Config','Настройки','ru',null",
         ));
 
         $this->createTable('user', array(
