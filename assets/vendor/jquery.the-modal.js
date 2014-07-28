@@ -12,7 +12,9 @@
 
 	// :focusable expression, needed for tabindexes in modal
 
-	var chromeVer = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+    var chromeVer = 0;
+    if(typeof window.navigator != 'undefined' && typeof window.navigator.appVersion != 'undefined')
+	    chromeVer = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
 	$.extend($.expr[':'], {
 		focusable: function (element) {
 			var map, mapName, img,
