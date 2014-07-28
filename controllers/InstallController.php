@@ -191,7 +191,7 @@ class InstallController extends CController
         $this->createTable('character_int', array(
             'character_id' => $int,
             'page_id' => $int,
-            'value' => 'int DEFAULT NULL',
+            'value' => 'float(11,2) DEFAULT NULL',
             'PRIMARY KEY (`character_id`,`page_id`)',
             'KEY `character_id` (`character_id`)',
             'KEY `page_id` (`page_id`)',
