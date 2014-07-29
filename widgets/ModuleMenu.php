@@ -35,11 +35,16 @@ class ModuleMenu extends CMenu
             $this->items[] = array('label' => $key, 'items' => $val, 'itemOptions' => array('class' => 'menu-' . Text::cyrillicToLatin($key)));
         }
 	    if(Yii::app()->hasComponent('statisticManager') && Yii::app()->statisticManager->enabled) {
-		    $this->items[] = array('label' => 'Статистика', 'items' => array(
-			    array('label' => 'Просмотры', 'url' => array('statistic/views')),
-			    array('label' => 'Нагрузка', 'url' => array('statistic/load')),
-			    array('label' => 'Параметры', 'url' => array('statistic/preferences')),
-		    ), 'itemOptions' => array('class' => 'menu-statistic'));
+		    $this->items[] = array(
+			    'label' => 'Статистика', 'items' => array(
+				    array('label' => 'Просмотры', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/hits')),
+				    array('label' => 'Источники', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/referrers')),
+				    array('label' => 'Браузеры', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/browsers')),
+				    array('label' => 'Нагрузка', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/load')),
+			    ),
+			    'itemOptions' => array('class' => 'menu-statistic'),
+			    'visible' => Yii::app()->user->checkAccess('moderator'),
+		    );
 	    }
         parent::init();
     }
