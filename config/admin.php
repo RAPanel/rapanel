@@ -10,7 +10,7 @@ return array(
 	),
 	'controllerMap' => array(
 		'statistic' => array(
-			'class' => 'ext.RStatisticManager.RStatisticController',
+			'class' => 'ext._rere.components.RStatisticManager.RStatisticController',
 		),
 	),
 	'components' => array(
