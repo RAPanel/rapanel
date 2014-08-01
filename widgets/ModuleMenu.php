@@ -37,10 +37,12 @@ class ModuleMenu extends CMenu
 	    if(Yii::app()->hasComponent('statisticManager') && Yii::app()->statisticManager->enabled) {
 		    $this->items[] = array(
 			    'label' => 'Статистика', 'items' => array(
-				    array('label' => 'Просмотры', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/hits')),
-				    array('label' => 'Источники', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/referrers')),
+				    array('label' => 'Статистика посещений', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/global', 'zoom' => 'day')),
+				    array('label' => 'Страницы', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/pages')),
+				    array('label' => 'Точки входа', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/enters')),
+				    array('label' => 'Точки выхода', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/exits')),
+				    array('label' => 'Продолжительность визита', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/visits')),
 				    array('label' => 'Браузеры', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/browsers')),
-				    array('label' => 'Нагрузка', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/load')),
 			    ),
 			    'itemOptions' => array('class' => 'menu-statistic'),
 			    'visible' => Yii::app()->user->checkAccess('moderator'),
