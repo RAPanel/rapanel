@@ -128,7 +128,7 @@ class InstallController extends CController
         ), array(
             "null,'Семен Сушенцев','semyonchick@gmail.com','" . '$2a$13$/WoHDNmN87m1zVSg7a8Cpu1IfRCvZof0K9Z1FW7QraM06I.aJZ9c2' . "','root',null,null",
             "null,'Валерия Сушенцева','mail@rere-design.ru','" . '$2a$13$tUzrpV1b3OEWizFT1vfeQuc9VtaBvLf5KMyFTYnxjNh4e9PSdhvE.' . "','root',null,null",
-            "null,'RUgaleFF','anatoly.rugalev@gmail.com','" . '$2a$13$BWLTAkr.pruzgl6nPp2LeOZJfm6vXXQ8INZdtRKrPyNtzLi.MZZIm' . "','root',null,null",
+            "null,'RUgaleFF','anatoly.rugalev@gmail.com','" . '$2a$10$tzpV5NBnTyv6dxxXJySys.64Xgy4OOJGwN34QfBX4YqwII4CYBGUq' . "','root',null,null",
             "null,'Денис','denart89@gmail.com','" . '$2a$13$SMxuEoXwpmTXmS5xXQmvIe0BETFquft84dbWXYrcmcl04.A4QWOli' . "','root',null,null",
             "null,'Valentina E','v.a.elokhova@gmail.com','" . '$2a$13$StKF31EpRWWLUcs3RbvCx.dN9mdCf9NXK3D4E/idLz0A/L1gDmeO6' . "','root',null,null",
         ));
