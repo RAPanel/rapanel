@@ -385,7 +385,7 @@ class InstallController extends CController
 		));
 
 		$this->createTableDdl(<<<TEXT
-CREATE TABLE `stat_page` (
+CREATE TABLE IF NOT EXISTS `stat_page` (
    `id` int(10) NOT NULL AUTO_INCREMENT,
   `url` varchar(1024) NOT NULL,
   `type` int(3) NOT NULL DEFAULT '1',
@@ -396,7 +396,7 @@ TEXT
 		);
 
 		$this->createTableDdl(<<<TEXT
-CREATE TABLE `stat_page_day` (
+CREATE TABLE IF NOT EXISTS `stat_page_day` (
   `page_id` int(10) unsigned NOT NULL,
   `day` int(10) unsigned NOT NULL,
   `avgCpu` int(10) unsigned NOT NULL DEFAULT '0',
@@ -414,7 +414,7 @@ TEXT
 		);
 
 		$this->createTableDdl(<<<TEXT
-CREATE TABLE `stat_global_hour` (
+CREATE TABLE IF NOT EXISTS `stat_global_hour` (
   `hour` int(10) unsigned NOT NULL,
   `maxRam` int(10) unsigned NOT NULL DEFAULT '0',
   `avgCpu` int(10) unsigned NOT NULL DEFAULT '0',
@@ -428,7 +428,7 @@ TEXT
 		);
 
 		$this->createTableDdl(<<<TEXT
-CREATE TABLE `stat_referrer_day` (
+CREATE TABLE IF NOT EXISTS `stat_referrer_day` (
   `page_id` int(10) unsigned NOT NULL,
   `day` int(10) unsigned NOT NULL,
   `referrer_id` int(10) unsigned NOT NULL,
@@ -443,20 +443,19 @@ TEXT
 		);
 
 		$this->createTableDdl(<<<TEXT
-CREATE TABLE `stat_useragent` (
+CREATE TABLE IF NOT EXISTS `stat_useragent` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `browser` varchar(256) NOT NULL,
   `version` varchar(256) NOT NULL,
   `isBot` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `is_bot` (`isBot`),
-  KEY `browser_version` (`browser`,`version`)
+  KEY `is_bot` (`isBot`)
 ) DEFAULT CHARSET=utf8
 TEXT
 		);
 
 		$this->createTableDdl(<<<TEXT
-CREATE TABLE `stat_useragent_day` (
+CREATE TABLE IF NOT EXISTS `stat_useragent_day` (
   `useragent_id` int(10) unsigned NOT NULL,
   `day` int(10) unsigned NOT NULL,
   `value` int(10) unsigned NOT NULL DEFAULT '0',
@@ -467,7 +466,7 @@ TEXT
 		);
 
 		$this->createTableDdl(<<<TEXT
-CREATE TABLE `stat_visits_day` (
+CREATE TABLE IF NOT EXISTS `stat_visits_day` (
   `views` int(10) unsigned NOT NULL,
   `day` int(10) unsigned NOT NULL,
   `visits` int(10) unsigned NOT NULL DEFAULT '0',
