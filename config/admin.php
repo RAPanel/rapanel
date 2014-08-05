@@ -8,6 +8,11 @@ return array(
 		'admin.behaviors.*',
 		'admin.helpers.*',
 	),
+	'controllerMap' => array(
+		'statistic' => array(
+			'class' => 'ext._rere.components.RStatisticManager.RStatisticController',
+		),
+	),
 	'components' => array(
 		'errorHandler' => array(
 			'errorAction' => 'rapanel/module/error',
