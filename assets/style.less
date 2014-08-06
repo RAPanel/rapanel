@@ -2176,4 +2176,40 @@ div.tagsinput {
     }
   }
 }
-
+section.main {
+  .statistic-pages {
+    &.statistic-pages-50 {
+      table {
+        width: 50%;
+        margin: 0 auto;
+      }
+    }
+    table {
+      width: 100%;
+      tr {
+        td {
+          text-align: center;
+          &.url {
+            text-align: left;
+          }
+          &.number {
+            text-align: right;
+            width: 70px;
+          }
+          &.id {
+            width: 32px;
+          }
+          &.details {
+            width: 40px;
+          }
+        }
+      }
+    }
+    .details-link {
+      .sprite-other();
+      &:hover {
+        .sprite-otherActive();
+      }
+    }
+  }
+}
