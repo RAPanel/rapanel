@@ -1791,7 +1791,7 @@ aside.main .wrapper > ul > li.menu-magazin.active span:before {
   zoom: 1;
   vertical-align: middle;
 }
-aside.main .wrapper > ul > li.menu-statistika span:before {
+aside.main .wrapper > ul > li.menu-statistic span:before {
   background-position: -5px -211px;
   width: 32px;
   height: 33px;
@@ -1802,7 +1802,7 @@ aside.main .wrapper > ul > li.menu-statistika span:before {
   zoom: 1;
   vertical-align: middle;
 }
-aside.main .wrapper > ul > li.menu-statistika:hover span:before {
+aside.main .wrapper > ul > li.menu-statistic:hover span:before {
   background-position: -89px -211px;
   width: 32px;
   height: 33px;
@@ -1813,7 +1813,7 @@ aside.main .wrapper > ul > li.menu-statistika:hover span:before {
   zoom: 1;
   vertical-align: middle;
 }
-aside.main .wrapper > ul > li.menu-statistika.active span:before {
+aside.main .wrapper > ul > li.menu-statistic.active span:before {
   background-position: -47px -211px;
   width: 32px;
   height: 33px;
@@ -4503,4 +4503,49 @@ div.tagsinput div {
 }
 .field_test .answer input[type="text"] {
   width: 835px;
+}
+section.main .statistic-pages .statistic-pages-50 {
+  width: 50%;
+  float: left;
+}
+section.main .statistic-pages table {
+  width: 100%;
+}
+section.main .statistic-pages table tr td {
+  text-align: center;
+}
+section.main .statistic-pages table tr td.url {
+  text-align: left;
+}
+section.main .statistic-pages table tr td.number {
+  text-align: right;
+  width: 70px;
+}
+section.main .statistic-pages table tr td.id {
+  width: 32px;
+}
+section.main .statistic-pages table tr td.details {
+  width: 40px;
+}
+section.main .statistic-pages .details-link {
+  background-position: -197px -120px;
+  width: 30px;
+  height: 10px;
+  background-image: url(sprite.png);
+  background-repeat: no-repeat;
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  vertical-align: middle;
+}
+section.main .statistic-pages .details-link:hover {
+  background-position: -197px -140px;
+  width: 30px;
+  height: 10px;
+  background-image: url(sprite.png);
+  background-repeat: no-repeat;
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  vertical-align: middle;
 }

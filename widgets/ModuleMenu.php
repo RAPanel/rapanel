@@ -40,8 +40,6 @@ class ModuleMenu extends CMenu
 				    array('label' => 'Статистика посещений', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/global', 'zoom' => 'day')),
 				    array('label' => 'Производительность', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/performance')),
 				    array('label' => 'Страницы', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/pages')),
-				    array('label' => 'Точки входа', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/enters')),
-				    array('label' => 'Точки выхода', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/exits')),
 				    array('label' => 'Продолжительность визита', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/visits')),
 				    array('label' => 'Браузеры', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/browsers')),
 			    ),
