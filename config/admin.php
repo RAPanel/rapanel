@@ -14,9 +14,6 @@ return array(
 		),
 	),
 	'components' => array(
-		'errorHandler' => array(
-			'errorAction' => 'rapanel/module/error',
-		),
 		'urlManager' => array(
 			'urlFormat' => 'path',
 			'showScriptName' => false,

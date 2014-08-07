@@ -387,11 +387,11 @@ class InstallController extends CController
 		$this->createTableDdl(<<<TEXT
 CREATE TABLE IF NOT EXISTS `stat_page` (
    `id` int(10) NOT NULL AUTO_INCREMENT,
-  `url` varchar(1024) NOT NULL,
+  `url` varchar(1024) CHARACTER SET utf8 NOT NULL,
   `type` int(3) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `url` (`url`(333))
-) DEFAULT CHARSET=utf8
+)
 TEXT
 		);
 
@@ -409,7 +409,7 @@ CREATE TABLE IF NOT EXISTS `stat_page_day` (
   KEY `page_id` (`page_id`),
   KEY `views` (`views`),
   KEY `exits` (`exits`)
-) DEFAULT CHARSET=utf8
+)
 TEXT
 		);
 
@@ -423,7 +423,7 @@ CREATE TABLE IF NOT EXISTS `stat_global_hour` (
   `visits` int(10) unsigned NOT NULL DEFAULT '0',
   `users` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`hour`)
-) DEFAULT CHARSET=utf8
+)
 TEXT
 		);
 
@@ -438,19 +438,21 @@ CREATE TABLE IF NOT EXISTS `stat_referrer_day` (
   KEY `page` (`page_id`),
   KEY `day` (`day`),
   KEY `referrer` (`referrer_id`)
-) DEFAULT CHARSET=utf8
+)
 TEXT
 		);
 
 		$this->createTableDdl(<<<TEXT
-CREATE TABLE IF NOT EXISTS `stat_useragent` (
+CREATE TABLE `stat_useragent` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `browser` varchar(256) NOT NULL,
-  `version` varchar(256) NOT NULL,
+  `browser` varchar(32) CHARACTER SET latin1 NOT NULL,
+  `version` varchar(32) CHARACTER SET latin1 NOT NULL,
   `isBot` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `is_bot` (`isBot`)
-) DEFAULT CHARSET=utf8
+  KEY `is_bot` (`isBot`),
+  KEY `browser_version` (`browser`,`version`),
+  KEY `browser` (`browser`)
+)
 TEXT
 		);
 
@@ -461,7 +463,7 @@ CREATE TABLE IF NOT EXISTS `stat_useragent_day` (
   `value` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`useragent_id`,`day`),
   KEY `count` (`value`)
-) DEFAULT CHARSET=utf8
+)
 TEXT
 		);
 
@@ -473,7 +475,7 @@ CREATE TABLE IF NOT EXISTS `stat_visits_day` (
   PRIMARY KEY (`day`,`views`),
   KEY `views` (`views`),
   KEY `day` (`day`)
-) DEFAULT CHARSET=utf8
+)
 TEXT
 		);
 

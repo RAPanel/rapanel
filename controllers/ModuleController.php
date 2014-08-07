@@ -120,5 +120,14 @@ class ModuleController extends RAdminController
         if($id) echo RActiveRecord::model($model)->updateByPk($id, array($attr => $value));
     }
 
+	public function actionError() {
+		if ($error = Yii::app()->errorHandler->error) {
+			$this->pageTitle = Yii::t('site', 'Ошибка') . ' ' . $error['code'];
+			if (Yii::app()->request->isAjaxRequest)
+				echo $error['message'];
+			else
+				$this->render('error', $error);
+		}
+	}
 
 }

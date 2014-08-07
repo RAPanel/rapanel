@@ -50,8 +50,6 @@ class ModuleMenu extends CMenu
 				    array('label' => 'Статистика посещений', 'url' => array("/" . $this->module . '/statistic/global', 'zoom' => 'day')),
 				    array('label' => 'Производительность', 'url' => array("/" . $this->module . '/statistic/performance')),
 				    array('label' => 'Страницы', 'url' => array("/" . $this->module . '/statistic/pages')),
-				    array('label' => 'Точки входа', 'url' => array("/" . $this->module . '/statistic/enters')),
-				    array('label' => 'Точки выхода', 'url' => array("/" . $this->module . '/statistic/exits')),
 				    array('label' => 'Продолжительность визита', 'url' => array("/" . $this->module . '/statistic/visits')),
 				    array('label' => 'Браузеры', 'url' => array("/" . $this->module . '/statistic/browsers')),
 			    ),
