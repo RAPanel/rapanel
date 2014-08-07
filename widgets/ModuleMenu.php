@@ -12,23 +12,33 @@ class ModuleMenu extends CMenu
     public $id = 'modules-menu';
     public $activateParents = true;
 	public $activeCssClass = 'active selected';
+	public $module;
+
+    static function items($module_id = false)
+    {
+        $module = new self();
+        $module->module = $module_id;
+        $module->init();
+        return $module->items;
+    }
 
     public function init()
     {
+        if(empty($this->module)) $this->module = Yii::app()->controller->module->id;
         $data = Module::model()->cache(60 * 60 * 24, new CGlobalStateCacheDependency('settings'))->active()->order()->findAll();
         $this->items = $items = $urlList = array();
         foreach ($data as $row) {
             $urlList[] = $row->url;
             $items[$row->groupName ? $row->groupName : 'Прочее'][] = array(
                 'label' => $row->name,
-                'url' => array("/" . Yii::app()->controller->module->id . "/content/index", 'url' => $row->url),
+                'url' => array("/" . $this->module . "/content/index", 'url' => $row->url),
                 'visible' => Yii::app()->user->checkAccess($row->access),
             );
         }
         if (in_array('banner', $urlList))
             $items['Статистика'][] = array(
                 'label' => 'баннеры',
-                'url' => array("/" . Yii::app()->controller->module->id . "/content/banner", 'url' => 'banner'),
+                'url' => array("/" . $this->module . "/content/banner", 'url' => 'banner'),
                 'visible' => Yii::app()->user->checkAccess('moderator'),
             );
         foreach ($items as $key => $val) {
@@ -37,13 +47,13 @@ class ModuleMenu extends CMenu
 	    if(Yii::app()->hasComponent('statisticManager') && Yii::app()->statisticManager->enabled) {
 		    $this->items[] = array(
 			    'label' => 'Статистика', 'items' => array(
-				    array('label' => 'Статистика посещений', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/global', 'zoom' => 'day')),
-				    array('label' => 'Производительность', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/performance')),
-				    array('label' => 'Страницы', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/pages')),
-				    array('label' => 'Точки входа', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/enters')),
-				    array('label' => 'Точки выхода', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/exits')),
-				    array('label' => 'Продолжительность визита', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/visits')),
-				    array('label' => 'Браузеры', 'url' => array("/" . Yii::app()->controller->module->id . '/statistic/browsers')),
+				    array('label' => 'Статистика посещений', 'url' => array("/" . $this->module . '/statistic/global', 'zoom' => 'day')),
+				    array('label' => 'Производительность', 'url' => array("/" . $this->module . '/statistic/performance')),
+				    array('label' => 'Страницы', 'url' => array("/" . $this->module . '/statistic/pages')),
+				    array('label' => 'Точки входа', 'url' => array("/" . $this->module . '/statistic/enters')),
+				    array('label' => 'Точки выхода', 'url' => array("/" . $this->module . '/statistic/exits')),
+				    array('label' => 'Продолжительность визита', 'url' => array("/" . $this->module . '/statistic/visits')),
+				    array('label' => 'Браузеры', 'url' => array("/" . $this->module . '/statistic/browsers')),
 			    ),
 			    'itemOptions' => array('class' => 'menu-statistic'),
 			    'visible' => Yii::app()->user->checkAccess('moderator'),

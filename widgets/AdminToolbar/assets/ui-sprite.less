@@ -1,0 +1,35 @@
+.stitches-user(@x: 0, @y: 0, @width: 0, @height: 0) {
+  background: url(ui-sprite.png) no-repeat;
+  .inline-block(middle);
+  background-position: @x @y;
+  width: @width;
+  height: @height;
+}
+
+.user-editMode {
+  .stitches-user(-2px, -2px, 15px, 15px);
+}
+
+.user-editModeActive {
+  .stitches-user(-21px, -2px, 15px, 15px);
+}
+
+.user-editSite {
+  .stitches-user(-2px, -21px, 18px, 16px);
+}
+
+.user-menu {
+  .stitches-user(-24px, -21px, 17px, 15px);
+}
+
+.user-reset {
+  .stitches-user(-40px, -2px, 15px, 15px);
+}
+
+.user-turn {
+  .stitches-user(-45px, -21px, 10px, 9px);
+}
+
+.user-user {
+  .stitches-user(-45px, -34px, 15px, 15px);
+}

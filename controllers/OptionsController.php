@@ -12,5 +12,4 @@ class OptionsController extends RAdminController {
 		}
 		$this->back();
 	}
-
 }

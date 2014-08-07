@@ -33,6 +33,8 @@ class ClearController extends RAdminController
 
     public function actionCache($back = true)
     {
+        $this->actionAssets(false);
+        
         /** @var $component CCache */
         foreach (Yii::app()->getComponents(false) as $component)
             if (is_subclass_of($component, 'CCache'))

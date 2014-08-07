@@ -1,0 +1,61 @@
+
+@import "lesshat";
+@import "mixins";
+
+body {
+  &.themodal-lock {
+    /* when modal is opened we're removing scrollbars from the main content */
+    overflow: hidden !important;
+  }
+}
+
+.themodal-overlay {
+  /* overlay will stay fixed and will take all the space available */
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* if modal content doesn't fit inside the overlay, display scrollbars */
+  overflow: auto;
+  /* allow one-finger iPad scrolling */
+  -webkit-overflow-scrolling: touch;
+  z-index: 1000;
+  .size(100%);
+  .rgba(#fff, 0.7);
+  background-image: url(loading.gif);
+  background-repeat: no-repeat;
+  background-position: center;
+  /* fix for iPad glitches */
+  > * {
+    -webkit-transform: translateZ(0px);
+  }
+  .themodal {
+    display: block;
+    position: relative;
+    background: #fff;
+    width: 900px;
+    top: 0;
+    margin: 15px auto;
+    .box-shadow(0 0 2px 2px rgba(0, 0, 0, 0.15));
+    iframe {
+      border: 0;
+      width: 100%;
+      display: block;
+    }
+    .close {
+      position: absolute;
+      text-decoration: none;
+      font-size: 1.8em;
+      font-weight: 700;
+      right: 15px;
+      top: 9px;
+      color: #FFF;
+      line-height: 1;
+      &:hover {
+        color: black;
+      }
+    }
+    &.loading {
+      display: none !important;
+    }
+  }
+}

@@ -141,6 +141,8 @@ class ContentController extends RAdminController
      */
     public function actionEdit($url = null, $id = null, $type = null)
     {
+        if(empty($url) && $id)
+            $url = Module::get(Page::model()->resetScope()->findByPk($id)->module_id);
         /** @var $module Module */
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');

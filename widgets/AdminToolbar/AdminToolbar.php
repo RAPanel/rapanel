@@ -1,32 +1,37 @@
 <?php
+
 /**
  * @author ReRe Design studio
  * @email webmaster@rere-design.ru
  */
-
 class AdminToolbar extends CWidget
 {
-
-    public $accessable;
+    public $accessible;
+    public $debug;
+    public $module = 'rapanel';
 
     public function init()
     {
-        $this->accessable = Yii::app()->user->checkAccess(User::ROLE_MODER);
-        $this->registerAssets();
+        if ($this->accessible = Yii::app()->user->checkAccess('moderator'))
+            $this->registerAssets();
+        $this->debug = YII_DEBUG;
     }
 
     public function run()
     {
-        if ($this->accessable && $this->beginCache(__CLASS__ . YII_DEBUG, array('varyByRoute'=>0, 'duration' => 60 * 60 * 24))) {
-            echo CHtml::openTag('div', array('id' => 'admin-toolbar', 'class' => 'admin-toolbar'));
-            echo CHtml::link(Yii::t('admin', 'admin'), '#', array('class' => 'toolbar-toggler'));
+        if ($this->accessible ) {
+            echo CHtml::openTag('nav', array('id' => 'adminToolbar', 'class' => 'userMenu' . (isset(Yii::app()->request->cookies['userMenu']) && Yii::app()->request->cookies['userMenu']->value ? ' active' : '')));
             $this->widget('zii.widgets.CMenu', array(
-                'id' => 'admin-menu',
+                'htmlOptions' => array('class' => 'f-left'),
                 'encodeLabel' => false,
-                'items' => self::getMenuItems(),
+                'items' => $this->menuLeft,
             ));
-            echo CHtml::closeTag('div');
-            $this->endCache();
+            $this->widget('zii.widgets.CMenu', array(
+                'htmlOptions' => array('class' => 'f-right'),
+                'items' => $this->menuRight,
+            ));
+            echo CHtml::closeTag('nav');
+            echo CHtml::link('RA-panel', '#open', array('class' => 'ra-panel'));
         }
     }
 
@@ -34,29 +39,35 @@ class AdminToolbar extends CWidget
     {
         /** @var CAssetManager $assetManager */
         $assetManager = Yii::app()->assetManager;
-        $path = $assetManager->publish(dirname(__FILE__) . '/assets');
+        $path = $assetManager->publish(__DIR__ . '/assets', 0, -1, YII_DEBUG);
 
         /** @var CClientScript $clientScript */
         $clientScript = Yii::app()->clientScript;
-        $clientScript->registerScriptFile($path . '/toolbar.js');
-        $clientScript->registerCssFile($path . '/toolbar.css');
-        $clientScript->registerScript('admin_toolbar', <<<JAVASCRIPT
-$('#admin-toolbar').adminToolbar();
-JAVASCRIPT
-        );
+        $clientScript->registerScriptFile($path . '/theModal.js');
+        $clientScript->registerCssFile($path . '/theModal.css');
+        $clientScript->registerScriptFile($path . '/userMenu.js');
+        $clientScript->registerCssFile($path . '/userMenu.css');
+        $clientScript->registerScript(__CLASS__, 'adminToolbar();');
+        $clientScript->registerCoreScript('cookie');
     }
 
-    public function getMenuItems()
+    public function getMenuLeft()
     {
-        $status = YII_DEBUG ?
-            CHtml::tag('span', array('class' => 'status-development'), Yii::t('admin', "Development mode")) :
-            CHtml::tag('span', array('class' => 'status-production'), Yii::t('admin', "Production mode"));
+        require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'ModuleMenu.php');
         return array(
-            array('label' => Yii::app()->name, 'url' => array('/site/index'), 'itemOptions' => array('class' => 'title')),
-            array('label' => Yii::t('auth', 'Logout'), 'url' => array('/auth/logout'), 'itemOptions' => array('class' => 'right')),
-            array('label' => Yii::t('admin', 'Open admin panel'), 'url' => array('/admin//'), 'itemOptions' => array('class' => 'right')),
-            array('label' => $status, 'itemOptions' => array('class' => 'right')),
+            array('label' => 'меню', 'url' => array('/' . $this->module . '/module/index'), 'itemOptions' => array('class' => 'menu'), 'items' => ModuleMenu::items($this->module)),
+            array('label' => 'сбросить кэш', 'url' => array('/' . $this->module . '/clear/cache'), 'itemOptions' => array('class' => 'reset')),
+            array('label' => 'режим правки ' . CHtml::tag('span', array(), $this->debug ? '(включен)' : '(выключен)'), 'url' => array('/' . $this->module . '/options/debug'), 'itemOptions' => array('class' => $this->debug ? 'editMode active' : 'editMode'), 'visible' => Yii::app()->user->checkAccess('root')),
+            array('label' => 'свернуть', 'url' => '#hide', 'itemOptions' => array('class' => 'turn')),
         );
     }
 
+    public function getMenuRight()
+    {
+        return array(
+            array('label' => 'редактировать', 'url' => array('/' . $this->module . '/content/edit', 'id' => Yii::app()->params['page_id']), 'itemOptions' => array('class' => 'editSite'), 'visible' => Yii::app()->params['page_id']),
+            array('label' => Yii::app()->user->name, 'url' => array('/' . $this->module . '/content/edit', 'url' => 'user', 'id' => Yii::app()->user->id), 'itemOptions' => array('class' => 'username')),
+            array('label' => 'выйти', 'url' => array('/' . $this->module . '/auth/logout'), 'itemOptions' => array('class' => 'exit')),
+        );
+    }
 }
