@@ -2,14 +2,14 @@
 @import "mixins";
 @import "ui-sprite";
 
-nav.userMenu {
+nav.rp_userMenu {
+  z-index: 9999;
   background: #3b3b3b;
   width: 980px;
   padding: 5px 0;
   position: fixed;
   top: 0;
   left: 50%;
-  z-index: 100;
   margin-left: -490px;
   margin-top: -37px;
   .transition(0.2s);
@@ -32,21 +32,21 @@ nav.userMenu {
       &:first-child > a {
         border: none;
       }
-      &.menu {
+      &.rp_menu {
         > a {
           &:before {
             .user-menu;
           }
         }
       }
-      &.reset {
+      &.rp_reset {
         > a {
           &:before {
             .user-reset;
           }
         }
       }
-      &.editMode {
+      &.rp_editMode {
         > a {
           position: relative;
           &:before {
@@ -85,14 +85,14 @@ nav.userMenu {
           }
         }
       }
-      &.editSite {
+      &.rp_editSite {
         > a {
           &:before {
             .user-editSite;
           }
         }
       }
-      &.username {
+      &.rp_username {
         > a {
           max-width: 190px;
           .box-sizing(border-box);
@@ -105,12 +105,12 @@ nav.userMenu {
           }
         }
       }
-      &.exit {
+      &.rp_exit {
         a:before {
           display: none;
         }
       }
-      &.turn {
+      &.rp_turn {
         position: absolute;
         left: 50%;
         margin-left: -45px;
@@ -182,6 +182,7 @@ nav.userMenu {
 }
 
 .ra-panel {
+  z-index: 9998;
   font-size: 12px;
   font-weight: 300;
   color: #FFFFFF;

@@ -19,8 +19,8 @@ class AdminToolbar extends CWidget
 
     public function run()
     {
-        if ($this->accessible ) {
-            echo CHtml::openTag('nav', array('id' => 'adminToolbar', 'class' => 'userMenu' . (isset(Yii::app()->request->cookies['userMenu']) && Yii::app()->request->cookies['userMenu']->value ? ' active' : '')));
+        if ($this->accessible) {
+            echo CHtml::openTag('nav', array('id' => 'adminToolbar', 'class' => 'rp_userMenu' . (isset(Yii::app()->request->cookies['userMenu']) && Yii::app()->request->cookies['userMenu']->value ? ' active' : '')));
             $this->widget('zii.widgets.CMenu', array(
                 'htmlOptions' => array('class' => 'f-left'),
                 'encodeLabel' => false,
@@ -55,19 +55,19 @@ class AdminToolbar extends CWidget
     {
         require_once(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'ModuleMenu.php');
         return array(
-            array('label' => 'меню', 'url' => array('/' . $this->module . '/module/index'), 'itemOptions' => array('class' => 'menu'), 'items' => ModuleMenu::items($this->module)),
-            array('label' => 'сбросить кэш', 'url' => array('/' . $this->module . '/clear/cache'), 'itemOptions' => array('class' => 'reset')),
-            array('label' => 'режим правки ' . CHtml::tag('span', array(), $this->debug ? '(включен)' : '(выключен)'), 'url' => array('/' . $this->module . '/options/debug'), 'itemOptions' => array('class' => $this->debug ? 'editMode active' : 'editMode'), 'visible' => Yii::app()->user->checkAccess('root')),
-            array('label' => 'свернуть', 'url' => '#hide', 'itemOptions' => array('class' => 'turn')),
+            array('label' => 'меню', 'url' => array('/' . $this->module . '/module/index'), 'itemOptions' => array('class' => 'rp_menu'), 'items' => ModuleMenu::items($this->module)),
+            array('label' => 'сбросить кэш', 'url' => array('/' . $this->module . '/clear/cache'), 'itemOptions' => array('class' => 'rp_reset')),
+            array('label' => 'режим правки ' . CHtml::tag('span', array(), $this->debug ? '(включен)' : '(выключен)'), 'url' => array('/' . $this->module . '/options/debug'), 'itemOptions' => array('class' => $this->debug ? 'rp_editMode active' : 'rp_editMode'), 'visible' => Yii::app()->user->checkAccess('root')),
+            array('label' => 'свернуть', 'url' => '#hide', 'itemOptions' => array('class' => 'rp_turn')),
         );
     }
 
     public function getMenuRight()
     {
         return array(
-            array('label' => 'редактировать', 'url' => array('/' . $this->module . '/content/edit', 'id' => Yii::app()->params['page_id']), 'itemOptions' => array('class' => 'editSite'), 'visible' => Yii::app()->params['page_id']),
-            array('label' => Yii::app()->user->name, 'url' => array('/' . $this->module . '/content/edit', 'url' => 'user', 'id' => Yii::app()->user->id), 'itemOptions' => array('class' => 'username')),
-            array('label' => 'выйти', 'url' => array('/' . $this->module . '/auth/logout'), 'itemOptions' => array('class' => 'exit')),
+            array('label' => 'редактировать', 'url' => array('/' . $this->module . '/content/edit', 'id' => Yii::app()->params['page_id']), 'itemOptions' => array('class' => 'rp_editSite'), 'visible' => Yii::app()->params['page_id']),
+            array('label' => Yii::app()->user->name, 'url' => array('/' . $this->module . '/content/edit', 'url' => 'user', 'id' => Yii::app()->user->id), 'itemOptions' => array('class' => 'rp_username')),
+            array('label' => 'выйти', 'url' => array('/' . $this->module . '/auth/logout'), 'itemOptions' => array('class' => 'rp_exit')),
         );
     }
 }
