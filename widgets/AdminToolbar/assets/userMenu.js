@@ -1,16 +1,16 @@
 function adminToolbar() {
     var t = 150;
-    $('nav.userMenu')
-        .on('click', '.menu > a', function () {
+    $('nav.rp_userMenu')
+        .on('click', '.rp_menu > a', function () {
             var e = $(this).parent('li');
             $('>ul', e).slideToggle(t);
             return false;
         })
-        .on('dblclick', '.menu > a', function () {
+        .on('dblclick', '.rp_menu > a', function () {
             window.location.href = $(this).attr('href');
             return false;
         })
-        .on('click', '.editMode > a', function () {
+        .on('click', '.rp_editMode > a', function () {
             var e = $(this).parent('li');
             e.toggleClass('active');
             if (!e.hasClass('active')) {
@@ -23,14 +23,14 @@ function adminToolbar() {
             window.location.reload();
             return false;
         })
-        .on('click', '.turn > a', function () {
+        .on('click', '.rp_turn > a', function () {
             $.cookie('userMenu', 0, {expires: 1, path: '/'});
-            var e = $(this).parents('nav.userMenu');
+            var e = $(this).parents('nav.rp_userMenu');
             e.removeClass('active');
-            $('.menu', e).find('ul').slideUp(t);
+            $('.rp_menu', e).find('ul').slideUp(t);
             return false;
         })
-        .on('click', '.exit > a, .reset > a', function () {
+        .on('click', '.rp_exit > a, .rp_reset > a', function () {
             if ($(this).parent().hasClass('loading'))
                 return false;
             $(this).parent().addClass('loading');
@@ -39,13 +39,13 @@ function adminToolbar() {
             });
             return false;
         })
-        .on('click', '.editSite > a', function () {
+        .on('click', '.rp_editSite > a', function () {
             modalIFrame(this);
             return false;
         });
 
     $('.ra-panel').click(function () {
-        $('nav.userMenu').addClass('active');
+        $('nav.rp_userMenu').addClass('active');
         $.cookie('userMenu', 1, {expires: 1, path: '/'});
         return false;
     });
