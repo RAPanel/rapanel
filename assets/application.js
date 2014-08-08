@@ -57,6 +57,14 @@ $(function () {
 		}
 	});
 
+	$('.date-range-input').change(function() {
+		var datepicker = $(this).next('div');
+		if(datepicker.css('display') == 'none') {
+			var gridView = $('.grid-view');
+			gridView.yiiGridView('update', {data: $(this).attr('name') + '=' + $(this).val()});
+		}
+	});
+
 });
 
 function bannerCreate() {
