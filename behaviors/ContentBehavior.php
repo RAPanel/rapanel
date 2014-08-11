@@ -10,7 +10,7 @@ class ContentBehavior extends AdminBehavior
     {
         $adminSettings = (array)$this->getModule()->config;
         return count($adminSettings) ? $adminSettings : array(
-            'actions' => array('view', 'edit', 'delete'),
+            'actions' => array('view', 'edit', 'clone', 'delete'),
         );
     }
 

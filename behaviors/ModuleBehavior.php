@@ -179,6 +179,7 @@ class ModuleBehavior extends AdminBehavior
             'items' => array(
                 'view' => 'Просмотр',
                 'edit' => 'Редактирование',
+	            'clone' => 'Клонирование',
                 'delete' => 'Удаление',
             ),
         );
