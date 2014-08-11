@@ -139,7 +139,7 @@ class ContentController extends RAdminController
      * param string $url URL модуля
      * param string $id ID модели
      */
-    public function actionEdit($url = null, $id = null, $type = null)
+    public function actionEdit($url = null, $id = null, $type = null, $clone = false)
     {
         if(empty($url) && $id)
             $url = Module::get(Page::model()->resetScope()->findByPk($id)->module_id);
@@ -156,6 +156,28 @@ class ContentController extends RAdminController
         if ($type == 'category') {
             $model->is_category = 1;
         }
+	    if($clone) {
+		    if(method_exists($model, 'getCharacters')) {
+		        $model->getCharacters();
+			    if($model->hasCharacter('url'))
+				    $model->url = null;
+			    if($model->hasCharacter('title'))
+				    $model->title = null;
+			    if($model->hasCharacter('description'))
+				    $model->description = null;
+			    if($model->hasCharacter('keywords'))
+				    $model->keywords = null;
+			    $model->resetOld();
+		    }
+		    if($model->hasAttribute('lft')) {
+			    $model->lft = null;
+			    $model->rgt = null;
+			    $model->level = null;
+		    }
+		    $model->isNewRecord = true;
+		    $model->id = null;
+		    $model->scenario = 'insert';
+	    }
 
         $this->performAjaxValidation($model);
         if (isset($_POST[get_class($model)])) {
@@ -180,6 +202,10 @@ class ContentController extends RAdminController
         ));*/
         $this->renderText($form->render());
     }
+
+	public function actionClone($url = null, $id = null, $type = null) {
+		$this->actionEdit($url, $id, $type, true);
+	}
 
     public function actionDelete($url, $id)
     {
