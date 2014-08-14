@@ -20,7 +20,7 @@ class ReReAdmin extends CWebModule
     public function init()
     {
         $this->publishAssets();
-	    Yii::app()->errorHandler->errorAction = 'rapanel/module/error';
+	    Yii::app()->errorHandler->errorAction = '/rapanel/module/error';
         parent::init();
     }
 
