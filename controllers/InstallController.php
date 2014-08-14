@@ -384,100 +384,81 @@ class InstallController extends CController
 			$this->fk('user_id', 'user'),
 		));
 
-		$this->createTableDdl(<<<TEXT
-CREATE TABLE IF NOT EXISTS `stat_page` (
-   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `url` varchar(1024) CHARACTER SET utf8 NOT NULL,
-  `type` int(3) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  KEY `url` (`url`(333))
-)
-TEXT
-		);
+		$this->createTable('stat_page', array(
+			'id' => $id,
+			'url' => 'varchar(1024) NOT NULL',
+			'type' => $tinyint,
+			'expiration' => $lastmod,
+            'KEY `url` (`url`(333))',
+		));
 
-		$this->createTableDdl(<<<TEXT
-CREATE TABLE IF NOT EXISTS `stat_page_day` (
-  `page_id` int(10) unsigned NOT NULL,
-  `day` int(10) unsigned NOT NULL,
-  `avgCpu` int(10) unsigned NOT NULL DEFAULT '0',
-  `avgTime` float(6,3) unsigned NOT NULL DEFAULT '0.000',
-  `maxRam` int(10) unsigned NOT NULL DEFAULT '0',
-  `views` int(10) unsigned NOT NULL DEFAULT '0',
-  `exits` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`page_id`,`day`),
-  KEY `day` (`day`),
-  KEY `page_id` (`page_id`),
-  KEY `views` (`views`),
-  KEY `exits` (`exits`)
-)
-TEXT
-		);
+        $this->createTable('stat_page_day', array(
+            'page_id' => $int,
+            'day' => $int,
+            'avgCpu' => $int,
+            'avgTime' =>'float(6,3) unsigned NOT NULL',
+            'maxRam' =>$int,
+            'views' =>$int,
+            'exits' =>$int,
+            'PRIMARY KEY (`page_id`,`day`)',
+            'KEY `page_id` (`page_id`)',
+            'KEY `day` (`day`)',
+            'KEY `views` (`views`)',
+            'KEY `exits` (`exits`)',
+            $this->fk('page_id', 'stat_page'),
+        ));
 
-		$this->createTableDdl(<<<TEXT
-CREATE TABLE IF NOT EXISTS `stat_global_hour` (
-  `hour` int(10) unsigned NOT NULL,
-  `maxRam` int(10) unsigned NOT NULL DEFAULT '0',
-  `avgCpu` int(10) unsigned NOT NULL DEFAULT '0',
-  `avgTime` int(10) unsigned NOT NULL DEFAULT '0',
-  `views` int(10) unsigned NOT NULL DEFAULT '0',
-  `visits` int(10) unsigned NOT NULL DEFAULT '0',
-  `users` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`hour`)
-)
-TEXT
-		);
+        $this->createTable('stat_global_hour', array(
+            'hour' => $id,
+            'avgCpu' => $int,
+            'avgTime' =>'float(6,3) unsigned NOT NULL',
+            'maxRam' =>$int,
+            'views' =>$int,
+            'visits' =>$int,
+            'users' =>$int,
+        ));
 
-		$this->createTableDdl(<<<TEXT
-CREATE TABLE IF NOT EXISTS `stat_referrer_day` (
-  `page_id` int(10) unsigned NOT NULL,
-  `day` int(10) unsigned NOT NULL,
-  `referrer_id` int(10) unsigned NOT NULL,
-  `count` int(10) unsigned NOT NULL DEFAULT '0',
-  `enters` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`page_id`,`day`,`referrer_id`),
-  KEY `page` (`page_id`),
-  KEY `day` (`day`),
-  KEY `referrer` (`referrer_id`)
-)
-TEXT
-		);
+        $this->createTable('stat_referrer_day', array(
+            'page_id' => $int,
+            'day' => $int,
+            'referrer_id' => $int,
+            'count' =>$int,
+            'enters' =>$int,
+            'PRIMARY KEY (`page_id`,`day`,`referrer_id`)',
+            'KEY `page_id` (`page_id`)',
+            'KEY `day` (`day`)',
+            'KEY `referrer_id` (`referrer_id`)',
+            $this->fk('page_id', 'stat_page'),
+        ));
 
-		$this->createTableDdl(<<<TEXT
-CREATE TABLE `stat_useragent` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `browser` varchar(32) CHARACTER SET latin1 NOT NULL,
-  `version` varchar(32) CHARACTER SET latin1 NOT NULL,
-  `isBot` int(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `is_bot` (`isBot`),
-  KEY `browser_version` (`browser`,`version`),
-  KEY `browser` (`browser`)
-)
-TEXT
-		);
+        $this->createTable('stat_referrer_day', array(
+            'id' => $id,
+            'browser' => 'varchar(32) CHARACTER SET latin1 NOT NULL',
+            'version' => 'varchar(32) CHARACTER SET latin1 NOT NULL',
+            'isBot' => 'bool NOT NULL',
+            'count' =>$int,
+            'enters' =>$int,
+            'KEY `is_bot` (`is_bot`)',
+            'KEY `browser_version` (`browser_version`)',
+            'KEY `browser` (`browser`)',
+        ));
 
-		$this->createTableDdl(<<<TEXT
-CREATE TABLE IF NOT EXISTS `stat_useragent_day` (
-  `useragent_id` int(10) unsigned NOT NULL,
-  `day` int(10) unsigned NOT NULL,
-  `value` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`useragent_id`,`day`),
-  KEY `count` (`value`)
-)
-TEXT
-		);
+        $this->createTable('stat_referrer_day', array(
+            'useragent_id' => $int,
+            'day' => $int,
+            'value' => $int,
+            'PRIMARY KEY (`useragent_id`,`day`)',
+            'KEY `count` (`count`)',
+        ));
 
-		$this->createTableDdl(<<<TEXT
-CREATE TABLE IF NOT EXISTS `stat_visits_day` (
-  `views` int(10) unsigned NOT NULL,
-  `day` int(10) unsigned NOT NULL,
-  `visits` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`day`,`views`),
-  KEY `views` (`views`),
-  KEY `day` (`day`)
-)
-TEXT
-		);
+        $this->createTable('stat_visits_day', array(
+            'views' => $int,
+            'day' => $int,
+            'visits' => $int,
+            'PRIMARY KEY (`day`,`views`)',
+            'KEY `views` (`views`)',
+            'KEY `day` (`day`)',
+        ));
 
 		$dirs = array('app.runtime', 'assets', 'data', 'data._source', 'data._tmp');
 		foreach ($dirs as $dir) {
