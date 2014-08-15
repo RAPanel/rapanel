@@ -389,7 +389,8 @@ class InstallController extends CController
 
         $this->createTable('stat_page', array(
             'id' => $id,
-            'url' => 'varchar(1024) NOT NULL',
+            'url' => 'text',
+            'hash' => 'char(32) NOT NULL',
             'type' => $tinyint,
             'expiration' => $lastmod,
             'KEY `url` (`url`(333))',
