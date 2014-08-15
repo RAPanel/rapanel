@@ -68,6 +68,7 @@ class InstallController extends CController
         ));
 
         $this->createTable('statistic', array(
+            'id' => $id,
             'time' => 'float(6,3) unsigned NOT NULL',
             'memory' => 'float(6,3) unsigned NOT NULL',
             'cpu' => 'float(6,3) unsigned NOT NULL',
@@ -79,6 +80,7 @@ class InstallController extends CController
             'url_referrer' => 'varchar(500) NOT NULL',
             'user_agent' => 'varchar(500) NOT NULL',
             'lastmod' => $lastmod,
+            'cache' => 'tinyint(1) NOT NULL',
         ));
 
         $this->createTable('module', array(
@@ -434,15 +436,15 @@ class InstallController extends CController
 
         $this->createTable('stat_referrer_day', array(
             'id' => $id,
-            'browser' => 'varchar(32) CHARACTER SET latin1 NOT NULL',
-            'version' => 'varchar(32) CHARACTER SET latin1 NOT NULL',
-            'isBot' => 'bool NOT NULL',
+            'browser' => 'varchar(32) NOT NULL',
+            'version' => 'varchar(32) NOT NULL',
+            'isBot' => 'tinyint(1) NOT NULL',
             'count' => $int,
             'enters' => $int,
             'KEY `is_bot` (`is_bot`)',
             'KEY `browser_version` (`browser_version`)',
             'KEY `browser` (`browser`)',
-        ));
+        ), array(), 'latin1');
 
         $this->createTable('stat_referrer_day', array(
             'useragent_id' => $int,
@@ -475,17 +477,17 @@ class InstallController extends CController
         return "CONSTRAINT `{$id}_{$to}_fk` FOREIGN KEY (`{$from}`) REFERENCES `{$to}` (`{$column}`) ON DELETE {$type} ON UPDATE {$type}";
     }
 
-    public function createTable($name, $data, $values = array())
+    public function createTable($name, $data, $values = array(), $charset = 'utf8')
     {
         $id = '';
         foreach (explode('_', $name) as $row) $id .= $row[0] . $row[1];
         foreach ($data as $key => $val) $data[$key] = str_replace('_fk` F', '_' . $id . '_fk` F', $val);
         if (!Yii::app()->db->createCommand('SHOW TABLES LIKE "' . $name . '"')->queryScalar())
-            Yii::app()->db->createCommand()->createTable($name, $data, 'ENGINE=InnoDB DEFAULT CHARSET=utf8');
+            Yii::app()->db->createCommand()->createTable($name, $data, 'ENGINE=InnoDB DEFAULT CHARSET=' . $charset);
         elseif ($this->update) {
             $last = false;
             $list = array();
-            foreach (Yii::app()->db->schema->tables['cache']->columns as $key => $val) {
+            foreach (Yii::app()->db->schema->tables[$name]->columns as $key => $val) {
                 $list[$key] = $val->dbType;
                 if (!$val->allowNull) $list[$key] .= ' NOT NULL';
                 if ($val->autoIncrement) $list[$key] .= ' AUTO_INCREMENT';
@@ -503,16 +505,5 @@ class InstallController extends CController
             $sql = 'insert ignore into `' . $name . '`(`' . implode('`,`', $list) . '`) values (' . implode('),(', $values) . ');';
             Yii::app()->db->createCommand($sql)->execute();
         }
-    }
-
-    public function createTableDdl($query)
-    {
-        Yii::app()->db->createCommand($query)->execute();
-    }
-
-    public function insertTable($table, $keys, $values)
-    {
-        $sql = 'insert  into `' . $table . '`(' . $keys . ') values (' . implode('),(', $values) . ');';
-        return Yii::app()->db->createCommand($sql)->execute();
     }
 }
