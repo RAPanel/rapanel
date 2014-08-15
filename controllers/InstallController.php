@@ -393,7 +393,7 @@ class InstallController extends CController
             'hash' => 'char(32) NOT NULL',
             'type' => $tinyint,
             'expiration' => $lastmod,
-            'KEY `url` (`url`(333))',
+            'KEY `hash` (`hash`)',
         ));
 
         $this->createTable('stat_page_day', array(
