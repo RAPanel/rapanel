@@ -387,6 +387,22 @@ class InstallController extends CController
             $this->fk('user_id', 'user'),
         ));
 
+        $this->actionStat();
+
+        $dirs = array('app.runtime', 'assets', 'data', 'data._source', 'data._tmp');
+        foreach ($dirs as $dir) {
+            $path = Yii::getPathOfAlias('webroot.' . $dir);
+            if (!file_exists($path)) mkdir($path);
+        }
+    }
+
+    public function actionStat()
+    {
+        $int = 'int(11) unsigned NOT NULL';
+        $id = $int . ' AUTO_INCREMENT PRIMARY KEY';
+        $tinyint = 'tinyint(3) unsigned NOT NULL';
+        $lastmod = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
+
         $this->createTable('stat_page', array(
             'id' => $id,
             'url' => 'text',
@@ -463,12 +479,6 @@ class InstallController extends CController
             'KEY `views` (`views`)',
             'KEY `day` (`day`)',
         ));
-
-        $dirs = array('app.runtime', 'assets', 'data', 'data._source', 'data._tmp');
-        foreach ($dirs as $dir) {
-            $path = Yii::getPathOfAlias('webroot.' . $dir);
-            if (!file_exists($path)) mkdir($path);
-        }
     }
 
     public function fk($from, $to, $type = 'CASCADE', $column = 'id')
