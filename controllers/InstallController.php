@@ -80,7 +80,8 @@ class InstallController extends CController
             'url_referrer' => 'varchar(500) NOT NULL',
             'user_agent' => 'varchar(500) NOT NULL',
             'lastmod' => $lastmod,
-            'cache' => 'tinyint(1) NOT NULL',
+            'KEY `session` (`session`)',
+            'KEY `lastmod` (`lastmod`)',
         ));
 
         $this->createTable('module', array(
@@ -416,7 +417,7 @@ class InstallController extends CController
             'page_id' => $int,
             'day' => $int,
             'avgCpu' => $int,
-            'avgTime' => 'float(6,3) unsigned NOT NULL',
+            'avgTime' => $int,
             'maxRam' => $int,
             'views' => $int,
             'exits' => $int,
@@ -431,7 +432,7 @@ class InstallController extends CController
         $this->createTable('stat_global_hour', array(
             'hour' => $id,
             'avgCpu' => $int,
-            'avgTime' => 'float(6,3) unsigned NOT NULL',
+            'avgTime' => $int,
             'maxRam' => $int,
             'views' => $int,
             'visits' => $int,
