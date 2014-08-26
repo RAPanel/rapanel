@@ -156,31 +156,14 @@ class ContentController extends RAdminController
         if ($type == 'category') {
             $model->is_category = 1;
         }
-	    if($clone) {
-		    if(method_exists($model, 'getCharacters')) {
-		        $model->getCharacters();
-			    if($model->hasCharacter('url'))
-				    $model->url = null;
-			    if($model->hasCharacter('title'))
-				    $model->title = null;
-			    if($model->hasCharacter('description'))
-				    $model->description = null;
-			    if($model->hasCharacter('keywords'))
-				    $model->keywords = null;
-			    $model->resetOld();
-		    }
-		    if($model->hasAttribute('lft')) {
-			    $model->lft = null;
-			    $model->rgt = null;
-			    $model->level = null;
-		    }
-		    $model->isNewRecord = true;
-		    $model->id = null;
-		    $model->scenario = 'insert';
-	    }
-
         $this->performAjaxValidation($model);
         if (isset($_POST[get_class($model)])) {
+	        if($clone !== false && property_exists($model, 'clone')) {
+		        $model->clone = $model->id;
+		        $model->isNewRecord = true;
+		        $model->id = null;
+		        $model->scenario = 'insert';
+	        }
             $model->attributes = $_POST[get_class($model)];
             if ($model->save()) {
                 if ($_GET['iframe']) exit('<script>parent.$.modal().close();</script>');
