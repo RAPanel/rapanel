@@ -415,6 +415,7 @@ class InstallController extends CController
             'last_action_time' => 'datetime NOT NULL',
             'first_action_time' => 'datetime NOT NULL',
             'location_ip' => 'varbinary(16) NOT NULL',
+            'action_id_ref' => $this->int,
             'total_time' => $this->smallint,
             'total_actions' => $this->smallint,
             'os' => 'char(3) NOT NULL',
@@ -429,11 +430,12 @@ class InstallController extends CController
             'action_id_name' => $this->int,
             'action_id_url' => $this->int,
             'action_id_event' => $this->int,
+            'time_cpu' => $this->smallint,
+            'time_exec' => $this->smallint,
+            'ram' => $this->smallint,
             'created' => $this->lastmod,
             $this->fk('visit_id', 'log_visit'),
-            $this->fk('action_id_name', 'log_action'),
             $this->fk('action_id_url', 'log_action'),
-            $this->fk('action_id_event', 'log_action'),
         ));
     }
 
