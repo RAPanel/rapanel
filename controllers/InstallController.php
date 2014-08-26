@@ -5,16 +5,18 @@ class InstallController extends CController
     public $lt;
     public $update;
 
+    private $int = 'int(11) unsigned NOT NULL';
+    private $pk = 'int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY';
+    private $binary = 'binary(8) NOT NULL';
+    private $tinyint = 'tinyint(3) unsigned NOT NULL';
+    private $smallint = 'smallint(6) unsigned NOT NULL';
+    private $lang = 'char(2) NOT NULL';
+    private $lastmod = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
+
     public function actionIndex()
     {
-        $int = 'int(11) unsigned NOT NULL';
-        $id = $int . ' AUTO_INCREMENT PRIMARY KEY';
-        $tinyint = 'tinyint(3) unsigned NOT NULL';
-        $lang = 'char(2) NOT NULL';
-        $lastmod = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
-
         $this->createTable('lang', array(
-            'id' => $lang . ' PRIMARY KEY',
+            'id' => $this->lang . ' PRIMARY KEY',
             'name' => 'varchar(50) NOT NULL',
             'tooltip' => 'varchar(255) NOT NULL',
         ), array(
@@ -24,30 +26,30 @@ class InstallController extends CController
 
         $this->createTable('cache', array(
             'id' => 'char(128) NOT NULL PRIMARY KEY',
-            'expire' => $int,
+            'expire' => $this->int,
             'value' => 'longblob NOT NULL',
             'KEY `expire` (`expire`)',
         ));
 
         $this->createTable('config', array(
-            'id' => $id,
-            'module_id' => $int,
+            'id' => $this->pk,
+            'module_id' => $this->int,
             'category' => 'varchar(64) NOT NULL',
             'name' => 'varchar(128) NOT NULL',
             'value' => 'varchar(256) NOT NULL',
-            'lastmod' => $lastmod,
+            'lastmod' => $this->lastmod,
         ));
 
         $this->createTable('session', array(
             'id' => 'char(32) NOT NULL PRIMARY KEY',
-            'expire' => $int,
+            'expire' => $this->int,
             'data' => 'longblob',
             'KEY `expire` (`expire`)',
         ));
 
         $this->createTable('message_source', array(
-            'id' => $id,
-            'language' => $lang,
+            'id' => $this->pk,
+            'language' => $this->lang,
             'category' => 'varchar(32) DEFAULT NULL',
             'message' => 'text',
             'UNIQUE KEY `category_message` (`category`,`message`(255),`language`)',
@@ -57,8 +59,8 @@ class InstallController extends CController
         ));
 
         $this->createTable('message_translation', array(
-            'id' => $int,
-            'language' => $lang,
+            'id' => $this->int,
+            'language' => $this->lang,
             'translation' => 'text',
             'PRIMARY KEY (`id`,`language`)',
             'KEY `id` (`id`)',
@@ -68,34 +70,34 @@ class InstallController extends CController
         ));
 
         $this->createTable('statistic', array(
-            'id' => $id,
+            'id' => $this->pk,
             'time' => 'float(6,3) unsigned NOT NULL',
             'memory' => 'float(6,3) unsigned NOT NULL',
             'cpu' => 'float(6,3) unsigned NOT NULL',
-            'referrer_id' => $int,
-            'page_id' => $int,
+            'referrer_id' => $this->int,
+            'page_id' => $this->int,
             'session' => 'char(32) NOT NULL',
             'ip' => 'varchar(50) NOT NULL',
             'url' => 'varchar(500) NOT NULL',
             'url_referrer' => 'varchar(500) NOT NULL',
             'user_agent' => 'varchar(500) NOT NULL',
-            'lastmod' => $lastmod,
+            'lastmod' => $this->lastmod,
             'KEY `session` (`session`)',
             'KEY `lastmod` (`lastmod`)',
         ));
 
         $this->createTable('module', array(
-            'id' => $id,
-            'num' => $int,
-            'status_id' => $tinyint,
-            'type_id' => $tinyint,
+            'id' => $this->pk,
+            'num' => $this->int,
+            'status_id' => $this->tinyint,
+            'type_id' => $this->tinyint,
             'name' => 'varchar(32) NOT NULL',
             'access' => 'varchar(64) NOT NULL',
             'url' => 'varchar(30) NOT NULL',
             'className' => 'varchar(255) NOT NULL',
             'groupName' => 'varchar(255) NOT NULL',
-            'lang_id' => $lang,
-            'lastmod' => $lastmod,
+            'lang_id' => $this->lang,
+            'lastmod' => $this->lastmod,
             'UNIQUE KEY `url` (`url`)',
             'KEY `num` (`num`)',
             'KEY `groupName` (`groupName`)',
@@ -119,12 +121,12 @@ class InstallController extends CController
         ));
 
         $this->createTable('user', array(
-            'id' => $id,
+            'id' => $this->pk,
             'username' => 'varchar(255) NOT NULL',
             'email' => 'varchar(255) NOT NULL',
             'password' => 'varchar(255) NOT NULL',
             'role' => 'varchar(32) NOT NULL',
-            'lastmod' => $lastmod,
+            'lastmod' => $this->lastmod,
             'created' => 'timestamp',
             'UNIQUE KEY `email` (`email`)',
             'KEY `username` (`username`)',
@@ -138,17 +140,17 @@ class InstallController extends CController
         ));
 
         $this->createTable('page', array(
-            'id' => $id,
-            'user_id' => $int,
-            'status_id' => $tinyint,
-            'module_id' => $int,
-            'parent_id' => $int,
-            'lft' => $int,
-            'rgt' => $int,
-            'level' => $tinyint,
-            'is_category' => $tinyint,
-            'lang_id' => $lang,
-            'lastmod' => $lastmod,
+            'id' => $this->pk,
+            'user_id' => $this->int,
+            'status_id' => $this->tinyint,
+            'module_id' => $this->int,
+            'parent_id' => $this->int,
+            'lft' => $this->int,
+            'rgt' => $this->int,
+            'level' => $this->tinyint,
+            'is_category' => $this->tinyint,
+            'lang_id' => $this->lang,
+            'lastmod' => $this->lastmod,
             'created' => 'timestamp',
             'KEY `id_user` (`id`,`user_id`)',
             'KEY `nested` (`lft`,`rgt`,`level`)',
@@ -169,8 +171,8 @@ class InstallController extends CController
         ));
 
         $this->createTable('character', array(
-            'id' => $id,
-            'num' => $int,
+            'id' => $this->pk,
+            'num' => $this->int,
             'url' => 'varchar(30) NOT NULL',
             'type' => 'varchar(30) NOT NULL',
             'name' => 'varchar(32) NOT NULL',
@@ -179,7 +181,7 @@ class InstallController extends CController
             'filter' => 'varchar(10) NOT NULL',
             'data' => 'text NOT NULL',
             'lang_id' => 'char(5) NOT NULL',
-            'lastmod' => $lastmod,
+            'lastmod' => $this->lastmod,
             'KEY `num` (`num`)',
             'UNIQUE KEY `url` (`url`)',
         ), array(
@@ -193,8 +195,8 @@ class InstallController extends CController
         ));
 
         $this->createTable('character_int', array(
-            'character_id' => $int,
-            'page_id' => $int,
+            'character_id' => $this->int,
+            'page_id' => $this->int,
             'value' => 'int DEFAULT NULL',
             'PRIMARY KEY (`character_id`,`page_id`)',
             'KEY `character_id` (`character_id`)',
@@ -205,8 +207,8 @@ class InstallController extends CController
         ));
 
         $this->createTable('character_tags_values', array(
-            'id' => $int . ' AUTO_INCREMENT',
-            'lang_id' => $lang,
+            'id' => $this->int . ' AUTO_INCREMENT',
+            'lang_id' => $this->lang,
             'value' => 'varchar(255) DEFAULT NULL',
             'PRIMARY KEY (`id`,`lang_id`)',
             'UNIQUE KEY `unique` (`lang_id`, `value`)',
@@ -215,9 +217,9 @@ class InstallController extends CController
         ));
 
         $this->createTable('character_tags', array(
-            'character_id' => $int,
-            'page_id' => $int,
-            'tag_id' => $int,
+            'character_id' => $this->int,
+            'page_id' => $this->int,
+            'tag_id' => $this->int,
             'PRIMARY KEY (`character_id`,`page_id`,`tag_id`)',
             'KEY `character_id` (`character_id`)',
             'KEY `page_id` (`page_id`)',
@@ -228,9 +230,9 @@ class InstallController extends CController
         ));
 
         $this->createTable('character_text', array(
-            'character_id' => $int,
-            'page_id' => $int,
-            'lang_id' => $lang,
+            'character_id' => $this->int,
+            'page_id' => $this->int,
+            'lang_id' => $this->lang,
             'value' => 'text DEFAULT NULL',
             'PRIMARY KEY (`character_id`,`page_id`,`lang_id`)',
             'KEY `character_id` (`character_id`)',
@@ -242,9 +244,9 @@ class InstallController extends CController
         ));
 
         $this->createTable('character_varchar', array(
-            'character_id' => $int,
-            'page_id' => $int,
-            'lang_id' => $lang,
+            'character_id' => $this->int,
+            'page_id' => $this->int,
+            'lang_id' => $this->lang,
             'value' => 'varchar(255) DEFAULT NULL',
             'PRIMARY KEY (`character_id`,`page_id`,`lang_id`)',
             'KEY `character_id` (`character_id`)',
@@ -263,16 +265,16 @@ class InstallController extends CController
         ));*/
 
         $this->createTable('form', array(
-            'id' => $id,
+            'id' => $this->pk,
             'type' => 'string',
             'info' => 'text',
-            'lastmod' => $lastmod,
+            'lastmod' => $this->lastmod,
             'KEY `type` (`type`)',
         ));
 
         $this->createTable('module_config', array(
-            'module_id' => $int,
-            'num' => $int,
+            'module_id' => $this->int,
+            'num' => $this->int,
             'name' => 'varchar(30) NOT NULL',
             'value' => 'varchar(30) NOT NULL',
             'PRIMARY KEY (`module_id`,`num`,`name`)',
@@ -280,30 +282,30 @@ class InstallController extends CController
         ));
 
         $this->createTable('order', array(
-            'id' => $id,
-            'user_id' => $int,
-            'status_id' => $tinyint,
-            'pay_status' => $tinyint,
-            'delivery_id' => $tinyint,
-            'pay_id' => $tinyint,
+            'id' => $this->pk,
+            'user_id' => $this->int,
+            'status_id' => $this->tinyint,
+            'pay_status' => $this->tinyint,
+            'delivery_id' => $this->tinyint,
+            'pay_id' => $this->tinyint,
             'total' => 'float(11,2) unsigned NOT NULL',
             'data' => 'longtext NOT NULL',
-            'lastmod' => $lastmod,
+            'lastmod' => $this->lastmod,
             'created' => 'timestamp',
         ));
 
         $this->createTable('user_photo', array(
-            'id' => $id,
-            'num' => $int,
-            'page_id' => $int,
-            'user_id' => $int,
+            'id' => $this->pk,
+            'num' => $this->int,
+            'page_id' => $this->int,
+            'user_id' => $this->int,
             'name' => 'varchar(255) NOT NULL',
-            'width' => $int,
-            'height' => $int,
+            'width' => $this->int,
+            'height' => $this->int,
             'about' => 'varchar(255) NOT NULL',
             'cropParams' => 'varchar(255) NOT NULL',
             'hash' => 'char(32) NOT NULL',
-            'lastmod' => $lastmod,
+            'lastmod' => $this->lastmod,
             'created' => 'timestamp',
             'KEY `num` (`num`)',
             'KEY `page_id` (`page_id`)',
@@ -315,7 +317,7 @@ class InstallController extends CController
         ));
 
         $this->createTable('price_type', array(
-            'id' => $id,
+            'id' => $this->pk,
             'name' => 'varchar(255) NOT NULL',
             'currency' => 'char(3) NOT NULL',
             'tax' => 'varchar(255) NOT NULL',
@@ -324,13 +326,13 @@ class InstallController extends CController
         ));
 
         $this->createTable('price', array(
-            'id' => $id,
-            'page_id' => $int,
-            'type_id' => $int,
+            'id' => $this->pk,
+            'page_id' => $this->int,
+            'type_id' => $this->int,
             'unit' => 'varchar(30) NOT NULL',
             'value' => 'float(11,2) unsigned NOT NULL',
-            'count' => $int,
-            'lastmod' => $lastmod,
+            'count' => $this->int,
+            'lastmod' => $this->lastmod,
             'KEY `page_id` (`page_id`)',
             'KEY `type_id` (`type_id`)',
             'KEY `count` (`count`)',
@@ -340,9 +342,9 @@ class InstallController extends CController
         ));
 
         $this->createTable('price_characters', array(
-            'price_id' => $int,
-            'character_id' => $int,
-            'value_id' => $int,
+            'price_id' => $this->int,
+            'character_id' => $this->int,
+            'value_id' => $this->int,
             'PRIMARY KEY (`price_id`,`character_id`,`value_id`)',
             'KEY `price_id` (`price_id`)',
             'KEY `character_id` (`character_id`)',
@@ -352,16 +354,16 @@ class InstallController extends CController
         ));
 
         $this->createTable('subscription', array(
-            'id' => $id,
+            'id' => $this->pk,
             'name' => 'varchar(150) NOT NULL',
             'email' => 'varchar(100) NOT NULL',
-            'value' => $tinyint,
-            'lastmod' => $lastmod,
+            'value' => $this->tinyint,
+            'lastmod' => $this->lastmod,
         ));
 
         $this->createTable('url', array(
             'value' => 'varchar(50) NOT NULL PRIMARY KEY',
-            'page_id' => $int,
+            'page_id' => $this->int,
             'current' => 'boolean',
             'KEY `page_id` (`page_id`)',
             'KEY `current` (`current`)',
@@ -369,7 +371,7 @@ class InstallController extends CController
         ));
 
         $this->createTable('user_setting', array(
-            'user_id' => $int,
+            'user_id' => $this->int,
             'name' => 'varchar(255) NOT NULL',
             'value' => 'varchar(255) NOT NULL',
             'PRIMARY KEY (`user_id`,`name`)',
@@ -379,16 +381,16 @@ class InstallController extends CController
         ));
 
         $this->createTable('user_token', array(
-            'user_id' => $int,
+            'user_id' => $this->int,
             'name' => 'varchar(32) NOT NULL',
             'value' => 'char(32) NOT NULL',
-            'expiration' => $lastmod,
+            'expiration' => $this->lastmod,
             'PRIMARY KEY (`user_id`,`name`)',
             'UNIQUE KEY `value` (`value`)',
             $this->fk('user_id', 'user'),
         ));
 
-        $this->actionStat();
+        $this->actionAnalytics();
 
         $dirs = array('app.runtime', 'assets', 'data', 'data._source', 'data._tmp');
         foreach ($dirs as $dir) {
@@ -397,88 +399,41 @@ class InstallController extends CController
         }
     }
 
-    public function actionStat()
+    public function actionAnalytics()
     {
-        $int = 'int(11) unsigned NOT NULL';
-        $id = $int . ' AUTO_INCREMENT PRIMARY KEY';
-        $tinyint = 'tinyint(3) unsigned NOT NULL';
-        $lastmod = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
-
-        $this->createTable('stat_page', array(
-            'id' => $id,
-            'url' => 'text',
-            'hash' => 'char(32) NOT NULL',
-            'type' => $tinyint,
-            'expiration' => $lastmod,
+        $this->createTable('log_action', array(
+            'id' => $this->pk,
+            'name' => 'text',
+            'hash' => $this->int,
+            'type' => $this->tinyint,
             'KEY `hash` (`hash`)',
         ));
 
-        $this->createTable('stat_page_day', array(
-            'page_id' => $int,
-            'day' => $int,
-            'avgCpu' => $int,
-            'avgTime' => $int,
-            'maxRam' => $int,
-            'views' => $int,
-            'exits' => $int,
-            'PRIMARY KEY (`page_id`,`day`)',
-            'KEY `page_id` (`page_id`)',
-            'KEY `day` (`day`)',
-            'KEY `views` (`views`)',
-            'KEY `exits` (`exits`)',
-            $this->fk('page_id', 'stat_page'),
+        $this->createTable('log_visit', array(
+            'id' => $this->pk,
+            'visitor_id' => $this->binary,
+            'last_action_time' => 'datetime NOT NULL',
+            'first_action_time' => 'datetime NOT NULL',
+            'location_ip' => 'varbinary(16) NOT NULL',
+            'total_time' => $this->smallint,
+            'total_actions' => $this->smallint,
+            'os' => 'char(3) NOT NULL',
+            'browser' => 'varchar(10) NOT NULL',
+            'browser_version' => 'varchar(20) NOT NULL',
         ));
 
-        $this->createTable('stat_global_hour', array(
-            'hour' => $id,
-            'avgCpu' => $int,
-            'avgTime' => $int,
-            'maxRam' => $int,
-            'views' => $int,
-            'visits' => $int,
-            'users' => $int,
-        ));
-
-        $this->createTable('stat_referrer_day', array(
-            'page_id' => $int,
-            'day' => $int,
-            'referrer_id' => $int,
-            'count' => $int,
-            'enters' => $int,
-            'PRIMARY KEY (`page_id`,`day`,`referrer_id`)',
-            'KEY `page_id` (`page_id`)',
-            'KEY `day` (`day`)',
-            'KEY `referrer_id` (`referrer_id`)',
-            $this->fk('page_id', 'stat_page'),
-        ));
-
-        $this->createTable('stat_referrer_day', array(
-            'id' => $id,
-            'browser' => 'varchar(32) NOT NULL',
-            'version' => 'varchar(32) NOT NULL',
-            'isBot' => 'tinyint(1) NOT NULL',
-            'count' => $int,
-            'enters' => $int,
-            'KEY `is_bot` (`is_bot`)',
-            'KEY `browser_version` (`browser_version`)',
-            'KEY `browser` (`browser`)',
-        ), array(), 'latin1');
-
-        $this->createTable('stat_referrer_day', array(
-            'useragent_id' => $int,
-            'day' => $int,
-            'value' => $int,
-            'PRIMARY KEY (`useragent_id`,`day`)',
-            'KEY `count` (`count`)',
-        ));
-
-        $this->createTable('stat_visits_day', array(
-            'views' => $int,
-            'day' => $int,
-            'visits' => $int,
-            'PRIMARY KEY (`day`,`views`)',
-            'KEY `views` (`views`)',
-            'KEY `day` (`day`)',
+        $this->createTable('log_hit', array(
+            'id' => $this->pk,
+            'visitor_id' => $this->binary,
+            'visit_id' => $this->int,
+            'action_id_name' => $this->int,
+            'action_id_url' => $this->int,
+            'action_id_event' => $this->int,
+            'created' => $this->lastmod,
+            $this->fk('visit_id', 'log_visit'),
+            $this->fk('action_id_name', 'log_action'),
+            $this->fk('action_id_url', 'log_action'),
+            $this->fk('action_id_event', 'log_action'),
         ));
     }
 
