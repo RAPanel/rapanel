@@ -300,7 +300,7 @@ class ContentController extends RAdminController
 
     public function fixPage($module_id, $is_category = null)
     {
-        $data = Page::model()->findAllByAttributes(compact('module_id'), array('select' => 'id, parent_id, lft, rgt, level', 'order' => 'lft, id DESC', 'condition'=>$is_category?'is_category>0':''));
+        $data = Page::model()->resetScope()->findAllByAttributes(compact('module_id'), array('select' => 'id, parent_id, lft, rgt, level', 'order' => 'lft, id DESC', 'condition'=>$is_category?'is_category>0':''));
         $items = array();
         foreach ($data as $row) {
             $items[$row->parent_id][] = $row;
