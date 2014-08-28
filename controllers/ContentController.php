@@ -95,8 +95,8 @@ class ContentController extends RAdminController
     {
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
-        if(!$type && in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)))
-            $this->redirect(array($this->action->id, 'url'=>$url, 'type'=>'folder'));
+        if (!$type && in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)))
+            $this->redirect(array($this->action->id, 'url' => $url, 'type' => 'folder'));
         /** @var $model RActiveRecord */
         $model = new $module->className($module->id);
         $model->resetScope();
@@ -141,7 +141,7 @@ class ContentController extends RAdminController
      */
     public function actionEdit($url = null, $id = null, $type = null, $clone = false)
     {
-        if(empty($url) && $id)
+        if (empty($url) && $id)
             $url = Module::get(Page::model()->resetScope()->findByPk($id)->module_id);
         /** @var $module Module */
         $module = Module::model()->findByAttributes(compact('url'));
@@ -158,12 +158,12 @@ class ContentController extends RAdminController
         }
         $this->performAjaxValidation($model);
         if (isset($_POST[get_class($model)])) {
-	        if($clone !== false && property_exists($model, 'clone')) {
-		        $model->clone = $model->id;
-		        $model->isNewRecord = true;
-		        $model->id = null;
-		        $model->scenario = 'insert';
-	        }
+            if ($clone !== false && property_exists($model, 'clone')) {
+                $model->clone = $model->id;
+                $model->isNewRecord = true;
+                $model->id = null;
+                $model->scenario = 'insert';
+            }
             $model->attributes = $_POST[get_class($model)];
             if ($model->save()) {
                 if ($_GET['iframe']) exit('<script>parent.$.modal().close();</script>');
@@ -186,9 +186,10 @@ class ContentController extends RAdminController
         $this->renderText($form->render());
     }
 
-	public function actionClone($url = null, $id = null, $type = null) {
-		$this->actionEdit($url, $id, $type, true);
-	}
+    public function actionClone($url = null, $id = null, $type = null)
+    {
+        $this->actionEdit($url, $id, $type, true);
+    }
 
     public function actionDelete($url, $id)
     {
@@ -222,7 +223,7 @@ class ContentController extends RAdminController
 
         $move = RActiveRecord::model($class)->findByPk($id);
         if ($move->hasAttribute('lft')) {
-            if($move->lft > 0 && $move->rgt > 0 ||  $move->level > 0){
+            if ($move->lft > 0 && $move->rgt > 0 || $move->level > 0) {
                 if ($before = Page::model()->findByPk($prev)) {
                     if ($move->parent_id == $before->id || $before->level > $move->level)
                         $result = $move->moveAsFirst($before);
@@ -232,7 +233,7 @@ class ContentController extends RAdminController
                     echo '4';
                     $result = $move->moveBefore($after);
                 }
-            }else{
+            } else {
                 $criteria = new CDbCriteria();
                 $criteria->compare('parent_id', $move->parent_id);
                 $criteria->compare('module_id', $move->module_id);
@@ -298,9 +299,17 @@ class ContentController extends RAdminController
         $this->fixPage($id);
     }
 
+    public function actionUpdate($id)
+    {
+        $model = Page::model()->findByPk($id);
+        $model->status_id = $model->status_id != 1;
+        $model->save(false, array('status_id'));
+        echo $model->status;
+    }
+
     public function fixPage($module_id, $is_category = null)
     {
-        $data = Page::model()->resetScope()->findAllByAttributes(compact('module_id'), array('select' => 'id, parent_id, lft, rgt, level', 'order' => 'lft, id DESC', 'condition'=>$is_category?'is_category>0':''));
+        $data = Page::model()->resetScope()->findAllByAttributes(compact('module_id'), array('select' => 'id, parent_id, lft, rgt, level', 'order' => 'lft, id DESC', 'condition' => $is_category ? 'is_category>0' : ''));
         $items = array();
         foreach ($data as $row) {
             $items[$row->parent_id][] = $row;
@@ -314,7 +323,7 @@ class ContentController extends RAdminController
     public function addIndex($parent_id, $items, $lft = 1)
     {
         set_time_limit(10);
-        if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) if($row->level || $row->rgt){
+        if (is_array($items[$parent_id])) foreach ($items[$parent_id] as $row) if ($row->level || $row->rgt) {
             $row->lft = $lft++;
             $lft = $this->addIndex($row->id, $items, $lft);
             $row->rgt = $lft++;
