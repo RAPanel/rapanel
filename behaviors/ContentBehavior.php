@@ -58,6 +58,8 @@ class ContentBehavior extends AdminBehavior
 
             $sort = false;
 
+            $columns = array_keys($this->getOwner()->tableSchema->columns);
+
             if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED) {
                 $criteria->order = '`t`.`is_category` DESC, `t`.`lft` ASC, `t`.`created` DESC, `t`.`id` DESC';
                 if (!isset($_GET['parent_id'])) $_GET['parent_id'] = $this->getModule()->config['parent_id'];
@@ -69,8 +71,10 @@ class ContentBehavior extends AdminBehavior
                 } else $criteria->addCondition('t.parent_id=:parent_id');
                 $criteria->addCondition('t.id!=:parent_id');
                 $criteria->params['parent_id'] = $_GET['parent_id'];
-            } elseif (in_array('num', array_keys($this->getOwner()->tableSchema->columns)))
+            } elseif (in_array('num', $columns))
                 $criteria->order = '`t`.`num` ASC, `t`.`id` ASC';
+            elseif (in_array('lft', $columns))
+                $criteria->order = '`t`.`lft` ASC, `t`.`id` DESC';
             else
                 $sort = array('defaultOrder' => 't.id DESC');
             $criteria->group = '`t`.`id`';
