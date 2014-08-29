@@ -161,6 +161,8 @@ class ContentBehavior extends AdminBehavior
             );
             if (method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes()))
                 $default[$column]['column']['type'] = 'arrayMode';
+            elseif(in_array($column, array('user_id', 'page_id', 'parent_id')))
+                $default[$column]['type'] = 'text';
             else
                 $default[$column]['type'] = $typeMap[$column];
         }
