@@ -412,8 +412,6 @@ class InstallController extends CController
         $this->createTable('log_visit', array(
             'id' => $this->pk,
             'visitor_id' => $this->binary,
-            'last_action_time' => $this->lastmod,
-            'first_action_time' => $this->lastmod,
             'location_ip' => 'varbinary(16) NOT NULL',
             'action_id_ref' => $this->int,
             'total_time' => $this->smallint,
@@ -421,6 +419,8 @@ class InstallController extends CController
             'os' => 'char(3) NOT NULL',
             'browser' => 'varchar(10) NOT NULL',
             'browser_version' => 'varchar(20) NOT NULL',
+            'lastmod' => $this->lastmod,
+            'created' => $this->lastmod,
         ));
 
         $this->createTable('log_hit', array(
