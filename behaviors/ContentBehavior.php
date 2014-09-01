@@ -137,16 +137,9 @@ class ContentBehavior extends AdminBehavior
 
     public function getColumns()
     {
-        /** @var $owner RActiveRecord */
         $owner = $this->getOwner();
 
         $default = array();
-        /*if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED)
-            $default['order'] = array(
-                'name' => '#',
-                'value' => '$data->id',
-            );
-        else*/
         if ($owner->hasAttribute('lft') || $owner->hasAttribute('num'))
             $default['order'] = array(
                 'name' => '#',
@@ -159,17 +152,19 @@ class ContentBehavior extends AdminBehavior
         if ($this->owner->hasAttribute('is_category')) $default['is_category'] = array(
             'value' => '$data->is_category?$data->is_category:$data->rgt>$data->lft+1',
         );
+        $typeMap = $owner->hasAttribute('module_id') ? Characters::map($owner->module_id, 'url', 'inputType') : array();
+        foreach($owner->tableSchema->columns as $key => $val) $typeMap[$key] = current(explode('(', $val->dbType));
         foreach ((array)$this->adminSettings['columns'] as $column) {
             $default[$column] = array(
                 'header' => $owner->getAttributeLabel($column),
-                'value' => '$data->' . $column . '',
+                'value' => $this->columnValue($column),
             );
-            if ($column == 'user_id') $default[$column]['value'] = '$data->user->username';
-            if ($column == 'page_id') $default[$column]['value'] = '$data->page->name';
-            if ($column == 'parent_id') $default[$column]['value'] = '$data->parent->name';
-            if ($column == 'status_id') $default[$column]['value'] = '$data->status';
             if (method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes()))
                 $default[$column]['column']['type'] = 'arrayMode';
+            elseif(in_array($column, array('user_id', 'page_id', 'parent_id')))
+                $default[$column]['type'] = 'text';
+            else
+                $default[$column]['type'] = $typeMap[$column];
         }
         $default['buttons'] = array(
             'header' => 'Действия',
@@ -178,6 +173,22 @@ class ContentBehavior extends AdminBehavior
             'buttons' => $this->getButtons(),
         );
         return $default;
+    }
+
+    public function columnValue($column)
+    {
+        switch ($column):
+            case 'user_id':
+                return '$data->user->username';
+            case 'page_id':
+                return '$data->page->name';
+            case 'parent_id':
+                return '$data->parent->name';
+            case 'status_id':
+                return '$data->status';
+            default:
+                return '$data->' . $column;
+        endswitch;
     }
 
     public function getButtons()
@@ -395,7 +406,7 @@ class ContentBehavior extends AdminBehavior
     }
 
     /**
-     * @return RActiveRecord.
+     * @return RActiveRecord|PageBase.
      */
     public function getOwner()
     {

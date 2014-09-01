@@ -1000,22 +1000,25 @@ section.main {
         }
       }
       &.status_id-column {
-        .status_hidden {
-          display: block;
+        .status_change{
+          display: inline-block;
           margin: auto;
           font-size: 0;
-          &:before {
-            content: '';
-            .sprite-ico-status-hidden();
+          padding: 3px;
+          margin-bottom: -3px;
+          &.status_hidden {
+            &:before{
+              .sprite-ico-status-hidden();
+            }
           }
-        }
-        .status_active {
-          display: block;
-          margin: auto;
-          font-size: 0;
-          &:before {
+          &.status_active {
+            &:before{
+              .sprite-status();
+            }
+          }
+          &:before{
             content: '';
-            .sprite-status();
+            float: left;
           }
         }
       }
