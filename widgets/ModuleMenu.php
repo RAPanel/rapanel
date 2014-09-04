@@ -42,8 +42,8 @@ class ModuleMenu extends CMenu
 				'visible' => Yii::app()->user->checkAccess('moderator'),
 			);
 		if (Yii::app()->hasComponent('analytics') && Yii::app()->getComponent('analytics')->enabled) {
-			$items['Статистика'][] = array('label' => 'Статистика посещений', 'url' => array('/' . $this->module . '/analytics/graph', 'dataSources' => 'hits,visits,visitors'));
-			$items['Статистика'][] = array('label' => 'Производительность', 'url' => array('/' . $this->module . '/analytics/graph', 'dataSources' => 'ram,cpu,execTime'));
+			$items['Статистика'][] = array('label' => 'Статистика посещений', 'url' => array('/' . $this->module . '/analytics/graph', 'dataSources' => 'hits,visits,visitors', 'graphZoom' => '1m'));
+			$items['Статистика'][] = array('label' => 'Производительность', 'url' => array('/' . $this->module . '/analytics/graph', 'dataSources' => 'ram,cpu,execTime', 'graphZoom' => '7d'));
 			$items['Статистика'][] = array('label' => 'Страницы', 'url' => array('/' . $this->module . '/analytics/pages'));
 			$items['Статистика'][] = array('label' => 'Продолжительность визита', 'url' => array('/' . $this->module . '/analytics/graph', 'dataSources' => ''));
 			$items['Статистика'][] = array('label' => 'Браузеры', 'url' => array('/' . $this->module . '/analytics/graph', 'dataSources' => ''));

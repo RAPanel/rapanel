@@ -56,12 +56,6 @@ $(function () {
 			ul.slideToggle(100);
 		}
 	});
-
-	$('.date-range-input').change(function() {
-		var datepicker = $(this).next('div');
-		datepicker.closest('form').submit();
-	});
-
 });
 
 function bannerCreate() {
