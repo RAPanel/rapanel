@@ -48,13 +48,7 @@ class ContentBehavior extends AdminBehavior
                     $criteria->with[$with] = array('together' => false);
                 }
 
-            if ($_GET['limit']) {
-                $_GET['myPage'] = floor($_GET['start'] / $_GET['limit']) + 1;
-                $pagination = array(
-                    'pageSize' => $_GET['limit'],
-                    'pageVar' => 'myPage',
-                );
-            } else $pagination = false;
+            $pagination = false;
 
             $sort = false;
 
@@ -78,7 +72,12 @@ class ContentBehavior extends AdminBehavior
             else
                 $sort = array('defaultOrder' => 't.id DESC');
             $criteria->group = '`t`.`id`';
-            $criteria->limit = 50;
+
+            $page = isset($_GET['page']) ? $_GET['page'] * 1000 : 0;
+            $start = isset($_GET['start']) ? $_GET['start'] : 0;
+            $limit = isset($_GET['limit']) ? $_GET['limit'] : 50;
+            $criteria->limit = $limit;
+            $criteria->offset = $page + $start;
 
             $criteria = $this->getSearchCriteria($criteria);
 
