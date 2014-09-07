@@ -1,5 +1,6 @@
 <?php
 
+YiiBase::import('core.controllers.RController');
 abstract class RAdminController extends RController
 {
     public $layout = 'rapanel.views.layouts.main';
