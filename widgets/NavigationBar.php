@@ -37,7 +37,7 @@ class NavigationBar extends TbNavbar {
 		}
 		$this->items = array(
 			array(
-				'class' => 'admin.widgets.ModulesMenu',
+				'class' => 'rapanel.widgets.ModulesMenu',
 			),
 			$languagesMenu,
 			array(

@@ -31,22 +31,22 @@ class RFormInputElement extends CFormInputElement
 				),
 			),
 			'boolean' => array(
-				'class' => 'admin.extensions.rere.BooleanInput',
+				'class' => 'rapanel.extensions.rere.BooleanInput',
 			),
 			'checkboxlist' => array(
-				'class' => 'admin.extensions.rere.RCheckboxList',
+				'class' => 'rapanel.extensions.rere.RCheckboxList',
 			),
 			'autocomplete' => array(
 				'class' => 'rere.RAutoComplete.RAutoCompleteWidget',
 			),
 			'select' => array(
-				'class' => 'admin.extensions.rere.SelectInput',
+				'class' => 'rapanel.extensions.rere.SelectInput',
 			),
 			'date' => array(
-				'class' => 'admin.extensions.rere.DateField',
+				'class' => 'rapanel.extensions.rere.DateField',
 			),
 			'price' => array(
-				'class' => 'admin.extensions.rere.PriceField',
+				'class' => 'rapanel.extensions.rere.PriceField',
 			),
 		);
 	}

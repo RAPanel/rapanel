@@ -30,7 +30,7 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
 <? if (Yii::app()->user->checkAccess('moderator')): ?>
     <aside class="main">
         <div class="wrapper">
-            <? $this->widget('admin.widgets.ModuleMenu') ?>
+            <? $this->widget('rapanel.widgets.ModuleMenu') ?>
         </div>
         <div class="actions">
             <span class="hide"></span>
@@ -48,6 +48,6 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
     <div class="contentLoading"></div>
 
 <?
-$this->widget('admin.widgets.FlashWidget');
+$this->widget('rapanel.widgets.FlashWidget');
 
 $this->endContent();
