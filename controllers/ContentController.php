@@ -220,28 +220,30 @@ class ContentController extends RAdminController
 
         preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->user->returnUrl, $url);
         $class = Module::model()->findByPk(Module::getIdByUrl($url[1]))->className;
+        $base = RActiveRecord::model($class)->resetScope();
 
-        $move = RActiveRecord::model($class)->findByPk($id);
+        $move = $base->findByPk($id);
         if ($move->hasAttribute('lft')) {
             if ($move->lft > 0 && $move->rgt > 0 || $move->level > 0) {
+                /** @var $move NestedSetBehavior */
                 if ($before = Page::model()->findByPk($prev)) {
                     if ($move->parent_id == $before->id || $before->level > $move->level)
                         $result = $move->moveAsFirst($before);
                     elseif ($move->id != $before->parent_id)
                         $result = $move->moveAfter($before);
                 } elseif ($after = Page::model()->findByPk($next)) {
-                    echo '4';
                     $result = $move->moveBefore($after);
                 }
             } else {
                 $criteria = new CDbCriteria();
+                $criteria->compare('level', $move->level);
                 $criteria->compare('parent_id', $move->parent_id);
                 $criteria->compare('module_id', $move->module_id);
                 $criteria->compare('is_category', 0);
-                $before = RActiveRecord::model($class)->findByPk($prev, $criteria);
-                $after = RActiveRecord::model($class)->findByPk($next, $criteria);
+                $before = $base->findByPk($prev, $criteria);
+                $after = $base->findByPk($next, $criteria);
                 if (!$before) {
-                    RActiveRecord::model($class)->updateCounters(array('lft' => 1), $criteria);
+                    $base->updateCounters(array('lft' => 1), $criteria);
                     $move->lft = 0;
                     $result = $move->save(false, array('lft'));
                 } elseif (!$after) {
@@ -253,7 +255,7 @@ class ContentController extends RAdminController
                         $criteria->order = 'lft, id DESC';
                         $criteria->addCondition('lft>' . $before->lft);
                         $criteria->addCondition('lft=' . $before->lft . ' AND id<' . $before->id, 'OR');
-                        RActiveRecord::model($class)->updateCounters(array('lft' => $count), $criteria);
+                        $base->updateCounters(array('lft' => $count), $criteria);
                     }
                     $move->lft = $before->lft + 1;
                     $result = $move->save(false, array('lft'));
@@ -261,10 +263,10 @@ class ContentController extends RAdminController
             }
 
         } elseif ($move->hasAttribute('num')) {
-            $before = RActiveRecord::model($class)->findByPk($prev);
-            $after = RActiveRecord::model($class)->findByPk($next);
+            $before = $base->findByPk($prev);
+            $after = $base->findByPk($next);
             if (!$before) {
-                RActiveRecord::model($class)->updateCounters(array('num' => 1));
+                $base->updateCounters(array('num' => 1));
                 $move->num = 0;
                 $result = $move->save(false, array('num'));
             } elseif (!$after) {
@@ -276,7 +278,7 @@ class ContentController extends RAdminController
                     $criteria = new CDbCriteria(array('order' => 'num, id'));
                     $criteria->addCondition('num>' . $before->num);
                     $criteria->addCondition('num=' . $before->num . ' AND id>' . $before->id, 'OR');
-                    RActiveRecord::model($class)->updateCounters(array('num' => $count), $criteria);
+                    $base->updateCounters(array('num' => $count), $criteria);
                 }
                 $move->num = $before->num + 1;
                 $result = $move->save(false, array('num'));
