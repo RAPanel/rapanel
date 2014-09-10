@@ -252,16 +252,14 @@ class ContentController extends RAdminController
                 } else {
                     if ($after->lft - $before->lft < 2) {
                         $count = -($after->lft - $before->lft - 2);
+                        $criteria->addCondition('(lft>' . $before->lft . ') OR (lft=' . $before->lft . ' AND id<' . $before->id . ')');
                         $criteria->order = 'lft, id DESC';
-                        $criteria->addCondition('lft>' . $before->lft);
-                        $criteria->addCondition('lft=' . $before->lft . ' AND id<' . $before->id, 'OR');
                         $base->updateCounters(array('lft' => $count), $criteria);
                     }
                     $move->lft = $before->lft + 1;
                     $result = $move->save(false, array('lft'));
                 }
             }
-
         } elseif ($move->hasAttribute('num')) {
             $before = $base->findByPk($prev);
             $after = $base->findByPk($next);
@@ -276,8 +274,7 @@ class ContentController extends RAdminController
                 if ($after->num - $before->num < 2) {
                     $count = -($after->num - $before->num - 2);
                     $criteria = new CDbCriteria(array('order' => 'num, id'));
-                    $criteria->addCondition('num>' . $before->num);
-                    $criteria->addCondition('num=' . $before->num . ' AND id>' . $before->id, 'OR');
+                    $criteria->addCondition('(num>' . $before->num . ') OR (num=' . $before->num . ' AND id>' . $before->id. ')');
                     $base->updateCounters(array('num' => $count), $criteria);
                 }
                 $move->num = $before->num + 1;
