@@ -147,7 +147,16 @@ class ContentController extends RAdminController
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
         /** @var $model RActiveRecord */
-        $model = RActiveRecord::model($module->className)->findByPk($id);
+	    $model = RActiveRecord::model($module->className);
+	    if(is_array($model->tableSchema->primaryKey)) {
+		    $parts = explode("--", $id);
+		    $pk = array();
+		    foreach($model->tableSchema->primaryKey as $name) {
+			    $pk[$name] = array_shift($parts);
+		    }
+	    } else
+		    $pk = $id;
+        $model = $model->findByPk($pk);
         if (empty($model)) $model = new $module->className('insert');
         else $model->scenario = 'edit';
         /** @var $model RActiveRecord|ContentBehavior */
