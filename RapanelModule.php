@@ -2,19 +2,22 @@
 
 class RapanelModule extends CWebModule
 {
-    public $layout;
-    public $assetsDir;
-    public $defaultController = 'module';
+	public $layout;
+	public $assetsDir;
+	public $defaultController = 'module';
+	private $_oldErrorAction;
 
-    public function init()
-    {
-        $this->publishAssets();
-	    Yii::app()->errorHandler->errorAction = '/rapanel/module/error';
-        parent::init();
-    }
+	public function beforeControllerAction($controller, $action)
+	{
+		$this->_oldErrorAction = Yii::app()->errorHandler->errorAction;
+		Yii::app()->errorHandler->errorAction = '/rapanel/module/error';
+		return parent::beforeControllerAction($controller, $action);
+	}
 
-    public function publishAssets()
-    {
-        $this->assetsDir = Yii::app()->assetManager->publish(YiiBase::getPathOfAlias('rapanel.assets'), false, -1, YII_DEBUG);
-    }
+	public function afterControllerAction($controller, $action)
+	{
+		Yii::app()->errorHandler->errorAction = $this->_oldErrorAction;
+		parent::afterControllerAction($controller, $action);
+	}
+
 }
