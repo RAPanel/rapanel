@@ -4,6 +4,8 @@ class ModuleBehavior extends AdminBehavior
 {
     public function getClassList()
     {
+	    if(Yii::app()->hasComponent('moduleMapper'))
+	        return Yii::app()->moduleMapper->getModuleClasses();
         $result = array();
         $list = array(
             Yii::getPathOfAlias('application.models') . DIRECTORY_SEPARATOR,
