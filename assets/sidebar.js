@@ -1,4 +1,4 @@
-$.prototype.sidebar = function() {
+$.fn.sidebar = function() {
 	var block = $(this);
 	var minMenuWidth = $('.wrapper>ul').width();
 	var initialMenuWidth = block.width();
