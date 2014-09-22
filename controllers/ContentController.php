@@ -104,17 +104,21 @@ class ContentController extends RAdminController
         $model->attachBehavior('contentBehavior', 'ContentBehavior');
         $model->setModule($module);
         if ($type == 'categories') $model->setIsCategory(true);
+
+        $widget = $this->createWidget('ext.RSlickGrid.RSlickGrid', array(
+            'id' => 'gridItems',
+            'dataProvider' => $model->contentBehavior->getDataProvider(),
+            'columns' => $model->contentBehavior->getColumns(),
+//            'ajaxUrl'       => array($this->action->id, 'url'=>$url, 'ajax'=>1),
+            'orderUrl' => array('saveOrder', 'url' => $url),
+        ), 1);
+
         if (Yii::app()->request->isAjaxRequest) {
-            $provider = $model->contentBehavior->getDataProvider();
-            Yii::import('ext.RSlickGrid.RSlickGrid');
-            echo json_encode(array(
-                'hits' => $provider->getTotalItemCount(),
-                'request' => array(
-                    'start' => (int)$_GET['start'],
-                ),
-                'results' => CJavaScript::jsonDecode(RSlickGrid::getValues($provider, $model->contentBehavior->getColumns())),
-            ));
-        } else $this->render($this->action->id, compact('model', 'module', 'url'));
+            echo json_encode($widget->formattedData);
+            Yii::app()->end();
+        }
+
+        $this->render($this->action->id, compact('widget', 'model', 'module', 'url'));
     }
 
     /**
@@ -147,15 +151,15 @@ class ContentController extends RAdminController
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
         /** @var $model RActiveRecord */
-	    $model = RActiveRecord::model($module->className);
-	    if(is_array($model->tableSchema->primaryKey)) {
-		    $parts = explode("--", $id);
-		    $pk = array();
-		    foreach($model->tableSchema->primaryKey as $name) {
-			    $pk[$name] = array_shift($parts);
-		    }
-	    } else
-		    $pk = $id;
+        $model = RActiveRecord::model($module->className);
+        if (is_array($model->tableSchema->primaryKey)) {
+            $parts = explode("--", $id);
+            $pk = array();
+            foreach ($model->tableSchema->primaryKey as $name) {
+                $pk[$name] = array_shift($parts);
+            }
+        } else
+            $pk = $id;
         $model = $model->findByPk($pk);
         if (empty($model)) $model = new $module->className('insert');
         else $model->scenario = 'edit';
@@ -229,6 +233,7 @@ class ContentController extends RAdminController
 
         preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->user->returnUrl, $url);
         $class = Module::model()->findByPk(Module::getIdByUrl($url[1]))->className;
+        if (!$class) $class = 'Module';
         $base = RActiveRecord::model($class)->resetScope();
 
         $move = $base->findByPk($id);
@@ -283,7 +288,7 @@ class ContentController extends RAdminController
                 if ($after->num - $before->num < 2) {
                     $count = -($after->num - $before->num - 2);
                     $criteria = new CDbCriteria(array('order' => 'num, id'));
-                    $criteria->addCondition('(num>' . $before->num . ') OR (num=' . $before->num . ' AND id>' . $before->id. ')');
+                    $criteria->addCondition('(num>' . $before->num . ') OR (num=' . $before->num . ' AND id>' . $before->id . ')');
                     $base->updateCounters(array('num' => $count), $criteria);
                 }
                 $move->num = $before->num + 1;
@@ -307,10 +312,15 @@ class ContentController extends RAdminController
         $this->fixPage($id);
     }
 
-    public function actionUpdate($id)
+    public function actionUpdate($id, $href = null)
     {
-        $model = Page::model()->findByPk($id);
-        $model->status_id = $model->status_id != 1;
+        preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->user->returnUrl, $url);
+        $class = Module::model()->findByPk(Module::getIdByUrl($url[1]))->className;
+        if (!$class) $class = 'Module';
+        $base = RActiveRecord::model($class)->resetScope();
+
+        $model = $base->findByPk($id);
+        $model->status_id = (int)$model->status_id != 1;
         $model->save(false, array('status_id'));
         echo $model->status;
     }
@@ -338,5 +348,34 @@ class ContentController extends RAdminController
             $row->saveNode(false, array('lft', 'rgt'));
         }
         return $lft;
+    }
+
+    public function actionMany($id, $url = null, $type)
+    {
+        if (is_null($url)) {
+            preg_match('|url=([^&]+)|', Yii::app()->user->returnUrl, $url);
+            $url = $url[1];
+        }
+        $class = Module::model()->findByPk(Module::getIdByUrl($url))->className;
+        if (is_null($class)) $class = 'Module';
+        $base = RActiveRecord::model($class)->resetScope();
+        $list = $base->findAllByPk(CJSON::decode($id));
+
+        $result = array();
+        foreach ($list as $row)
+            switch ($type):
+                case 'show':
+                    $row->status_id = 1;
+                    $result[] = $row->save(false, array('status_id'));
+                    break;
+                case 'hide':
+                    $row->status_id = 0;
+                    $result[] = $row->save(false, array('status_id'));
+                    break;
+                case 'delete':
+                    $result[] = $row->delete();
+                    break;
+            endswitch;
+        var_dump($result);
     }
 }

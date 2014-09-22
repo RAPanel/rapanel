@@ -56,7 +56,7 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
                 foreach ($items as $row) if (!isset($row['visible']) || $row['visible'] == 1) $i++;
                 if ($i > 1) $this->widget('zii.widgets.CMenu', array(
                     'htmlOptions' => array('class' => 'listAction'),
-                    'items' => array(compact('items')),
+                    'items' => array(array('itemOptions' => array('class' => 'dropdown', 'data-toggle' => 'dropdown'), 'items' => $items)),
                 ));?>
             </div>
 
@@ -91,7 +91,7 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
                 foreach ($items as $row) if (!isset($row['visible']) || $row['visible'] == 1) $i++;
                 if ($i > 1) $this->widget('zii.widgets.CMenu', array(
                     'htmlOptions' => array('class' => 'listAction'),
-                    'items' => array(compact('items')),
+                    'items' => array(array('itemOptions' => array('class' => 'dropdown', 'data-toggle' => 'dropdown'), 'items' => $items)),
                 ));?>
             </div>
         </div>
@@ -105,18 +105,9 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
                 ?></div>
         </div>
     </div>
-    <div class="grid"><?
-        $this->widget('ext.RSlickGrid.RSlickGrid' /*'zii.widgets.grid.CGridView'*/, array(
-            'id' => 'contentGrid',
-            'dataProvider' => $model->getDataProvider(),
-            'columns' => $model->getColumns(),
-            'htmlOptions' => array(
-                'data-url' => $this->createUrl('saveOrder', compact('url')),
-            ),
-        ))
-        ?></div>
+    <div class="grid"><? $widget->run(); ?></div>
 
-    <div class="gridActions row justi" style="display: none">
+    <div class="gridActions row justi">
         <?
         //        if (method_exists($model, 'status'))
         //            echo CHtml::dropDownList('status_id', null, $model::status(), array('empty' => 'сменить статус', 'onchange' => 'fastChange(this)'));
@@ -127,34 +118,30 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
                 ?>
             </div>
             <div class="edit-delete">
-                <button class="edit"></button>
-                <button class="delete"></button>
+                <button type="button" class="edit"></button>
+                <button type="button" class="delete"></button>
             </div>
             <div class="actionList">
                 <ul>
-                    <li><a href="#">Создать</a></li>
-                    <li><a href="#">Редактировать</a></li>
-                    <li><a href="#">Удалить</a></li>
+                    <li>
+                        <button type="button" class="hide">скрыть</button>
+                    </li>
+                    <li>
+                        <button type="button" class="show">активировать</button>
+                    </li>
+                    <li>
+                        <button type="button" class="edit">редактировать</button>
+                    </li>
+                    <li>
+                        <button type="button" class="delete">удалить</button>
+                    </li>
                 </ul>
-                <button class="action">действия</button>
+                <button type="button" class="action dropdown" data-toggle="dropdown">действия</button>
             </div>
         </div>
-        <div class="pagination" style="display: none">
-            <div class="pager">
-                <ul>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#">6</a></li>
-                    <li><a href="#">7</a></li>
-                    <li><a href="#">...</a></li>
-                    <li><a href="#">22</a></li>
-                </ul>
-            </div>
+        <!--<div class="pagination">
             <button class="up"></button>
-        </div>
+        </div>-->
     </div>
     <div class="clearfix"></div>
 <?

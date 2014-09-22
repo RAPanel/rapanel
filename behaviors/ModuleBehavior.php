@@ -11,7 +11,7 @@ class ModuleBehavior extends AdminBehavior
             Yii::getPathOfAlias('application.models') . DIRECTORY_SEPARATOR,
             Yii::getPathOfAlias('ext._rere.models') . DIRECTORY_SEPARATOR,
         );
-        foreach($list as $dir) foreach (scandir($dir) as $file)
+        foreach ($list as $dir) foreach (scandir($dir) as $file)
             if (is_file($dir . $file)) {
                 $class = current(explode('.', $file));
                 $result[$class] = $class;
@@ -22,8 +22,30 @@ class ModuleBehavior extends AdminBehavior
     public function getDataProvider()
     {
         $criteria = new CDbCriteria();
+
+        if (!empty($_REQUEST['sSearch'])) {
+            $criteria->addSearchCondition('name', $_REQUEST['sSearch']);
+        }
+
         $criteria->addCondition('`t`.`id` > 0');
         $criteria->order = '`t`.`num` ASC';
+
+        if (($q = $_GET['q']) && $q != '*') {
+            $condition = array();
+            foreach ($this->getOwner()->tableSchema->columns as $row) {
+                if (in_array(current(explode('(', $row->dbType)), array('varchar', 'text'))) {
+                    $condition[] = "t.{$row->name} LIKE :textSearch";
+                    $criteria->params['textSearch'] = "%{$q}%";
+                } elseif (in_array(current(explode('(', $row->dbType)), array('timestamp'))) {
+                    continue;
+                } else {
+                    if (!is_numeric($q)) continue;
+                    $condition[] = "t.{$row->name}=:intSearch";
+                    $criteria->params['intSearch'] = $q;
+                }
+            }
+            $criteria->addCondition(implode(' OR ', $condition));
+        }
 
         return new CActiveDataProvider($this->owner, array(
             'criteria' => $criteria,
@@ -35,30 +57,57 @@ class ModuleBehavior extends AdminBehavior
     public function getColumns()
     {
         return array(
-            array(
-                'class' => 'CCheckBoxColumn',
-                'selectableRows' => 9999,
+            'order' => array(
+                'name' => '#',
+                'value' => '$data->num',
+                'type' => 'order',
+                'cssClassExpression' => '"sorterHandler"',
             ),
-            'id',
-            array(
+            'checkbox'=>array(
+                'class' => 'CCheckBoxColumn',
+                'selectableRows' => 99999,
+            ),
+            'id' => array(
+                'name' => 'id',
+                'type' => $this->getTypeFromList('id'),
+            ),
+            'status_id' => array(
                 'name' => 'status_id',
                 'value' => '$data->status',
+                'type' => $this->getTypeFromList('status_id'),
             ),
-            array(
+            'type_id' => array(
                 'name' => 'type_id',
                 'value' => '$data->type',
+                'type' => $this->getTypeFromList('type_id'),
             ),
-            'url',
-            'groupName',
-            'name',
-            'className',
-            array(
+            'url' => array(
+                'name' => 'url',
+                'type' => $this->getTypeFromList('url'),
+            ),
+            'groupName' => array(
+                'name' => 'groupName',
+                'type' => $this->getTypeFromList('groupName'),
+            ),
+            'name' => array(
+                'name' => 'name',
+                'type' => $this->getTypeFromList('name'),
+            ),
+            'className' => array(
+                'name' => 'className',
+                'type' => $this->getTypeFromList('className'),
+            ),
+            'lastmod' => array(
+                'name' => 'lastmod',
+                'type' => $this->getTypeFromList('lastmod'),
+            ),
+            'buttons'=>array(
                 'header' => 'Действия',
                 'class' => 'CButtonColumn',
                 'template' => '{edit} {config}',
                 'buttons' => array(
                     'edit' => array(
-                        'label' => 'edit',
+                        'label' => 'Edit',
                         'url' => 'CHtml::normalizeUrl(array("edit", "url"=>$data->url))',
                         'options' => array(
                             'onclick' => 'modalIFrame(this);return false;',
@@ -66,7 +115,7 @@ class ModuleBehavior extends AdminBehavior
                         ),
                     ),
                     'config' => array(
-                        'label' => 'config',
+                        'label' => 'Config',
                         'url' => 'CHtml::normalizeUrl(array("config", "url"=>$data->url))',
                         'options' => array(
                             'onclick' => 'modalIFrame(this);return false;',
@@ -181,7 +230,7 @@ class ModuleBehavior extends AdminBehavior
             'items' => array(
                 'view' => 'Просмотр',
                 'edit' => 'Редактирование',
-	            'clone' => 'Клонирование',
+                'clone' => 'Клонирование',
                 'delete' => 'Удаление',
             ),
         );

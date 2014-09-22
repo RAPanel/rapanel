@@ -23,7 +23,15 @@
 
 html {
 
+}
 
+table {
+  table-layout: fixed;
+}
+
+td {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body {
@@ -39,7 +47,6 @@ input, textarea, select, button {
   font-size: 14px;
   font-family: "Trebuchet MS", "Helvetica Neue", "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
 }
-
 
 input[type="checkbox"], input[type="checkbox"] + label {
   cursor: pointer;
@@ -80,6 +87,11 @@ header.main {
         }
         &:first-child:before {
           content: none;
+        }
+        &.open {
+          ul {
+            display: block;
+          }
         }
         ul {
           position: absolute;
@@ -183,6 +195,31 @@ aside.main {
       display: block;
       font-size: 10px;
       text-align: center;
+      &:hover, &.active {
+        span {
+          background: @colorGrey3b;
+          color: #808080;
+        }
+      }
+      &:hover {
+        span:before {
+          .sprite-otherHover();
+        }
+        > ul {
+          z-index: 1;
+        }
+      }
+      &.active {
+        span {
+          color: @colorGreen;
+          &:before {
+            .sprite-otherActive();
+          }
+        }
+        > ul {
+          display: block;
+        }
+      }
       span {
         padding: 5px;
         cursor: pointer;
@@ -198,9 +235,7 @@ aside.main {
           content: '';
           display: block !important;
           margin: 5px auto;
-        }
-        &:hover {
-          color: #808080;
+          .sprite-other();
         }
       }
       &.menu-stranici-saita {
@@ -288,7 +323,7 @@ aside.main {
           }
         }
       }
-      &.menu-statistic {
+      &.menu-statistika {
         span {
           &:before {
             .sprite-statistics();
@@ -303,25 +338,6 @@ aside.main {
           span:before {
             .sprite-statisticsActive();
           }
-        }
-      }
-      &:hover, &.active {
-        span {
-          background: @colorGrey3b;
-          color: #808080;
-        }
-      }
-      &:hover {
-        > ul {
-          z-index: 1;
-        }
-      }
-      &.active {
-        span {
-          color: @colorGreen;
-        }
-        > ul {
-          display: block;
         }
       }
       > ul {
@@ -421,51 +437,22 @@ section.main {
     }
   }
   .gridActions {
-    //    display: none;
+    display: none;
+    position: absolute;
+    margin: 0;
     font-size: 0;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    width: 100%;
+    z-index: 11;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
     .actions {
+      margin-left: 17px;
       float: left;
     }
     .pagination {
       float: right;
-    }
-    .checkAll {
-      background: @colorGreyef;
-      .inline-block(middle);
-      .border-radius(2px);
-      width: 92px;
-      height: 34px;
-      line-height: 34px;
-      text-align: center;
-      margin-right: 10px;
-      input[type="checkbox"] {
-        position: absolute;
-        left: -9999px;
-      }
-      input[type="checkbox"] + label {
-        font-size: 12px;
-        color: #9b9c9e;
-        display: block;
-        &:before {
-          content: "";
-          .sprite-checkbox();
-          position: relative;
-          top: -1px;
-          margin-right: 7px;
-        }
-      }
-      input[type="checkbox"]:hover + label {
-        color: @colorGreen;
-        &:before {
-          .sprite-checkboxHover();
-        }
-      }
-      input[type="checkbox"]:checked + label {
-        &:before {
-          .sprite-checkboxChecked();
-        }
-      }
     }
     .edit-delete {
       .inline-block(middle);
@@ -513,34 +500,49 @@ section.main {
       .inline-block(middle);
       font-size: 0;
       position: relative;
-      &:hover {
-        ul {
-          display: block;
-        }
-      }
       ul {
         list-style: none;
         margin: 0;
         padding: 0;
         .box-sizing(border-box);
+        background: #FFFFFF;
         position: absolute;
-        bottom: 34px;
+        bottom: 35px;
         z-index: 10;
         display: none;
+        .box-shadow(0 0 2px 2px rgba(0, 0, 0, 0.15));
         li {
-          font-size: 14px;
+          font-size: 12px;
+          border-bottom: 1px solid #e8e8e8;
+          &:last-child {
+            border: none;
+          }
         }
-        a {
+        button {
           display: block;
+          width: 100%;
+          border: none;
+          background: none;
           line-height: 34px;
-          padding: 3px 20px;
-          background: @colorGreyef;
-          color: @colorGrey9;
+          color: #666666;
+          text-align: left;
           text-decoration: none;
-          text-transform: uppercase;
+          text-transform: none;
           &:hover {
             background: @colorGreen;
             color: #ffffff;
+          }
+        }
+      }
+      &.open {
+        ul {
+          display: block;
+        }
+        .action {
+          background: @colorGreen;
+          color: #ffffff;
+          &:before {
+            .sprite-arrow-up-white();
           }
         }
       }
@@ -561,7 +563,7 @@ section.main {
         background: @colorGreen;
         color: #ffffff;
         &:before {
-          .sprite-arrow-up-white();
+          .sprite-arrow-down-white();
         }
       }
       &:before {
@@ -591,6 +593,43 @@ section.main {
         position: absolute;
         top: 12px;
         right: 11px;
+      }
+    }
+    .checkAll {
+      background: @colorGreyef;
+      .inline-block(middle);
+      .border-radius(2px);
+      width: 92px;
+      height: 34px;
+      line-height: 34px;
+      text-align: center;
+      margin-right: 10px;
+      input[type="checkbox"] {
+        position: absolute;
+        left: -9999px;
+      }
+      input[type="checkbox"] + label {
+        font-size: 12px;
+        color: #9b9c9e;
+        display: block;
+        &:before {
+          content: "";
+          .sprite-checkbox();
+          position: relative;
+          top: -1px;
+          margin-right: 7px;
+        }
+      }
+      input[type="checkbox"]:hover + label {
+        color: @colorGreen;
+        &:before {
+          .sprite-checkboxHover();
+        }
+      }
+      input[type="checkbox"]:checked + label {
+        &:before {
+          .sprite-checkboxChecked();
+        }
       }
     }
   }
@@ -842,6 +881,11 @@ section.main {
 
 .listAction {
   .inline-block(middle);
+  &.open {
+    ul {
+      display: block;
+    }
+  }
   > li {
     position: relative;
     width: 22px;
@@ -858,7 +902,7 @@ section.main {
       margin-top: -4px;
       margin-left: -5px;
     }
-    &:hover, &.active {
+    &:hover, &.open {
       background: @colorGreen;
       span {
         border-top-color: #ffffff;
@@ -889,6 +933,10 @@ section.main {
       }
     }
   }
+}
+
+.withColumns .contentGrid .slick-header-columns {
+  display: block;
 }
 
 .contentGrid {
@@ -999,27 +1047,25 @@ section.main {
           .opacity(0);
         }
       }
-      &.status_id-column {
-        .status_change{
-          display: inline-block;
-          margin: auto;
-          font-size: 0;
-          padding: 3px;
-          margin-bottom: -3px;
-          &.status_hidden {
-            &:before{
-              .sprite-ico-status-hidden();
-            }
+      .status_change {
+        display: inline-block;
+        margin: auto;
+        font-size: 0;
+        padding: 3px;
+        margin-bottom: -3px;
+        &.status_hidden {
+          &:before {
+            .sprite-ico-status-hidden();
           }
-          &.status_active {
-            &:before{
-              .sprite-status();
-            }
+        }
+        &.status_active {
+          &:before {
+            .sprite-status();
           }
-          &:before{
-            content: '';
-            float: left;
-          }
+        }
+        &:before {
+          content: '';
+          float: left;
         }
       }
       &.buttons-column {
@@ -1053,6 +1099,12 @@ section.main {
             .sprite-remove();
             &:hover {
               .sprite-removeActive();
+            }
+          }
+          &.buttonConfig {
+            background: url(buttonConfig.png) no-repeat top;
+            &:hover {
+              background-position: bottom;
             }
           }
         }
@@ -1206,6 +1258,31 @@ form {
     > span {
       margin-left: 10px;
       display: block;
+      input {
+        position: absolute;
+        left: -9999px;
+      }
+      input + label {
+        &:before {
+          content: '';
+          .sprite-checkbox();
+          position: relative;
+          top: -1px;
+          margin-right: 5px;
+        }
+        &:hover:before {
+          .sprite-checkboxHover();
+        }
+      }
+      input:checked + label {
+        &:before {
+          .sprite-checkboxChecked();
+        }
+        &:hover:before {
+          .box-shadow(0 0 3px);
+          .border-radius(4px);
+        }
+      }
     }
     > label {
       &:after {
@@ -1744,34 +1821,6 @@ body.in {
   }
 }
 
-#Module_config_actions {
-  input[type='checkbox'] {
-    position: absolute;
-    left: -9999px;
-  }
-  input[type='checkbox'] + label {
-    &:before {
-      content: '';
-      .sprite-checkbox();
-      position: relative;
-      top: -1px;
-      margin-right: 5px;
-    }
-    &:hover:before {
-      .sprite-checkboxHover();
-    }
-  }
-  input[type='checkbox']:checked + label {
-    &:before {
-      .sprite-checkboxChecked();
-    }
-    &:hover:before {
-      .box-shadow(0 0 3px);
-      .border-radius(4px);
-    }
-  }
-}
-
 .field_status_id {
   #Page_status_id {
     input[type='radio'] {
@@ -2191,7 +2240,6 @@ div.tagsinput {
   }
 }
 
-
 #pages-grid {
   table {
     width: 100%;
@@ -2223,5 +2271,18 @@ div.tagsinput {
     &:hover {
       .sprite-otherActive();
     }
+  }
+}
+
+.grid-canvas {
+  &:after {
+    content: '';
+    height: 50px;
+    background: #FFFFFF;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
   }
 }

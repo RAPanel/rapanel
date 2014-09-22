@@ -11,6 +11,7 @@ return array(
 				'rapanel.controllers.*',
 				'rapanel.behaviors.*',
 				'rapanel.helpers.*',
+                'rapanel.extensions.edatatables.*',
 			),
 			'components' => array(
 				'urlManager' => array(

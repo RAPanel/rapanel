@@ -11,6 +11,7 @@ Yii::app()->clientScript->addGlobal(array(
 		'[rapanel]/sidebar.js',
 		'[rapanel]/application.js',
 		'[rapanel]/plugins.js',
+		'[rapanel]/dropdown.js',
 	),
 	'less' => array(
 		'[rapanel]/style.less',
