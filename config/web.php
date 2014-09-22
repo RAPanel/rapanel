@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return CMap::mergeArray(require(__DIR__ . '/main.php'), array(
 	'modules' => array(
 		'rapanel' => array(
 			'class' => 'rapanel.RapanelModule',
@@ -14,17 +14,6 @@ return array(
                 'rapanel.extensions.edatatables.*',
 			),
 			'components' => array(
-				'urlManager' => array(
-					'urlFormat' => 'path',
-					'showScriptName' => false,
-					'urlSuffix' => '',
-					'rules' => array(
-						'' => 'site/index',
-						'<m_:(rapanel)>' => '<m_>/module/index',
-						'<m_>/<c_>' => '<m_>/<c_>/index',
-						'<m_>/<c_>/<a_>' => '<m_>/<c_>/<a_>',
-					),
-				),
 				'widgetFactory' => array(
 					'widgets' => array(
 						'RTagsInput' => array(
@@ -82,4 +71,4 @@ return array(
 			),
 		),
 	),
-);
+));
