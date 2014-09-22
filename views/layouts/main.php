@@ -8,7 +8,7 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
 ?>
 
     <header class="main">
-        <div class="logo"><?= CHtml::link('RA-panel '.Yii::app()->name, array('module/index')) ?></div>
+        <div class="logo"><?= CHtml::link('RA-panel ' . Yii::app()->name, array('module/index')) ?></div>
         <nav class="menu">
             <? $this->widget('zii.widgets.CMenu', array(
                 'id' => 'topMenu',
@@ -19,7 +19,7 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
                         array('label' => 'очистить assets', 'url' => array('clear/assets'), 'visible' => Yii::app()->user->checkAccess('root')),
                         array('label' => 'очистить images', 'url' => array('clear/images'), 'visible' => Yii::app()->user->checkAccess('root')),
                         array('label' => 'очистить cache', 'url' => array('clear/cache')),
-                    ), 'visible' => Yii::app()->user->checkAccess('administrator')),
+                    ), 'visible' => Yii::app()->user->checkAccess('administrator'), 'linkOptions' => array('class' => 'dropdown', 'data-toggle' => 'dropdown')),
                     array('label' => 'выход', 'url' => array('auth/logout'), 'visible' => !Yii::app()->user->isGuest),
                 ),
             ))?>
@@ -30,7 +30,7 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
 <? if (Yii::app()->user->checkAccess('moderator')): ?>
     <aside class="main">
         <div class="wrapper">
-            <? $this->widget('admin.widgets.ModuleMenu') ?>
+            <? $this->widget('rapanel.widgets.ModuleMenu') ?>
         </div>
         <div class="actions">
             <span class="hide"></span>
@@ -48,6 +48,6 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
     <div class="contentLoading"></div>
 
 <?
-$this->widget('admin.widgets.FlashWidget');
+$this->widget('rapanel.widgets.FlashWidget');
 
 $this->endContent();

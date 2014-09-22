@@ -1,6 +1,6 @@
 <?php
 
-Yii::import('admin.personal.translations.models.*');
+Yii::import('rapanel.personal.translations.models.*');
 class TranslationsController extends RPersonalController {
 
 	public $assetsDir;
@@ -13,7 +13,7 @@ class TranslationsController extends RPersonalController {
 	}
 
 	public function beforeAction($action) {
-		$assetsDir = YiiBase::getPathOfAlias('admin.personal.translations.assets');
+		$assetsDir = YiiBase::getPathOfAlias('rapanel.personal.translations.assets');
 		/** @var CAssetManager $manager */
 		$manager = Yii::app()->assetManager;
 		$this->assetsDir = $manager->publish($assetsDir);

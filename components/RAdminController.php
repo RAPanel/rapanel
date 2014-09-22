@@ -2,7 +2,7 @@
 
 abstract class RAdminController extends RController
 {
-    public $layout = 'admin.views.layouts.main';
+    public $layout = 'rapanel.views.layouts.main';
 
     public function filters()
     {

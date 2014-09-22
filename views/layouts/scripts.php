@@ -2,21 +2,23 @@
 
 $this->beginContent('/layouts/head');
 
-$dir = $this->module->assetsDir;
-
-/** @var CClientScript $cs */
-$cs = Yii::app()->clientScript;
-$cs->registerCoreScript('jquery');
-$cs->registerCoreScript('jquery.ui');
-$cs->registerCssFile($dir . '/style.css');
-//$cs->registerLinkTag('stylesheet/less', 'text/css', $dir . '/style.less');
-//$cs->registerScriptFile($dir . '/vendor/less-1.3.3.min.js', CClientScript::POS_HEAD);
-//$cs->registerScript('lessWatch', 'less.env = "development";less.watch();', CClientScript::POS_HEAD);
-$cs->registerScriptFile($dir . '/vendor/jquery.the-modal.js');
-$cs->registerScriptFile($dir . '/sidebar.js');
-$cs->registerScriptFile($dir . '/application.js');
-$cs->registerScriptFile($dir . '/plugins.js');
-
+Yii::app()->clientScript->assetDirs['rapanel'] = 'rapanel.assets';
+Yii::app()->clientScript->addGlobal(array(
+	'js' => array(
+		'core:jquery',
+		'core:jquery.ui',
+		'[rapanel]/vendor/jquery.the-modal.js',
+		'[rapanel]/sidebar.js',
+		'[rapanel]/application.js',
+		'[rapanel]/plugins.js',
+		'[rapanel]/dropdown.js',
+	),
+	'less' => array(
+		'[rapanel]/style.less',
+	)
+));
+Yii::app()->clientScript->forcePublishOnDebug = false;
+Yii::app()->clientScript->minEnabled = true;
 echo $content;
 
 $this->endContent();

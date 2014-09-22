@@ -48,13 +48,7 @@ class ContentBehavior extends AdminBehavior
                     $criteria->with[$with] = array('together' => false);
                 }
 
-            if ($_GET['limit']) {
-                $_GET['myPage'] = floor($_GET['start'] / $_GET['limit']) + 1;
-                $pagination = array(
-                    'pageSize' => $_GET['limit'],
-                    'pageVar' => 'myPage',
-                );
-            } else $pagination = false;
+            $pagination = false;
 
             $sort = false;
 
@@ -78,9 +72,14 @@ class ContentBehavior extends AdminBehavior
             else
                 $sort = array('defaultOrder' => 't.id DESC');
             $criteria->group = '`t`.`id`';
-            $criteria->limit = 50;
 
-            $criteria = $this->getSearchCriteria($criteria);
+            $page = isset($_GET['page']) ? $_GET['page'] * 1000 : 0;
+            $start = isset($_GET['start']) ? $_GET['start'] : 0;
+            $limit = isset($_GET['limit']) ? $_GET['limit'] : 50;
+            $criteria->limit = $limit;
+            $criteria->offset = $page + $start;
+
+            $this->getSearchCriteria($criteria);
 
             $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url))->resetScope(), compact('criteria', 'pagination', 'sort'));
 
@@ -99,77 +98,82 @@ class ContentBehavior extends AdminBehavior
     /** @var $criteria CDbCriteria */
     public function getSearchCriteria($criteria)
     {
-        if (($q = $_GET['q']) && $q != '*') {
-            $condition = array();
-            foreach ($this->getOwner()->tableSchema->columns as $row) {
-                if (in_array(current(explode('(', $row->dbType)), array('varchar', 'text'))) {
-                    $condition[] = "t.{$row->name} LIKE :textSearch";
-                    $criteria->params['textSearch'] = "%{$q}%";
-                } elseif (in_array(current(explode('(', $row->dbType)), array('timestamp'))) {
-                    continue;
+        if (($query = $_GET['q']) && $query != '*')
+            foreach (explode(' ', $query) as $q) if ($q) {
+                list($attr, $value) = explode(':', $q);
+                if ($value && ($this->owner->hasAttribute($attr))) {
+                    $criteria->compare('t.' . $attr, $value, !is_numeric($value));
+                } elseif ($value && ($this->owner instanceof PageBase && $this->owner->hasCharacter($attr))) {
+                    $criteria->compare(Characters::getRelationByUrl($attr) . '.value', $value, !is_numeric($value));
                 } else {
-                    if (!is_numeric($q)) continue;
-                    $condition[] = "t.{$row->name}=:intSearch";
-                    $criteria->params['intSearch'] = $q;
+                    $condition = array();
+                    foreach ($this->getOwner()->tableSchema->columns as $row) {
+                        if (in_array(current(explode('(', $row->dbType)), array('varchar', 'text'))) {
+                            $condition[] = "t.{$row->name} LIKE :textSearch";
+                            $criteria->params['textSearch'] = "%{$q}%";
+                        } elseif (in_array(current(explode('(', $row->dbType)), array('timestamp'))) {
+                            continue;
+                        } else {
+                            if (!is_numeric($q)) continue;
+                            $condition[] = "t.{$row->name}=:intSearch";
+                            $criteria->params['intSearch'] = $q;
+                        }
+                    }
+                    if ($this->owner instanceof PageBase) {
+                        if (stripos($criteria->join, ' `cv`') === false)
+                            $criteria->join .= ' INNER JOIN `character_varchar` `cv` ON(cv.page_id=t.id)';
+                        $condition[] = "cv.value LIKE :textSearch";
+                        $criteria->params['textSearch'] = "%{$q}%";
+                    }
+                    if (count($criteria->with)) foreach (array('user', 'currentUrl') as $val) if (isset($criteria->with[$val]) && !empty($criteria->with[$val]['select'])) {
+                        $condition[] = "{$val}.{$criteria->with[$val]['select']} LIKE :textSearch";
+                        $criteria->with[$val]['together'] = true;
+                        $criteria->params['textSearch'] = "%{$q}%";
+                    }
+                    if (count($criteria->with)) foreach (array('page', 'parent') as $val) if (isset($criteria->with[$val]) && $criteria->with[$val]['with']['rName']) {
+                        $condition[] = "pName.value LIKE :textSearch";
+                        $criteria->with[$val]['together'] = true;
+                        $criteria->params['textSearch'] = "%{$q}%";
+                    }
+                    $criteria->addCondition(implode(' OR ', $condition));
                 }
             }
-            if (get_class($this->getOwner()) == 'Page' || $this->getOwner() instanceof Page) {
-                if (stripos($criteria->join, ' `cv`') === false)
-                    $criteria->join .= ' INNER JOIN `character_varchar` `cv` ON(cv.page_id=t.id)';
-                $condition[] = "cv.value LIKE :textSearch";
-                $criteria->params['textSearch'] = "%{$q}%";
-            }
-            if (count($criteria->with)) foreach (array('user', 'currentUrl') as $val) if (isset($criteria->with[$val]) && !empty($criteria->with[$val]['select'])) {
-                $condition[] = "{$val}.{$criteria->with[$val]['select']} LIKE :textSearch";
-                $criteria->with[$val]['together'] = true;
-                $criteria->params['textSearch'] = "%{$q}%";
-            }
-            if (count($criteria->with)) foreach (array('page', 'parent') as $val) if (isset($criteria->with[$val]) && $criteria->with[$val]['with']['rName']) {
-                $condition[] = "pName.value LIKE :textSearch";
-                $criteria->with[$val]['together'] = true;
-                $criteria->params['textSearch'] = "%{$q}%";
-            }
-            $criteria->addCondition(implode(' OR ', $condition));
-        }
-
-        return $criteria;
     }
 
     public function getColumns()
     {
-        /** @var $owner RActiveRecord */
         $owner = $this->getOwner();
 
         $default = array();
-        /*if ($this->getModule()->type_id == Module::TYPE_SELF_NESTED || $this->getModule()->type_id == Module::TYPE_NESTED)
-            $default['order'] = array(
-                'name' => '#',
-                'value' => '$data->id',
-            );
-        else*/
         if ($owner->hasAttribute('lft') || $owner->hasAttribute('num'))
             $default['order'] = array(
                 'name' => '#',
-                'value' => '$data->id',
+                'value' => $owner->hasAttribute('lft') ? '$data->lft' : '$data->num',
+                'type' => 'order',
+                'cssClassExpression' => '"sorterHandler"',
             );
+        else$default['step'] = array(
+            'name' => '#',
+            'value' => '',
+            'type' => 'order',
+        );
         $default['checkbox'] = array(
             'class' => 'CCheckBoxColumn',
             'selectableRows' => 9999,
         );
         if ($this->owner->hasAttribute('is_category')) $default['is_category'] = array(
-            'value' => '$data->is_category?$data->is_category:$data->rgt>$data->lft+1',
+            'value' => '$data->is_category?$data->is_category:$data->hasNestedChild',
         );
-        foreach ((array)$this->adminSettings['columns'] as $column) {
+        foreach ((array)$this->adminSettings['columns'] as $column) if (empty($default[$column])) {
             $default[$column] = array(
                 'header' => $owner->getAttributeLabel($column),
-                'value' => '$data->' . $column . '',
+                'value' => $this->columnValue($column),
+                'type' => $this->getTypeFromList($column),
             );
-            if ($column == 'user_id') $default[$column]['value'] = '$data->user->username';
-            if ($column == 'page_id') $default[$column]['value'] = '$data->page->name';
-            if ($column == 'parent_id') $default[$column]['value'] = '$data->parent->name';
-            if ($column == 'status_id') $default[$column]['value'] = '$data->status';
-            if (method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes()))
-                $default[$column]['column']['type'] = 'arrayMode';
+            if (method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes())){
+                $default[$column]['type'] = 'arrayMode';
+                $default[$column]['value'] = '$data->inLineData';
+            }
         }
         $default['buttons'] = array(
             'header' => 'Действия',
@@ -180,18 +184,41 @@ class ContentBehavior extends AdminBehavior
         return $default;
     }
 
+
+    public function columnValue($column)
+    {
+        switch ($column):
+            case 'user_id':
+                return '$data->user->username';
+            case 'page_id':
+                return '$data->page->name';
+            case 'parent_id':
+                return '$data->parent->name';
+//            case 'status_id':
+//                return '$data->status';
+            default:
+                return '$data->' . $column;
+        endswitch;
+    }
+
     public function getButtons()
     {
         $result = array();
-        foreach ((array)$this->adminSettings['actions'] as $button) {
-            $result[$button] = array(
-                'label' => ucfirst($button),
-                'url' => 'CHtml::normalizeUrl(array("' . $button . '", "url"=>"' . $this->getModule()->url . '", "id"=>$data->id))',
+        $module = $this->getModule();
+        foreach ((array)$this->adminSettings['actions'] as $action) {
+            $result[$action] = array(
+                'label' => ucfirst($action),
+                'url' => function ($data) use ($action, $module) {
+                    $pk = $data->getPrimaryKey();
+                    if (is_array($pk))
+                        $pk = implode('--', $pk);
+                    return CHtml::normalizeUrl(array($action, "url" => $module->url, "id" => $pk));
+                },
                 'imageUrl' => false,
                 'crop' => $this->adminSettings['crop'],
                 'max' => $this->adminSettings['photos'],
                 'options' => array(
-                    'class' => "button" . ucfirst($button),
+                    'class' => "button" . ucfirst($action),
                     'onclick' => 'modalIFrame(this);return false;',
                     'data-update' => 'contentGrid',
                 ),
@@ -395,7 +422,7 @@ class ContentBehavior extends AdminBehavior
     }
 
     /**
-     * @return RActiveRecord.
+     * @return RActiveRecord|PageBase.
      */
     public function getOwner()
     {

@@ -1,9 +1,9 @@
 @import "lesshat";
 
 .datePicker {
-  background: url(/app/modules/rapanel/assets/calendarIco.png) no-repeat 848px 0 !important;
+  background: url(calendarIco.png) no-repeat 848px 0 !important;
   &:focus {
-    background: url(/app/modules/rapanel/assets/calendarIco.png) no-repeat 848px -23px !important;
+    background: url(calendarIco.png) no-repeat 848px -23px !important;
   }
 }
 
@@ -14,6 +14,8 @@
   background: #FFFFFF;
   .box-shadow(0 0 5px rgba(0, 0, 0, 0.3));
   padding: 0 10px 10px 10px;
+  z-index: 1;
+  position: absolute;
   th {
     font-size: 12px;
     color: #bfbfbf;

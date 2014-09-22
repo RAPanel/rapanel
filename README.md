@@ -8,7 +8,7 @@ rapanel
 Добавить вывод виджета в app/views/layouts/head.php
 -------
 ```php
-<? $this->widget('application.modules.rapanel.widgets.AdminToolbar.AdminToolbar') ?>
+<? $this->widget('rapanel.widgets.AdminToolbar.AdminToolbar') ?>
 ```
 
 rapanel

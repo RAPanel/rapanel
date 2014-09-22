@@ -11,7 +11,7 @@ class InstallController extends CController
     private $tinyint = 'tinyint(3) unsigned NOT NULL';
     private $smallint = 'smallint(6) unsigned NOT NULL';
     private $lang = 'char(2) NOT NULL';
-    private $lastmod = 'timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
+    private $lastmod = 'timestamp NOT NULL';
 
     public function actionIndex()
     {
@@ -127,7 +127,7 @@ class InstallController extends CController
             'password' => 'varchar(255) NOT NULL',
             'role' => 'varchar(32) NOT NULL',
             'lastmod' => $this->lastmod,
-            'created' => 'timestamp',
+            'created' => $this->lastmod,
             'UNIQUE KEY `email` (`email`)',
             'KEY `username` (`username`)',
             'KEY `role` (`role`)',
@@ -151,7 +151,7 @@ class InstallController extends CController
             'is_category' => $this->tinyint,
             'lang_id' => $this->lang,
             'lastmod' => $this->lastmod,
-            'created' => 'timestamp',
+            'created' => $this->lastmod,
             'KEY `id_user` (`id`,`user_id`)',
             'KEY `nested` (`lft`,`rgt`,`level`)',
             'KEY `user_id` (`user_id`)',
@@ -291,7 +291,7 @@ class InstallController extends CController
             'total' => 'float(11,2) unsigned NOT NULL',
             'data' => 'longtext NOT NULL',
             'lastmod' => $this->lastmod,
-            'created' => 'timestamp',
+            'created' => $this->lastmod,
         ));
 
         $this->createTable('user_photo', array(
@@ -306,7 +306,7 @@ class InstallController extends CController
             'cropParams' => 'varchar(255) NOT NULL',
             'hash' => 'char(32) NOT NULL',
             'lastmod' => $this->lastmod,
-            'created' => 'timestamp',
+            'created' => $this->lastmod,
             'KEY `num` (`num`)',
             'KEY `page_id` (`page_id`)',
             'KEY `user_id` (`user_id`)',
@@ -412,8 +412,6 @@ class InstallController extends CController
         $this->createTable('log_visit', array(
             'id' => $this->pk,
             'visitor_id' => $this->binary,
-            'last_action_time' => 'datetime NOT NULL',
-            'first_action_time' => 'datetime NOT NULL',
             'location_ip' => 'varbinary(16) NOT NULL',
             'action_id_ref' => $this->int,
             'total_time' => $this->smallint,
@@ -421,6 +419,8 @@ class InstallController extends CController
             'os' => 'char(3) NOT NULL',
             'browser' => 'varchar(10) NOT NULL',
             'browser_version' => 'varchar(20) NOT NULL',
+            'lastmod' => $this->lastmod,
+            'created' => $this->lastmod,
         ));
 
         $this->createTable('log_hit', array(

@@ -9,14 +9,28 @@ class ModuleController extends RAdminController
      */
     public function actionIndex()
     {
-        if (!Yii::app()->user->checkAccess('root')) {
+        if (!Yii::app()->user->checkAccess('root'))
             $this->redirect(array('tutorial'));
-        }
+
+        /** @var Module|ModuleBehavior $model */
         $model = new Module('grid');
         $model->attachBehavior('column', 'ModuleBehavior');
 
+        $widget = $this->createWidget('ext.RSlickGrid.RSlickGrid', array(
+            'id'            => 'gridItems',
+            'dataProvider'  => $model->column->getDataProvider(),
+            'columns'       => $model->column->getColumns(),
+            'ajaxUrl'       => array($this->action->id, 'ajax'=>1),
+            'orderUrl'       => array('saveOrder', 'url'=>'module'),
+        ), 1);
+
+        if(Yii::app()->request->isAjaxRequest || isset($_GET['json'])){
+            echo json_encode($widget->formattedData);
+            Yii::app()->end();
+        }
+
         $this->pageTitle = 'Управление модулями';
-        $this->render($this->action->id, compact('model'));
+        $this->render($this->action->id, compact('model', 'widget'));
     }
 
     /**
@@ -74,7 +88,7 @@ class ModuleController extends RAdminController
         $this->renderText($form);
     }
 
-    public function actionSaveOrder()
+    /*public function actionSaveOrder()
     {
         if (isset($_POST['id'])) {
             CVarDumper::dump($_POST['id']);
@@ -90,7 +104,7 @@ class ModuleController extends RAdminController
             $this->redirect(Yii::app()->user->returnUrl);
         else
             echo Yii::t('admin', 'Modules move success');
-    }
+    }*/
 
     public function actionTutorial()
     {

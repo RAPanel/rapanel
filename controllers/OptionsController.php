@@ -12,4 +12,8 @@ class OptionsController extends RAdminController {
 		}
 		$this->back();
 	}
+
+	public function actionDebug() {
+		Yii::app()->request->cookies['editMode'] = new CHttpCookie('editMode', 1);
+	}
 }
