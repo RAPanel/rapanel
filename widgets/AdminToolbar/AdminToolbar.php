@@ -37,18 +37,21 @@ class AdminToolbar extends CWidget
 
     public function registerAssets()
     {
-        /** @var CAssetManager $assetManager */
-        $assetManager = Yii::app()->assetManager;
-        $path = $assetManager->publish(__DIR__ . '/assets', 0, -1, YII_DEBUG);
-
-        /** @var CClientScript $clientScript */
+        /** @var RClientScript $clientScript */
         $clientScript = Yii::app()->clientScript;
-        $clientScript->registerScriptFile($path . '/theModal.js');
-        $clientScript->registerCssFile($path . '/theModal.css');
-        $clientScript->registerScriptFile($path . '/userMenu.js');
-        $clientScript->registerCssFile($path . '/userMenu.css');
+        $clientScript->assetDirs['adminToolbar'] = 'rapanel.widgets.AdminToolbar.assets';
+        $clientScript->addGlobal(array(
+            'js' => array(
+                '[adminToolbar]/theModal.js',
+                '[adminToolbar]/userMenu.js',
+                'core:cookie',
+            ),
+            'less' => array(
+                '[adminToolbar]/theModal.less',
+                '[adminToolbar]/userMenu.less',
+            ),
+        ));
         $clientScript->registerScript(__CLASS__, 'adminToolbar();');
-        $clientScript->registerCoreScript('cookie');
     }
 
     public function getMenuLeft()
