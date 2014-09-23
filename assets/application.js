@@ -46,30 +46,7 @@ $(function () {
     // Функционал работы сайдбара
     $('aside.main').sidebar();
 
-    // Меню вверху сайта
-    /*$('nav.menu li > a').click(function () {
-        var ul = $(this).next('ul');
-        if (ul.length) {
-            ul.slideToggle(100);
-            return false;
-        }
-    });*/
-
-    // Меню списка настроек
-    /*$('.listAction > li').click(function () {
-        var ul = $(this).find('ul');
-        if (ul.length) {
-            $(this).toggleClass('active');
-            ul.slideToggle(100);
-        }
-    });*/
-
-    //Меню действий
-    /*$('.gridActions .actionList button').click(function () {
-     var e = $(this);
-     e.parent('.actionList').toggleClass('active');
-     });*/
-
+    // Показ меню
     $('.dropdown').dropdown();
 });
 
@@ -165,8 +142,3 @@ function bannerCreate() {
         }, 1)
     }
 }
-
-// @todo Удалить протестировав все ли работает
-/*function viewMenu(e) {
- $(e).nextAll('.hiddenMenu').slideToggle(100);
- }*/

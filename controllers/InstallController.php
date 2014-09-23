@@ -109,6 +109,7 @@ class InstallController extends CController
             "null,0,0,0,'Пользователи','administrator','users','User','Посетители','ru',null",
             "null,0,0,0,'Компании','administrator','company','Page','Посетители','ru',null",
             "null,0,0,0,'Подписка','administrator','subscribe','Subscription','Посетители','ru',null",
+            "null,0,0,0,'Сообщения','administrator','messages','Form','Посетители','ru',null",
             "null,0,0,0,'Уведомления','administrator','notification','Notification','Посетители','ru',null",
             "null,0,0,0,'Опросы','administrator','interview','Page','Посетители','ru',null",
             "null,0,0,0,'Товары','administrator','catalog','Product','Магазин','ru',null",
@@ -116,7 +117,7 @@ class InstallController extends CController
             "null,0,0,0,'Брэнды','administrator','brand','Page','Магазин','ru',null",
             "null,0,0,0,'Акции','administrator','stock','Page','Магазин','ru',null",
             "null,0,1,0,'Характеристики','administrator','characteristics','Character','Настройки','ru',null",
-            "null,0,0,0,'Сообщения и переводы','administrator','translater','MessageTranslate','Настройки','ru',null",
+            "null,0,0,0,'Сообщения и переводы','administrator','translater','Message','Настройки','ru',null",
             "null,0,0,0,'Параметры','administrator','config','Config','Настройки','ru',null",
         ));
 

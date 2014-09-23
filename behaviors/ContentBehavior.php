@@ -17,7 +17,7 @@ class ContentBehavior extends AdminBehavior
     public function getDataProvider($criteria = array())
     {
         if (!$this->_dataProvider) {
-            $columns = $this->adminSettings['columns'];
+            $columns = (array)$this->adminSettings['columns'];
             $criteria = new CDbCriteria($criteria);
             $criteria->addCondition('`t`.`id` > 0');
 
