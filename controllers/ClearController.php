@@ -6,13 +6,21 @@
 class ClearController extends RAdminController
 {
 
-    public function actionIndex()
+    public function actionIndex($back = true)
     {
         $this->actionAssets(false);
         $this->actionImages(false);
         $this->actionAssets(false);
+        $this->actionState(false);
 
-        $this->back();
+        if ($back) $this->back();
+    }
+
+    public function actionState($back = true)
+    {
+        $this->deleteFilesRecursive(YiiBase::getPathOfAlias('application.runtime.state') . '.bin');
+
+        if ($back) $this->back();
     }
 
     public function actionAssets($back = true)

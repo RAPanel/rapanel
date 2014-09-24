@@ -19,7 +19,8 @@ $cs->registerScript('fixedHeight', 'fixedHeight("aside.main, section.main", "hea
                         array('label' => 'очистить assets', 'url' => array('clear/assets'), 'visible' => Yii::app()->user->checkAccess('root')),
                         array('label' => 'очистить images', 'url' => array('clear/images'), 'visible' => Yii::app()->user->checkAccess('root')),
                         array('label' => 'очистить cache', 'url' => array('clear/cache')),
-                    ), 'visible' => Yii::app()->user->checkAccess('administrator'), 'linkOptions' => array('class' => 'dropdown', 'data-toggle' => 'dropdown')),
+                        array('label' => 'очистить state', 'url' => array('clear/state')),
+                    ), 'visible' => Yii::app()->user->checkAccess('administrator'), 'linkOptions' => array('class' => 'dropdown clearMenu', 'data-toggle' => 'dropdown')),
                     array('label' => 'выход', 'url' => array('auth/logout'), 'visible' => !Yii::app()->user->isGuest),
                 ),
             ))?>

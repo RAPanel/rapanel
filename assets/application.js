@@ -16,6 +16,13 @@ $(function () {
         });
     });
 
+    // сброс кэша на ajax
+    $('a', '.clearMenu').click(function(){
+        $.get(this.href, {back:0}, function(){
+            window.location.reload();
+        });
+    });
+
     // Правило для грида для показа пакетных действий
     var form = $('.wrapper > form').on('change', 'input[type="checkbox"]', function () {
         if ($(':checked', form).length)

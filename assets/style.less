@@ -1122,7 +1122,7 @@ section.main {
   overflow: auto;
   /* allow one-finger iPad scrolling */
   -webkit-overflow-scrolling: touch;
-  z-index: 1000;
+  z-index: 100000;
   .size(100%);
   .rgba(#fff, 0.7);
   background-image: url(loading.gif);
@@ -1252,6 +1252,9 @@ form#edit-form {
 form {
   .row {
     margin: 12px;
+    .row {
+      margin-right: 0;
+    }
     > label {
       display: block;
     }
@@ -2284,5 +2287,28 @@ div.tagsinput {
     right: 0;
     bottom: 0;
     z-index: 1;
+  }
+}
+
+table.items-list {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  border: none;
+  font-size: 14px;
+  th, td, tr {
+    border-color: #cccccc;
+  }
+  .td_id {
+    text-align: center;
+  }
+  .td_name {
+    img {
+      float: left;
+      margin-right: 10px;
+    }
+    a {
+      color: #666666;
+    }
   }
 }
