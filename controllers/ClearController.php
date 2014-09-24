@@ -16,10 +16,12 @@ class ClearController extends RAdminController
         if ($back) $this->back();
     }
 
-    public function actionState($back = true)
+    public function actionState($keys = null, $back = true)
     {
-        $this->deleteFilesRecursive(YiiBase::getPathOfAlias('application.runtime.state') . '.bin');
-
+	    $keys = explode(',', $keys);
+	    foreach($keys as $key) {
+		    Yii::app()->clearGlobalState($key);
+	    }
         if ($back) $this->back();
     }
 
