@@ -109,4 +109,4 @@ $.fn.sidebar = function() {
 	});
 	if(!state().closed && !state().minimized)
 		$('.resize', this).draggable("enable");
-}
+};
