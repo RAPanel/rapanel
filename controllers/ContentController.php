@@ -115,7 +115,7 @@ class ContentController extends RAdminController
             Yii::app()->end();
         }
 
-        $this->renderActive($this->action->id, compact('widget', 'model', 'module', 'url'));
+        $this->render($this->action->id, compact('widget', 'model', 'module', 'url'));
     }
 
     /**
@@ -303,7 +303,7 @@ class ContentController extends RAdminController
 
     public function actionUpdate($id, $href = null)
     {
-        preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->user->returnUrl, $url);
+        preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->request->urlReferrer, $url);
         $class = Module::model()->findByPk(Module::getIdByUrl($url[1]))->className;
         if (!$class) $class = 'Module';
         $base = RActiveRecord::model($class)->resetScope();

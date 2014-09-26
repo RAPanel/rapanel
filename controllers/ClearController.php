@@ -16,12 +16,10 @@ class ClearController extends RAdminController
         if ($back) $this->back();
     }
 
-    public function actionState($keys = null, $back = true)
+    public function actionState($back = true)
     {
-	    $keys = explode(',', $keys);
-	    foreach($keys as $key) {
-		    Yii::app()->clearGlobalState($key);
-	    }
+        unlink(YiiBase::getPathOfAlias('application.runtime.state') . '.bin');
+
         if ($back) $this->back();
     }
 
@@ -43,8 +41,6 @@ class ClearController extends RAdminController
 
     public function actionCache($back = true)
     {
-        $this->actionAssets(false);
-        
         /** @var $component CCache */
         foreach (Yii::app()->getComponents(false) as $component)
             if (is_subclass_of($component, 'CCache'))
