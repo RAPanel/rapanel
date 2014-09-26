@@ -220,7 +220,7 @@ class ContentController extends RAdminController
     {
         $result = 0;
 
-        preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->user->returnUrl, $url);
+        preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->request->urlReferrer, $url);
         $class = Module::model()->findByPk(Module::getIdByUrl($url[1]))->className;
         if (!$class) $class = 'Module';
         $base = RActiveRecord::model($class)->resetScope();
@@ -342,7 +342,7 @@ class ContentController extends RAdminController
     public function actionMany(array $id, $type, $url = null)
     {
         if (is_null($url)) {
-            preg_match('|url=([^&]+)|', Yii::app()->user->returnUrl, $url);
+            preg_match('|url=([^&]+)|', Yii::app()->request->urlReferrer, $url);
             $url = $url[1];
         }
         $class = Module::model()->findByPk(Module::getIdByUrl($url))->className;
