@@ -209,18 +209,11 @@ class ContentBehavior extends AdminBehavior
             $result[$action] = array(
                 'label' => ucfirst($action),
                 'url' => function ($data) use ($action, $module) {
-                    $pk = $data->getPrimaryKey();
-                    if (is_array($pk))
-                        $pk = implode('--', $pk);
-                    return CHtml::normalizeUrl(array($action, "url" => $module->url, "id" => $pk));
+                    return CHtml::normalizeUrl(array($action, "url" => $module->url, "id" => implode('--', (array)$data->getPrimaryKey())));
                 },
                 'imageUrl' => false,
-                'crop' => $this->adminSettings['crop'],
-                'max' => $this->adminSettings['photos'],
                 'options' => array(
                     'class' => "button" . ucfirst($action),
-                    'onclick' => 'modalIFrame(this);return false;',
-                    'data-update' => 'contentGrid',
                 ),
             );
         }

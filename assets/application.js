@@ -2,6 +2,14 @@ var modalChange = true;
 var confirmClose = false;
 
 $(function () {
+    // TODO доработать систему ajax смены контента страницы
+    /*$('#modules-menu a').click(function(){
+     $.get($(this).attr('href'), {}, function(data){
+     $('section.main .wrapper').html(data);
+     });
+     return false;
+     });*/
+
     // Правило для модалки для уведомлений о закрытии и обновлении грида
     $('#iframe').find('form').each(function () {
         var el = $(this).find('input, select, textarea');
@@ -17,10 +25,11 @@ $(function () {
     });
 
     // сброс кэша на ajax
-    $('a', '.clearMenu').click(function(){
-        $.get(this.href, {back:0}, function(){
+    $('.clearMenu ul a').click(function () {
+        $.get(this.href, {back: 0}, function () {
             window.location.reload();
         });
+        return false;
     });
 
     // Правило для грида для показа пакетных действий
@@ -38,7 +47,7 @@ $(function () {
     $('.datePicker').each(function () {
         var time = $(this).val() ? $(this).val() * 1000 : Date.now();
         var d = new Date(time);
-        var date = [ d.getDate(), d.getMonth() + 1, d.getFullYear() ];
+        var date = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
         for (var i = 0; i < 2; i++) {
             if (date[i] < 10) {
                 date[i] = "0" + date[i];
@@ -90,6 +99,23 @@ function beforeDelete(e) {
     }
     else
         return false;
+}
+
+function beforeNote(e) {
+    var data = $('<div class="noteForm">');
+    $('<textarea>').appendTo(data).keypress(function (event) {
+        if ((event.ctrlKey) && ((event.keyCode == 0xA) || (event.keyCode == 0xD)))
+            $.colorbox.close();
+    });
+    $.colorbox({
+        html: data,
+        fixed: true,
+        speed: 0,
+        onClosed: function () {
+            $.post(e.href, {text: $('textarea', data).val()});
+        }
+    });
+    return false;
 }
 
 // @todo Построитель баннеров вынести в отдельный Виджет

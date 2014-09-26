@@ -979,7 +979,7 @@ section.main {
         }
         &.buttons-column {
           width: 90px;
-          margin-left: -110px;
+          margin-left: -106px;
         }
         &.created-column, &.lastmod-column {
           display: none;
@@ -1052,7 +1052,9 @@ section.main {
         margin: auto;
         font-size: 0;
         padding: 3px;
-        margin-bottom: -3px;
+        margin-bottom: 2px;
+        background: none;
+        vertical-align: middle;
         &.status_hidden {
           &:before {
             .sprite-ico-status-hidden();
@@ -1100,6 +1102,19 @@ section.main {
             &:hover {
               .sprite-removeActive();
             }
+          }
+          &.buttonNote {
+            position: absolute;
+            right: 0;
+            top:0;
+//            height: 0;
+//            width: 0;
+//            border: 7px solid transparent;
+//            border-color: #555 #555 transparent transparent;
+            height: 100%;
+            width: 5px;
+            bottom: 0;
+            background: #555;
           }
           &.buttonConfig {
             background: url(buttonConfig.png) no-repeat top;

@@ -95,15 +95,12 @@ class ContentController extends RAdminController
     {
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
-        if (!$type && in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)))
-            $this->redirect(array($this->action->id, 'url' => $url, 'type' => 'folder'));
         /** @var $model RActiveRecord */
         $model = new $module->className($module->id);
         $model->resetScope();
         /** @var $model RActiveRecord|ContentBehavior */
         $model->attachBehavior('contentBehavior', 'ContentBehavior');
         $model->setModule($module);
-        if ($type == 'categories') $model->setIsCategory(true);
 
         $widget = $this->createWidget('ext.RSlickGrid.RSlickGrid', array(
             'id' => 'gridItems',
@@ -113,12 +110,12 @@ class ContentController extends RAdminController
             'orderUrl' => array('saveOrder', 'url' => $url),
         ), 1);
 
-        if (Yii::app()->request->isAjaxRequest) {
+        if (isset($_GET['json'])) {
             echo json_encode($widget->formattedData);
             Yii::app()->end();
         }
 
-        $this->render($this->action->id, compact('widget', 'model', 'module', 'url'));
+        $this->renderActive($this->action->id, compact('widget', 'model', 'module', 'url'));
     }
 
     /**
@@ -166,9 +163,7 @@ class ContentController extends RAdminController
         /** @var $model RActiveRecord|ContentBehavior */
         $model->attachBehavior('contentBehavior', 'ContentBehavior');
         $model->setModule($module);
-        if ($type == 'category') {
-            $model->is_category = 1;
-        }
+        if ($type == 'category') $model->is_category = 1;
         $this->performAjaxValidation($model);
         if (isset($_POST[get_class($model)])) {
             if ($clone !== false && property_exists($model, 'clone')) {
@@ -188,14 +183,8 @@ class ContentController extends RAdminController
 
         $this->pageTitle = $model->isNewRecord ? 'Создание элемента' : 'Редактирование элемента';
         Yii::app()->clientScript->registerScript('tabs', '$("#tabs").tabs();');
-        /*$this->widget('ext.RChosen.RChosen', array(
-            'id'=>'test',
-            'query'=>'select',
-            'select'=>false,
-            'options'=>array(
-                'disable_search_threshold'=>10,
-            ),
-        ));*/
+        if (is_null($id)) Yii::app()->clientScript->registerScript('parentId', 'if(parent.parentId) $("form div.row.field_parent_id select").val(parent.parentId)');
+
         $this->renderText($form->render());
     }
 
@@ -350,7 +339,7 @@ class ContentController extends RAdminController
         return $lft;
     }
 
-    public function actionMany($id, $url = null, $type)
+    public function actionMany(array $id, $type, $url = null)
     {
         if (is_null($url)) {
             preg_match('|url=([^&]+)|', Yii::app()->user->returnUrl, $url);
@@ -359,7 +348,7 @@ class ContentController extends RAdminController
         $class = Module::model()->findByPk(Module::getIdByUrl($url))->className;
         if (is_null($class)) $class = 'Module';
         $base = RActiveRecord::model($class)->resetScope();
-        $list = $base->findAllByPk(CJSON::decode($id));
+        $list = $base->findAllByPk($id);
 
         $result = array();
         foreach ($list as $row)
@@ -375,7 +364,44 @@ class ContentController extends RAdminController
                 case 'delete':
                     $result[] = $row->delete();
                     break;
+                case 'edit':
+                    $listData[] = $row->characters;
+                    break;
             endswitch;
-        var_dump($result);
+
+        if (!empty($listData)) {
+            $data = array();
+            foreach (Characters::getDataByUrls(array_keys($row->characters)) as $key => $val)
+                if ($val['position'] == 'main')
+                    $data[$val['url']] = array(
+                        'header' => $val['name'],
+                        'type' => $val['inputType'],
+                        'formatter' => 'edit',
+                    );
+
+            $widget = $this->createWidget('ext.RSlickGrid.RSlickGrid', array(
+                'id' => 'gridEditItems',
+                'dataProvider' => new CArrayDataProvider($listData),
+                'columns' => $data,
+                'orderUrl' => array('saveOrder', 'url' => $url),
+            ), 1);
+
+            if (isset($_GET['json'])) {
+                echo json_encode($widget->formattedData);
+                Yii::app()->end();
+            }
+            $this->renderPartial('ajax', compact('widget'), 0, 1);
+        } else
+            var_dump($result);
+    }
+
+    public function actionNote($id, $url)
+    {
+        if ($_POST['text']) echo Yii::app()->db->createCommand()->insert('admin_note', array(
+            'user_id' => Yii::app()->user->id,
+            'from_id' => $id,
+            'from_url' => $url,
+            'text' => $_POST['text'],
+        ));
     }
 }

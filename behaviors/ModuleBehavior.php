@@ -232,8 +232,15 @@ class ModuleBehavior extends AdminBehavior
                 'edit' => 'Редактирование',
                 'clone' => 'Клонирование',
                 'delete' => 'Удаление',
+                'note' => 'Заметки',
             ),
         );
+        if (in_array('currentUrl', array_keys($model->relations()))) {
+            $elements['config[noUrl]'] = array(
+                'label' => 'Не генерировать url',
+                'type' => 'checkbox',
+            );
+        }
         if (in_array('photos', array_keys($model->relations()))) {
             $elements['config[photos]'] = array(
                 'label' => 'Максимальное количество фотографий',
