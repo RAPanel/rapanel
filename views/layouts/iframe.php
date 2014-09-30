@@ -1,5 +1,5 @@
 <?php
-$this->beginContent('/layouts/scripts');
+$this->beginContent('/layouts/assets');
 Yii::app()->clientScript->registerScript("iFrame", 'iFrameAutoResize();');
 ?>
 

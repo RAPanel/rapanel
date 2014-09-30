@@ -26,7 +26,7 @@ Yii::app()->clientScript->addGlobal(array(
 	),
 ));
 Yii::app()->clientScript->forcePublishOnDebug = false;
-Yii::app()->clientScript->minEnabled = true;
+Yii::app()->clientScript->minEnabled = false;
 echo $content;
 
 $this->endContent();

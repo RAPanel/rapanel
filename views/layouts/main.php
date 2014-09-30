@@ -1,6 +1,6 @@
 <?php
 /** @var RController $this */
-$this->beginContent('/layouts/scripts');
+$this->beginContent('/layouts/assets');
 
 /** @var CClientScript $cs */
 $cs = Yii::app()->clientScript;
