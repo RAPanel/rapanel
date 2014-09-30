@@ -13,7 +13,7 @@ abstract class RAdminController extends RController
 
     public function init()
     {
-        if(isset($_GET['iframe'])) $this->layout = 'iframe';
+        if (isset($_GET['iframe'])) $this->layout = 'iframe';
         parent::init();
     }
 
@@ -38,13 +38,13 @@ abstract class RAdminController extends RController
                 'roles' => array('user'),
                 'deniedCallback' => function () {
                     Yii::app()->user->setFlash('error access-denied', 'Доступ запрещён');
-                    Yii::app()->controller->redirect(array('auth/login'));
+                    Yii::app()->controller->redirect(array('auth/login', 'returnTo' => Yii::app()->request->requestUri));
                 }
             ),
             array('deny',
                 'deniedCallback' => function () {
                     Yii::app()->user->setFlash('error access-guest', 'Вы не авторизованы');
-                    Yii::app()->controller->redirect(array('auth/login'));
+                    Yii::app()->controller->redirect(array('auth/login', 'returnTo' => Yii::app()->request->requestUri));
                 }
             )
         );
