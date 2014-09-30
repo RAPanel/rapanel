@@ -39,7 +39,7 @@ class AdminToolbar extends CWidget
     {
         /** @var RClientScript $clientScript */
         $clientScript = Yii::app()->clientScript;
-        $clientScript->assetDirs['adminToolbar'] = 'rapanel.widgets.AdminToolbar.assets';
+        $clientScript->assetDirs['adminToolbar'] = __DIR__ . '/assets';
         $clientScript->addGlobal(array(
             'js' => array(
                 '[adminToolbar]/theModal.js',
