@@ -4,7 +4,6 @@
  */
 
 $this->beginContent('/layouts/head');
-
 Yii::app()->clientScript->assetDirs['rapanel'] = 'rapanel.assets';
 Yii::app()->clientScript->addGlobal(array(
 	'js' => array(
@@ -18,9 +17,9 @@ Yii::app()->clientScript->addGlobal(array(
 		'[rapanel]/jquery.colorbox-min.js',
 	),
     //TODO перенести в less файл!
-	'css' => array(
-		'[rapanel]/colorbox.css',
-	),
+//	'css' => array(
+//		'[rapanel]/colorbox.css',
+//	),
 	'less' => array(
 		'[rapanel]/style.less',
 	),
