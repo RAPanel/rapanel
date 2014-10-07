@@ -31,6 +31,11 @@ $(function () {
         });
         return false;
     });
+    $('.clearMenu >a').dblclick(function () {
+        $.get(this.href, {back: 0}, function () {
+            window.location.reload();
+        });
+    });
 
     // Правило для грида для показа пакетных действий
     var form = $('.wrapper > form').on('change', 'input[type="checkbox"]', function () {
@@ -45,6 +50,7 @@ $(function () {
     // Модификация для datePicker в формах модалки
     // @todo интегрировать в виджет!
     $('.datePicker').each(function () {
+        if(!$(this).val() && !$(this).hasClass('autoNow')) return;
         var time = $(this).val() ? $(this).val() * 1000 : Date.now();
         var d = new Date(time);
         var date = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
@@ -175,3 +181,40 @@ function bannerCreate() {
         }, 1)
     }
 }
+
+(function ($) {
+    $.each(['show', 'hide'], function (i, ev) {
+        var el = $.fn[ev];
+        $.fn[ev] = function () {
+            this.trigger(ev);
+            return el.apply(this, arguments);
+        };
+    });
+})(jQuery);
+
+(function ($) {
+    $.fn.extend({
+        onShow: function (callback, unbind) {
+            return this.each(function () {
+                var _this = this;
+                var bindopt = (unbind == undefined) ? true : unbind;
+                if ($.isFunction(callback)) {
+                    if ($(_this).is(':hidden')) {
+                        var checkVis = function () {
+                            if ($(_this).is(':visible')) {
+                                callback.call(_this);
+                                if (bindopt) {
+                                    $('body').unbind('click keyup keydown', checkVis);
+                                }
+                            }
+                        }
+                        $('body').bind('click keyup keydown', checkVis);
+                    }
+                    else {
+                        callback.call(_this);
+                    }
+                }
+            });
+        }
+    });
+})(jQuery);
