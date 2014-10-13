@@ -2,6 +2,8 @@
 
 class AuthController extends RAdminController
 {
+    public $layout = 'auth';
+
     public function actionLogin($returnTo = null)
     {
         $model = new UserBase('login');
@@ -38,6 +40,7 @@ class AuthController extends RAdminController
                 ),
                 'rememberMe' => array(
                     'type' => 'checkbox',
+                    'layout' => '<div class="checkbox-single">{input}{label}</div>{hint}{error}'
                 ),
             ),
             'buttons' => array(

@@ -99,6 +99,11 @@ class ContentBehavior extends AdminBehavior
     /** @var $criteria CDbCriteria */
     public function getSearchCriteria($criteria)
     {
+        /*preg_match_all('&(([a-z]+):(\(([^\)]+)\)|([^\s]+))\s)&', $_GET['q'], $data);
+        if($_GET['q']) {
+            var_dump($data);die;
+        }*/
+
         if (($query = $_GET['q']) && $query != '*')
             foreach (explode(' ', $query) as $q) if ($q) {
                 list($attr, $value) = explode(':', $q);
@@ -235,6 +240,12 @@ class ContentBehavior extends AdminBehavior
         );
     }
 
+    public function applyDefaultElementConfig($elementConfig) {
+        if($elementConfig['type'] == 'checkbox')
+            $elementConfig['layout'] = '<div class="checkbox-single">{input}{label}</div>{hint}{error}';
+        return $elementConfig;
+    }
+
     /**
      * @return array|mixed
      */
@@ -242,13 +253,16 @@ class ContentBehavior extends AdminBehavior
     {
         $result = array();
         $elements = method_exists($this->owner, 'getElements') ? $this->owner->getElements() : array();
+        foreach($elements as $elementId => $config) {
+            $elements[$elementId] = $this->applyDefaultElementConfig($config);
+        }
         foreach ((array)$this->adminSettings['elements'] as $row)
             if (in_array($row, array_keys($this->getOwner()->tableSchema->columns))) {
                 $result['main'][$row] = $elements[$row] ? $elements[$row] : array();
             }
         if (method_exists($this->getOwner(), 'getCharacterNames'))
             foreach (Characters::getDataByUrls($this->getOwner()->getCharacterNames(true)) as $row)
-                $result[$row['position']][$row['url']] = $this->getCharacterElement($row);
+                $result[$row['position']][$row['url']] = $this->applyDefaultElementConfig($this->getCharacterElement($row));
         if (method_exists($this->getOwner(), 'settingNames'))
             foreach ($this->getOwner()->settingNames() as $row)
                 $result['additional'][$row] = array(
@@ -347,7 +361,6 @@ class ContentBehavior extends AdminBehavior
             case 'boolean':
                 return $data + array(
                     'type' => 'checkbox',
-                    'layout' => '{input}{label}{hint}{error}',
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'fromlist':

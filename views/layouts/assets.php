@@ -24,7 +24,7 @@ Yii::app()->clientScript->addGlobal(array(
 		'[rapanel]/style.less',
 	),
 ));
-Yii::app()->clientScript->forcePublishOnDebug = false;
+Yii::app()->clientScript->forcePublishOnDebug = true;
 Yii::app()->clientScript->minEnabled = false;
 echo $content;
 

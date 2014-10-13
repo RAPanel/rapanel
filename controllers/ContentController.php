@@ -372,7 +372,7 @@ class ContentController extends RAdminController
         if (!empty($listData)) {
             $data = array();
             foreach (Characters::getDataByUrls(array_keys($row->characters)) as $key => $val)
-                if ($val['position'] == 'main')
+//                if ($val['position'] == 'main')
                     $data[$val['url']] = array(
                         'header' => $val['name'],
                         'type' => $val['inputType'],
@@ -390,7 +390,7 @@ class ContentController extends RAdminController
                 echo json_encode($widget->formattedData);
                 Yii::app()->end();
             }
-            $this->renderPartial('ajax', compact('widget'), 0, 1);
+            $this->renderActive('editAll', compact('widget'), 0, 1);
         } else
             var_dump($result);
     }
