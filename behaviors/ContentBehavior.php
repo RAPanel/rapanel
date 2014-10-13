@@ -176,7 +176,7 @@ class ContentBehavior extends AdminBehavior
                 'value' => $this->columnValue($column),
                 'type' => $this->getTypeFromList($column),
             );
-            if (method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes())){
+            if (method_exists($owner, 'getInLineData') && method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes())){
                 $default[$column]['type'] = 'arrayMode';
                 $default[$column]['value'] = '$data->inLineData';
             }
