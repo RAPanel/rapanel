@@ -238,6 +238,7 @@ class ModuleBehavior extends AdminBehavior
         if (in_array('currentUrl', array_keys($model->relations()))) {
             $elements['config[noUrl]'] = array(
                 'label' => 'Не генерировать url',
+                'layout' => '{input}{label}{hint}{error}',
                 'type' => 'checkbox',
             );
         }

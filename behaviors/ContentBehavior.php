@@ -361,6 +361,7 @@ class ContentBehavior extends AdminBehavior
             case 'boolean':
                 return $data + array(
                     'type' => 'checkbox',
+                    'layout' => '{input}{label}{hint}{error}',
                     'class' => 'input-' . $row['inputType'],
                 );
             case 'fromlist':
