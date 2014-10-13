@@ -203,7 +203,7 @@ class ContentController extends RAdminController
         $model = RActiveRecord::model($module->className)->findByPk($id);
         if (empty($model)) throw new CHttpException(404, 'Запись не найдена');
 
-        $func = isset($model->NestedSetBehavior) ? 'deleteNode' : 'delete';
+        $func = isset($model->nestedSetBehavior) ? 'deleteNode' : 'delete';
 
         if ($model->{$func}()) {
             $this->flash('success content-delete', 'Object successfully deleted');
