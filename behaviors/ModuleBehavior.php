@@ -184,7 +184,7 @@ class ModuleBehavior extends AdminBehavior
 
         if (method_exists($model, 'getCharacterNames'))
             $lines['characters'] = array_values($model->getCharacterNames(true, true));
-        $lines['elements'] = array_keys($model->tableSchema->columns);
+        $lines['elements'] = $model->attributeNames();
         $lines['columns'] = isset($this->owner->config['characters']) ? CMap::mergeArray($lines['elements'], (array)$this->owner->config['characters']) : $lines['elements'];
 
         foreach ($lines as $label => $array) {

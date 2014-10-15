@@ -257,7 +257,7 @@ class ContentBehavior extends AdminBehavior
             $elements[$elementId] = $this->applyDefaultElementConfig($config);
         }
         foreach ((array)$this->adminSettings['elements'] as $row)
-            if (in_array($row, array_keys($this->getOwner()->tableSchema->columns))) {
+            if (in_array($row, $this->getOwner()->attributeNames())) {
                 $result['main'][$row] = $elements[$row] ? $elements[$row] : array();
             }
         if (method_exists($this->getOwner(), 'getCharacterNames'))
