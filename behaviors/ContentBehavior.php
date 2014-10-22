@@ -81,8 +81,6 @@ class ContentBehavior extends AdminBehavior
 
             $this->getSearchCriteria($criteria);
 
-            CVarDumper::dump($criteria,10,1);die;
-
             $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url))->resetScope(), compact('criteria', 'pagination', 'sort'));
 
             /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
