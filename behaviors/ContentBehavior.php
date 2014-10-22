@@ -19,7 +19,6 @@ class ContentBehavior extends AdminBehavior
         if (!$this->_dataProvider) {
             $columns = (array)$this->adminSettings['columns'];
             $criteria = new CDbCriteria($criteria);
-            $criteria->mergeWith($this->getOwner()->defaultScope());
             $criteria->addCondition('`t`.`id` > 0');
 
             if (isset($this->owner->module_id))
@@ -81,6 +80,8 @@ class ContentBehavior extends AdminBehavior
             $criteria->offset = $page + $start;
 
             $this->getSearchCriteria($criteria);
+
+            CVarDumper::dump($criteria,10,1);die;
 
             $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url))->resetScope(), compact('criteria', 'pagination', 'sort'));
 
