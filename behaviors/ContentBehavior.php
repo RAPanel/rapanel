@@ -81,8 +81,6 @@ class ContentBehavior extends AdminBehavior
 
             $this->getSearchCriteria($criteria);
 
-            CVarDumper::dump($criteria,10,1);die;
-
             $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url))->resetScope(), compact('criteria', 'pagination', 'sort'));
 
             /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
@@ -100,14 +98,20 @@ class ContentBehavior extends AdminBehavior
     /** @var $criteria CDbCriteria */
     public function getSearchCriteria($criteria)
     {
-        /*preg_match_all('&(([a-z]+):(\(([^\)]+)\)|([^\s]+))\s)&', $_GET['q'], $data);
-        if($_GET['q']) {
-            var_dump($data);die;
-        }*/
-
-        if (($query = $_GET['q']) && $query != '*')
-            foreach (explode(' ', $query) as $q) if ($q) {
-                list($attr, $value) = explode(':', $q);
+        if (($query = $_GET['q']) && $query != '*') {
+            $params = array();
+            $q = $query;
+            $pattern = '#([a-z]+):(\(([^\)]+)\)|([^\s]+))#i';
+            if (preg_match_all($pattern, $query, $matches)) {
+                foreach ($matches[0] as $i => $match) {
+                    $q = str_replace($match, '', $q);
+                    $key = $matches[1][$i];
+                    $value = $matches[3][$i] ? $matches[3][$i] : $matches[4][$i];
+                    $params[$key] = $value;
+                }
+                $params[] = trim($q);
+            }
+            foreach ($params as $attr => $value) if ($value) {
                 if ($value && ($this->owner->hasAttribute($attr))) {
                     $criteria->compare('t.' . $attr, $value, !is_numeric($value));
                 } elseif ($value && ($this->owner instanceof PageBase && $this->owner->hasCharacter($attr))) {
@@ -145,6 +149,7 @@ class ContentBehavior extends AdminBehavior
                     $criteria->addCondition(implode(' OR ', $condition));
                 }
             }
+        }
     }
 
     public function getColumns()
@@ -177,7 +182,7 @@ class ContentBehavior extends AdminBehavior
                 'value' => $this->columnValue($column),
                 'type' => $this->getTypeFromList($column),
             );
-            if (method_exists($owner, 'getInLineData') && method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes())){
+            if (method_exists($owner, 'getInLineData') && method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes())) {
                 $default[$column]['type'] = 'arrayMode';
                 $default[$column]['value'] = '$data->inLineData';
             }
@@ -241,8 +246,9 @@ class ContentBehavior extends AdminBehavior
         );
     }
 
-    public function applyDefaultElementConfig($elementConfig) {
-        if($elementConfig['type'] == 'checkbox')
+    public function applyDefaultElementConfig($elementConfig)
+    {
+        if ($elementConfig['type'] == 'checkbox')
             $elementConfig['layout'] = '<div class="checkbox-single">{input}{label}</div>{hint}{error}';
         return $elementConfig;
     }
@@ -254,7 +260,7 @@ class ContentBehavior extends AdminBehavior
     {
         $result = array();
         $elements = method_exists($this->owner, 'getElements') ? $this->owner->getElements() : array();
-        foreach($elements as $elementId => $config) {
+        foreach ($elements as $elementId => $config) {
             $elements[$elementId] = $this->applyDefaultElementConfig($config);
         }
         foreach ((array)$this->adminSettings['elements'] as $row)
