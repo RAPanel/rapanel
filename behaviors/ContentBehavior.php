@@ -101,7 +101,7 @@ class ContentBehavior extends AdminBehavior
         if (($query = $_GET['q']) && $query != '*') {
             $params = array();
             $q = $query;
-            $pattern = '#([a-z]+):(\(([^\)]+)\)|([^\s]+))#i';
+            $pattern = '#([a-z_-]+):(\(([^\)]+)\)|([^\s]+))#i';
             if (preg_match_all($pattern, $query, $matches)) {
                 foreach ($matches[0] as $i => $match) {
                     $q = str_replace($match, '', $q);
@@ -114,8 +114,10 @@ class ContentBehavior extends AdminBehavior
             foreach ($params as $attr => $value) if ($value) {
                 if ($value && ($this->owner->hasAttribute($attr))) {
                     $criteria->compare('t.' . $attr, $value, !is_numeric($value));
-                } elseif ($value && ($this->owner instanceof PageBase && $this->owner->hasCharacter($attr))) {
-                    $criteria->compare(Characters::getRelationByUrl($attr) . '.value', $value, !is_numeric($value));
+                } elseif ($value && ($attr && $this->owner instanceof PageBase && $this->owner->hasCharacter($attr))) {
+                    $criteria->with[] = Characters::getRelationByUrl($attr);
+                    foreach(explode(' ', $value) as $text)
+                        $criteria->compare(Characters::getRelationByUrl($attr) . '.value', $text, !is_numeric($value));
                 } else {
                     $condition = array();
                     foreach ($this->getOwner()->tableSchema->columns as $row) {
