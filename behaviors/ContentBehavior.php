@@ -115,7 +115,9 @@ class ContentBehavior extends AdminBehavior
                 if ($value && ($this->owner->hasAttribute($attr))) {
                     $criteria->compare('t.' . $attr, $value, !is_numeric($value));
                 } elseif ($value && ($this->owner instanceof PageBase && $this->owner->hasCharacter($attr))) {
-                    $criteria->compare(Characters::getRelationByUrl($attr) . '.value', $value, !is_numeric($value));
+                    $criteria->with[] = Characters::getRelationByUrl($attr);
+                    foreach(explode(' ', $value) as $text)
+                        $criteria->compare(Characters::getRelationByUrl($attr) . '.value', $text, !is_numeric($value));
                 } else {
                     $condition = array();
                     foreach ($this->getOwner()->tableSchema->columns as $row) {
