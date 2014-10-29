@@ -109,12 +109,12 @@ class ContentBehavior extends AdminBehavior
                     $value = $matches[3][$i] ? $matches[3][$i] : $matches[4][$i];
                     $params[$key] = $value;
                 }
-                $params[] = trim($q);
             }
+            if($q) $params[] = trim($q);
             foreach ($params as $attr => $value) if ($value) {
-                if ($value && ($this->owner->hasAttribute($attr))) {
+                if ($attr && !is_numeric($attr) && $value && $this->owner->hasAttribute($attr)) {
                     $criteria->compare('t.' . $attr, $value, !is_numeric($value));
-                } elseif ($value && ($attr && $this->owner instanceof PageBase && $this->owner->hasCharacter($attr))) {
+                } elseif ($attr && !is_numeric($attr) && $value && $this->owner instanceof PageBase && $this->owner->hasCharacter($attr)) {
                     $criteria->with[] = Characters::getRelationByUrl($attr);
                     foreach(explode(' ', $value) as $text)
                         $criteria->compare(Characters::getRelationByUrl($attr) . '.value', $text, !is_numeric($value));
@@ -123,30 +123,30 @@ class ContentBehavior extends AdminBehavior
                     foreach ($this->getOwner()->tableSchema->columns as $row) {
                         if (in_array(current(explode('(', $row->dbType)), array('varchar', 'text'))) {
                             $condition[] = "t.{$row->name} LIKE :textSearch";
-                            $criteria->params['textSearch'] = "%{$q}%";
+                            $criteria->params['textSearch'] = "%{$value}%";
                         } elseif (in_array(current(explode('(', $row->dbType)), array('timestamp'))) {
                             continue;
                         } else {
-                            if (!is_numeric($q)) continue;
+                            if (!is_numeric($value)) continue;
                             $condition[] = "t.{$row->name}=:intSearch";
-                            $criteria->params['intSearch'] = $q;
+                            $criteria->params['intSearch'] = $value;
                         }
                     }
                     if ($this->owner instanceof PageBase) {
                         if (stripos($criteria->join, ' `cv`') === false)
                             $criteria->join .= ' INNER JOIN `character_varchar` `cv` ON(cv.page_id=t.id)';
                         $condition[] = "cv.value LIKE :textSearch";
-                        $criteria->params['textSearch'] = "%{$q}%";
+                        $criteria->params['textSearch'] = "%{$value}%";
                     }
                     if (count($criteria->with)) foreach (array('user', 'currentUrl') as $val) if (isset($criteria->with[$val]) && !empty($criteria->with[$val]['select'])) {
                         $condition[] = "{$val}.{$criteria->with[$val]['select']} LIKE :textSearch";
                         $criteria->with[$val]['together'] = true;
-                        $criteria->params['textSearch'] = "%{$q}%";
+                        $criteria->params['textSearch'] = "%{$value}%";
                     }
                     if (count($criteria->with)) foreach (array('page', 'parent') as $val) if (isset($criteria->with[$val]) && $criteria->with[$val]['with']['rName']) {
                         $condition[] = "pName.value LIKE :textSearch";
                         $criteria->with[$val]['together'] = true;
-                        $criteria->params['textSearch'] = "%{$q}%";
+                        $criteria->params['textSearch'] = "%{$value}%";
                     }
                     $criteria->addCondition(implode(' OR ', $condition));
                 }
