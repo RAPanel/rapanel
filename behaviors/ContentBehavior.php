@@ -110,7 +110,8 @@ class ContentBehavior extends AdminBehavior
                     $params[$key] = $value;
                 }
             }
-            if($q) $params[] = trim($q);
+            if(trim($q))
+                $params[] = trim($q);
             foreach ($params as $attr => $value) if ($value) {
                 if ($attr && !is_numeric($attr) && $value && $this->owner->hasAttribute($attr)) {
                     $criteria->compare('t.' . $attr, $value, !is_numeric($value));
