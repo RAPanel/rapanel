@@ -184,7 +184,7 @@ class ModuleBehavior extends AdminBehavior
 
         if (method_exists($model, 'getCharacterNames'))
             $lines['characters'] = array_values($model->getCharacterNames(true, true));
-        $lines['elements'] = array_keys($model->tableSchema->columns);
+        $lines['elements'] = $model->attributeNames();
         $lines['columns'] = isset($this->owner->config['characters']) ? CMap::mergeArray($lines['elements'], (array)$this->owner->config['characters']) : $lines['elements'];
 
         foreach ($lines as $label => $array) {
@@ -232,8 +232,16 @@ class ModuleBehavior extends AdminBehavior
                 'edit' => 'Редактирование',
                 'clone' => 'Клонирование',
                 'delete' => 'Удаление',
+                'note' => 'Заметки',
             ),
         );
+        if (in_array('currentUrl', array_keys($model->relations()))) {
+            $elements['config[noUrl]'] = array(
+                'label' => 'Не генерировать url',
+                'layout' => '{input}{label}{hint}{error}',
+                'type' => 'checkbox',
+            );
+        }
         if (in_array('photos', array_keys($model->relations()))) {
             $elements['config[photos]'] = array(
                 'label' => 'Максимальное количество фотографий',

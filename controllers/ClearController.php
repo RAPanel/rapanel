@@ -6,13 +6,21 @@
 class ClearController extends RAdminController
 {
 
-    public function actionIndex()
+    public function actionIndex($back = true)
     {
         $this->actionAssets(false);
         $this->actionImages(false);
         $this->actionAssets(false);
+        $this->actionState(false);
 
-        $this->back();
+        if ($back) $this->back();
+    }
+
+    public function actionState($back = true)
+    {
+        unlink(YiiBase::getPathOfAlias('application.runtime.state') . '.bin');
+
+        if ($back) $this->back();
     }
 
     public function actionAssets($back = true)
@@ -33,8 +41,6 @@ class ClearController extends RAdminController
 
     public function actionCache($back = true)
     {
-        $this->actionAssets(false);
-        
         /** @var $component CCache */
         foreach (Yii::app()->getComponents(false) as $component)
             if (is_subclass_of($component, 'CCache'))

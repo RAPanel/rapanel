@@ -2,6 +2,14 @@ var modalChange = true;
 var confirmClose = false;
 
 $(function () {
+    // TODO доработать систему ajax смены контента страницы
+    /*$('#modules-menu a').click(function(){
+     $.get($(this).attr('href'), {}, function(data){
+     $('section.main .wrapper').html(data);
+     });
+     return false;
+     });*/
+
     // Правило для модалки для уведомлений о закрытии и обновлении грида
     $('#iframe').find('form').each(function () {
         var el = $(this).find('input, select, textarea');
@@ -13,6 +21,19 @@ $(function () {
         $(this).submit(function () {
             parent.confirmClose = false;
             parent.modalChange = true;
+        });
+    });
+
+    // сброс кэша на ajax
+    $('.clearMenu ul a').click(function () {
+        $.get(this.href, {back: 0}, function () {
+            window.location.reload();
+        });
+        return false;
+    });
+    $('.clearMenu >a').dblclick(function () {
+        $.get(this.href, {back: 0}, function () {
+            window.location.reload();
         });
     });
 
@@ -29,9 +50,10 @@ $(function () {
     // Модификация для datePicker в формах модалки
     // @todo интегрировать в виджет!
     $('.datePicker').each(function () {
+        if(!$(this).val() && !$(this).hasClass('autoNow')) return;
         var time = $(this).val() ? $(this).val() * 1000 : Date.now();
         var d = new Date(time);
-        var date = [ d.getDate(), d.getMonth() + 1, d.getFullYear() ];
+        var date = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
         for (var i = 0; i < 2; i++) {
             if (date[i] < 10) {
                 date[i] = "0" + date[i];
@@ -46,30 +68,7 @@ $(function () {
     // Функционал работы сайдбара
     $('aside.main').sidebar();
 
-    // Меню вверху сайта
-    /*$('nav.menu li > a').click(function () {
-        var ul = $(this).next('ul');
-        if (ul.length) {
-            ul.slideToggle(100);
-            return false;
-        }
-    });*/
-
-    // Меню списка настроек
-    /*$('.listAction > li').click(function () {
-        var ul = $(this).find('ul');
-        if (ul.length) {
-            $(this).toggleClass('active');
-            ul.slideToggle(100);
-        }
-    });*/
-
-    //Меню действий
-    /*$('.gridActions .actionList button').click(function () {
-     var e = $(this);
-     e.parent('.actionList').toggleClass('active');
-     });*/
-
+    // Показ меню
     $('.dropdown').dropdown();
 });
 
@@ -106,6 +105,23 @@ function beforeDelete(e) {
     }
     else
         return false;
+}
+
+function beforeNote(e) {
+    var data = $('<div class="noteForm">');
+    $('<textarea>').appendTo(data).keypress(function (event) {
+        if ((event.ctrlKey) && ((event.keyCode == 0xA) || (event.keyCode == 0xD)))
+            $.colorbox.close();
+    });
+    $.colorbox({
+        html: data,
+        fixed: true,
+        speed: 0,
+        onClosed: function () {
+            $.post(e.href, {text: $('textarea', data).val()});
+        }
+    });
+    return false;
 }
 
 // @todo Построитель баннеров вынести в отдельный Виджет
@@ -166,7 +182,39 @@ function bannerCreate() {
     }
 }
 
-// @todo Удалить протестировав все ли работает
-/*function viewMenu(e) {
- $(e).nextAll('.hiddenMenu').slideToggle(100);
- }*/
+(function ($) {
+    $.each(['show', 'hide'], function (i, ev) {
+        var el = $.fn[ev];
+        $.fn[ev] = function () {
+            this.trigger(ev);
+            return el.apply(this, arguments);
+        };
+    });
+})(jQuery);
+
+(function ($) {
+    $.fn.extend({
+        onShow: function (callback, unbind) {
+            return this.each(function () {
+                var _this = this;
+                var bindopt = (unbind == undefined) ? true : unbind;
+                if ($.isFunction(callback)) {
+                    if ($(_this).is(':hidden')) {
+                        var checkVis = function () {
+                            if ($(_this).is(':visible')) {
+                                callback.call(_this);
+                                if (bindopt) {
+                                    $('body').unbind('click keyup keydown', checkVis);
+                                }
+                            }
+                        }
+                        $('body').bind('click keyup keydown', checkVis);
+                    }
+                    else {
+                        callback.call(_this);
+                    }
+                }
+            });
+        }
+    });
+})(jQuery);

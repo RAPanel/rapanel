@@ -17,7 +17,7 @@ class ContentBehavior extends AdminBehavior
     public function getDataProvider($criteria = array())
     {
         if (!$this->_dataProvider) {
-            $columns = $this->adminSettings['columns'];
+            $columns = (array)$this->adminSettings['columns'];
             $criteria = new CDbCriteria($criteria);
             $criteria->addCondition('`t`.`id` > 0');
 
@@ -98,46 +98,61 @@ class ContentBehavior extends AdminBehavior
     /** @var $criteria CDbCriteria */
     public function getSearchCriteria($criteria)
     {
-        if (($query = $_GET['q']) && $query != '*')
-            foreach (explode(' ', $query) as $q) if ($q) {
-                list($attr, $value) = explode(':', $q);
-                if ($value && ($this->owner->hasAttribute($attr))) {
+        if (($query = $_GET['q']) && $query != '*') {
+            $params = array();
+            $q = $query;
+            $pattern = '#([a-z_-]+):(\(([^\)]+)\)|([^\s]+))#i';
+            if (preg_match_all($pattern, $query, $matches)) {
+                foreach ($matches[0] as $i => $match) {
+                    $q = str_replace($match, '', $q);
+                    $key = $matches[1][$i];
+                    $value = $matches[3][$i] ? $matches[3][$i] : $matches[4][$i];
+                    $params[$key] = $value;
+                }
+            }
+            if(trim($q))
+                $params[] = trim($q);
+            foreach ($params as $attr => $value) if ($value) {
+                if ($attr && !is_numeric($attr) && $value && $this->owner->hasAttribute($attr)) {
                     $criteria->compare('t.' . $attr, $value, !is_numeric($value));
-                } elseif ($value && ($this->owner instanceof PageBase && $this->owner->hasCharacter($attr))) {
-                    $criteria->compare(Characters::getRelationByUrl($attr) . '.value', $value, !is_numeric($value));
+                } elseif ($attr && !is_numeric($attr) && $value && $this->owner instanceof PageBase && $this->owner->hasCharacter($attr)) {
+                    $criteria->with[] = Characters::getRelationByUrl($attr);
+                    foreach(explode(' ', $value) as $text)
+                        $criteria->compare(Characters::getRelationByUrl($attr) . '.value', $text, !is_numeric($value));
                 } else {
                     $condition = array();
                     foreach ($this->getOwner()->tableSchema->columns as $row) {
                         if (in_array(current(explode('(', $row->dbType)), array('varchar', 'text'))) {
                             $condition[] = "t.{$row->name} LIKE :textSearch";
-                            $criteria->params['textSearch'] = "%{$q}%";
+                            $criteria->params['textSearch'] = "%{$value}%";
                         } elseif (in_array(current(explode('(', $row->dbType)), array('timestamp'))) {
                             continue;
                         } else {
-                            if (!is_numeric($q)) continue;
+                            if (!is_numeric($value)) continue;
                             $condition[] = "t.{$row->name}=:intSearch";
-                            $criteria->params['intSearch'] = $q;
+                            $criteria->params['intSearch'] = $value;
                         }
                     }
                     if ($this->owner instanceof PageBase) {
                         if (stripos($criteria->join, ' `cv`') === false)
                             $criteria->join .= ' INNER JOIN `character_varchar` `cv` ON(cv.page_id=t.id)';
                         $condition[] = "cv.value LIKE :textSearch";
-                        $criteria->params['textSearch'] = "%{$q}%";
+                        $criteria->params['textSearch'] = "%{$value}%";
                     }
                     if (count($criteria->with)) foreach (array('user', 'currentUrl') as $val) if (isset($criteria->with[$val]) && !empty($criteria->with[$val]['select'])) {
                         $condition[] = "{$val}.{$criteria->with[$val]['select']} LIKE :textSearch";
                         $criteria->with[$val]['together'] = true;
-                        $criteria->params['textSearch'] = "%{$q}%";
+                        $criteria->params['textSearch'] = "%{$value}%";
                     }
                     if (count($criteria->with)) foreach (array('page', 'parent') as $val) if (isset($criteria->with[$val]) && $criteria->with[$val]['with']['rName']) {
                         $condition[] = "pName.value LIKE :textSearch";
                         $criteria->with[$val]['together'] = true;
-                        $criteria->params['textSearch'] = "%{$q}%";
+                        $criteria->params['textSearch'] = "%{$value}%";
                     }
                     $criteria->addCondition(implode(' OR ', $condition));
                 }
             }
+        }
     }
 
     public function getColumns()
@@ -170,7 +185,7 @@ class ContentBehavior extends AdminBehavior
                 'value' => $this->columnValue($column),
                 'type' => $this->getTypeFromList($column),
             );
-            if (method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes())){
+            if (method_exists($owner, 'getInLineData') && method_exists($owner, 'serializationAttributes') && in_array($column, $owner->serializationAttributes())) {
                 $default[$column]['type'] = 'arrayMode';
                 $default[$column]['value'] = '$data->inLineData';
             }
@@ -209,18 +224,11 @@ class ContentBehavior extends AdminBehavior
             $result[$action] = array(
                 'label' => ucfirst($action),
                 'url' => function ($data) use ($action, $module) {
-                    $pk = $data->getPrimaryKey();
-                    if (is_array($pk))
-                        $pk = implode('--', $pk);
-                    return CHtml::normalizeUrl(array($action, "url" => $module->url, "id" => $pk));
+                    return CHtml::normalizeUrl(array($action, "url" => $module->url, "id" => implode('--', (array)$data->getPrimaryKey())));
                 },
                 'imageUrl' => false,
-                'crop' => $this->adminSettings['crop'],
-                'max' => $this->adminSettings['photos'],
                 'options' => array(
                     'class' => "button" . ucfirst($action),
-                    'onclick' => 'modalIFrame(this);return false;',
-                    'data-update' => 'contentGrid',
                 ),
             );
         }
@@ -241,6 +249,13 @@ class ContentBehavior extends AdminBehavior
         );
     }
 
+    public function applyDefaultElementConfig($elementConfig)
+    {
+        if ($elementConfig['type'] == 'checkbox')
+            $elementConfig['layout'] = '<div class="checkbox-single">{input}{label}</div>{hint}{error}';
+        return $elementConfig;
+    }
+
     /**
      * @return array|mixed
      */
@@ -248,13 +263,16 @@ class ContentBehavior extends AdminBehavior
     {
         $result = array();
         $elements = method_exists($this->owner, 'getElements') ? $this->owner->getElements() : array();
+        foreach ($elements as $elementId => $config) {
+            $elements[$elementId] = $this->applyDefaultElementConfig($config);
+        }
         foreach ((array)$this->adminSettings['elements'] as $row)
-            if (in_array($row, array_keys($this->getOwner()->tableSchema->columns))) {
+            if (in_array($row, $this->getOwner()->attributeNames())) {
                 $result['main'][$row] = $elements[$row] ? $elements[$row] : array();
             }
         if (method_exists($this->getOwner(), 'getCharacterNames'))
             foreach (Characters::getDataByUrls($this->getOwner()->getCharacterNames(true)) as $row)
-                $result[$row['position']][$row['url']] = $this->getCharacterElement($row);
+                $result[$row['position']][$row['url']] = $this->applyDefaultElementConfig($this->getCharacterElement($row));
         if (method_exists($this->getOwner(), 'settingNames'))
             foreach ($this->getOwner()->settingNames() as $row)
                 $result['additional'][$row] = array(
