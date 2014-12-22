@@ -130,6 +130,9 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
                         <button type="button" class="show">активировать</button>
                     </li>
                     <li>
+                        <button type="button" class="export" data-url="<?=$module->url ?>">экспорт</button>
+                    </li>
+                    <li>
                         <button type="button" class="edit">редактировать</button>
                     </li>
                     <li>
