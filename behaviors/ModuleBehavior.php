@@ -186,6 +186,7 @@ class ModuleBehavior extends AdminBehavior
             $lines['characters'] = array_values($model->getCharacterNames(true, true));
         $lines['elements'] = $model->attributeNames();
         $lines['columns'] = isset($this->owner->config['characters']) ? CMap::mergeArray($lines['elements'], (array)$this->owner->config['characters']) : $lines['elements'];
+        $lines['columns'][] = 'ico';
 
         foreach ($lines as $label => $array) {
             $columns = array_intersect((array)$this->owner->config[$label], $array);
