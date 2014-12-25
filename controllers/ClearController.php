@@ -8,10 +8,19 @@ class ClearController extends RAdminController
 
     public function actionIndex($back = true)
     {
+        $this->actionState(false);
         $this->actionAssets(false);
         $this->actionImages(false);
-        $this->actionAssets(false);
+        $this->actionCache(false);
+
+        if ($back) $this->back();
+    }
+
+    public function actionFast($back = true)
+    {
         $this->actionState(false);
+        $this->actionAssets(false);
+        $this->actionCache(false);
 
         if ($back) $this->back();
     }

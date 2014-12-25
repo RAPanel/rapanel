@@ -148,7 +148,7 @@ class ContentController extends RAdminController
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
         /** @var $model RActiveRecord */
-        $model = RActiveRecord::model($module->className);
+        $model = RActiveRecord::model($module->className)->resetScope();
         if (is_array($model->tableSchema->primaryKey)) {
             $parts = explode("--", $id);
             $pk = array();
@@ -291,7 +291,7 @@ class ContentController extends RAdminController
     {
         $module = Module::model()->findByAttributes(compact('url'));
         if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
-        $model = RActiveRecord::model($module->className)->findByPk($id);
+        $model = RActiveRecord::model($module->className)->resetScope()->findByPk($id);
         if ($model->href) $this->redirect($model->href);
     }
 
@@ -306,7 +306,7 @@ class ContentController extends RAdminController
         preg_match('|url=([^&]+)|', $href ? $href : Yii::app()->request->urlReferrer, $url);
         $class = Module::model()->findByPk(Module::getIdByUrl($url[1]))->className;
         if (!$class) $class = 'Module';
-        $base = RActiveRecord::model($class)->resetScope();
+        $base = RActiveRecord::model($class)->resetScope()->resetScope();
 
         $model = $base->findByPk($id);
         $model->status_id = (int)$model->status_id != 1;

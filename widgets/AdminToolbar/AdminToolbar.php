@@ -58,7 +58,7 @@ class AdminToolbar extends CWidget
     {
         return array(
             array('label' => 'меню', 'url' => array('/' . $this->moduleId . '/module/index'), 'itemOptions' => array('class' => 'rp_menu'), 'items' => Yii::app()->moduleMapper->getAdminMenuItems($this->moduleId)),
-            array('label' => 'сбросить кэш', 'url' => array('/' . $this->moduleId . '/clear/cache'), 'itemOptions' => array('class' => 'rp_reset')),
+            array('label' => 'сбросить кэш', 'url' => array('/' . $this->moduleId . '/clear/fast'), 'itemOptions' => array('class' => 'rp_reset')),
             array('label' => 'режим правки ' . CHtml::tag('span', array(), $this->debug ? '(включен)' : '(выключен)'), 'url' => array('/' . $this->moduleId . '/options/debug'), 'itemOptions' => array('class' => $this->debug ? 'rp_editMode active' : 'rp_editMode'), 'visible' => Yii::app()->user->checkAccess('root')),
             array('label' => 'свернуть', 'url' => '#hide', 'itemOptions' => array('class' => 'rp_turn')),
         );
