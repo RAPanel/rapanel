@@ -33,6 +33,8 @@ class ContentBehavior extends AdminBehavior
             }
 
             $relations = array_keys($this->owner->relations());
+            if (in_array('ico', $columns) && in_array('photo', $relations))
+                $criteria->with['photo'] = array('select' => '*');
             if (in_array('user_id', $columns) && in_array('user', $relations))
                 $criteria->with['user'] = array('select' => 'username');
             if (in_array('page_id', $columns) && in_array('page', $relations))
@@ -167,7 +169,7 @@ class ContentBehavior extends AdminBehavior
                 'type' => 'order',
                 'cssClassExpression' => '"sorterHandler"',
             );
-        else$default['step'] = array(
+        else $default['step'] = array(
             'name' => '#',
             'value' => '',
             'type' => 'order',
