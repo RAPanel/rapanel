@@ -200,7 +200,7 @@ class ContentController extends RAdminController
 		if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
 
 		/** @var $model RActiveRecord */
-		$model = RActiveRecord::model($module->className)->findByPk($id);
+		$model = RActiveRecord::model($module->className)->resetScope()->findByPk($id);
 		if (empty($model)) throw new CHttpException(404, 'Запись не найдена');
 
 		$func = isset($model->nestedSetBehavior) ? 'deleteNode' : 'delete';
