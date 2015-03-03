@@ -292,7 +292,11 @@ class ContentController extends RAdminController
 		$module = Module::model()->findByAttributes(compact('url'));
 		if (empty($module)) throw new CHttpException(404, 'Модуль не найден');
 		$model = RActiveRecord::model($module->className)->resetScope()->findByPk($id);
-		if ($model->href) $this->redirect($model->href);
+        if(get_class($model) == 'User'){
+            Yii::app()->user->setState('adminView', $model->id);
+            $this->redirect('/');
+        }
+		elseif ($model->href) $this->redirect($model->href);
 	}
 
 	public function actionFix($id = false, $url = false)
