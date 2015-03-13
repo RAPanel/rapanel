@@ -10,7 +10,7 @@ class ClearController extends RAdminController
     {
         $this->actionState(false);
         $this->actionAssets(false);
-        $this->actionImages(false);
+//        $this->actionImages(false);
         $this->actionCache(false);
 
         if ($back) $this->back();
