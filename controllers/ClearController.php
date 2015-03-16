@@ -71,6 +71,7 @@ class ClearController extends RAdminController
             if (is_file($file)) {
                 if (Photo::model()->exists('name=:filename', compact('filename'))) {
                     list($w, $h) = getimagesize($file);
+                    if (!$w || !$h) unlink($file);
                     if ($w && $h && ($w > 1920 || $h > 1920)) {
                         try {
                             Yii::app()->imageConverter->convert($file, $file, 'default');
@@ -81,7 +82,7 @@ class ClearController extends RAdminController
                         $photo = Photo::model()->find('name=:filename', compact('filename'));
                         $photo->setAttributes(compact('width', 'height'), false);
                         $photo->save(false);
-                    } else unlink($file);
+                    }
                 } else unlink($file);
             }
         }
