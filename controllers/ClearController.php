@@ -59,19 +59,29 @@ class ClearController extends RAdminController
         if ($back) $this->back();
     }
 
-    public function actionOptimizePhoto()
+    public function actionOptimizePhoto($lastFile = null)
     {
+        set_time_limit(0);
         $dir = Yii::getPathOfAlias('webroot.data._tmp');
+        $go = !(bool)$lastFile;
         foreach (scandir($dir) as $filename) {
+            if ($lastFile == $filename) $go = true;
+            if (!$go) continue;
             $file = $dir . DIRECTORY_SEPARATOR . $filename;
-            list($w, $h) = getimagesize($file);
-            if (Photo::model()->exists('name=:filename', compact('filename'))) {
-                if ($w && $h && ($w > 2000 || $h > 2000)) {
-                    Yii::app()->imageConverter->convert($file, $file, 'default');
-                    list($width, $height) =  getimagesize($file);
-                    $photo = Photo::model()->find('name=:filename', compact('filename'));
-                    $photo->setAttributes(compact('width', 'height'), false);
-                    $photo->save(false);
+            if (is_file($file)) {
+                if (Photo::model()->exists('name=:filename', compact('filename'))) {
+                    list($w, $h) = getimagesize($file);
+                    if ($w && $h && ($w > 1920 || $h > 1920)) {
+                        try {
+                            Yii::app()->imageConverter->convert($file, $file, 'default');
+                        } catch (Exception $e) {
+                            $this->redirect(array($this->action->id, 'lastFile' => $filename));
+                        }
+                        list($width, $height) = getimagesize($file);
+                        $photo = Photo::model()->find('name=:filename', compact('filename'));
+                        $photo->setAttributes(compact('width', 'height'), false);
+                        $photo->save(false);
+                    } else unlink($file);
                 } else unlink($file);
             }
         }
