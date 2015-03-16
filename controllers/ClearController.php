@@ -59,6 +59,24 @@ class ClearController extends RAdminController
         if ($back) $this->back();
     }
 
+    public function actionOptimizePhoto()
+    {
+        $dir = Yii::getPathOfAlias('webroot.data._tmp');
+        foreach (scandir($dir) as $filename) {
+            $file = $dir . DIRECTORY_SEPARATOR . $filename;
+            list($w, $h) = getimagesize($file);
+            if (Photo::model()->exists('name=:filename', compact('filename'))) {
+                if ($w && $h && ($w > 2000 || $h > 2000)) {
+                    Yii::app()->imageConverter->convert($file, $file, 'default');
+                    list($width, $height) =  getimagesize($file);
+                    $photo = Photo::model()->find('name=:filename', compact('filename'));
+                    $photo->setAttributes(compact('width', 'height'), false);
+                    $photo->save(false);
+                } else unlink($file);
+            }
+        }
+    }
+
     public function deleteFilesRecursive($path)
     {
         if (file_exists($path)) CFileHelper::removeDirectory($path);
