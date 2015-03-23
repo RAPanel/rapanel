@@ -46,10 +46,13 @@ class AdminToolbar extends CWidget
                 '[adminToolbar]/userMenu.js',
                 'core:cookie',
             ),
-            'less' => array(
+            'css' => array(
+                '[adminToolbar]/userMenu.css',
+            ),
+            /*'less' => array(
                 '[adminToolbar]/theModal.less',
                 '[adminToolbar]/userMenu.less',
-            ),
+            ),*/
         ));
         $clientScript->registerScript(__CLASS__, 'adminToolbar();');
     }
