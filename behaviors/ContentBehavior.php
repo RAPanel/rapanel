@@ -83,7 +83,10 @@ class ContentBehavior extends AdminBehavior
 
             $this->getSearchCriteria($criteria);
 
+//            CVarDumper::dump($criteria,10,1);die;
+
             $this->_dataProvider = new CActiveDataProvider($this->owner->cache('60*60', new CGlobalStateCacheDependency($this->getModule()->url))->resetScope(), compact('criteria', 'pagination', 'sort'));
+
 
             /* $count = Yii::app()->cache->get( $id = md5(serialize($criteria)));
              if($count === false){
@@ -124,7 +127,7 @@ class ContentBehavior extends AdminBehavior
                 } else {
                     $condition = array();
                     foreach ($this->getOwner()->tableSchema->columns as $row) {
-                        if (in_array(current(explode('(', $row->dbType)), array('varchar', 'text'))) {
+                        if (in_array(current(explode('(', $row->dbType)), array('varchar', 'text', 'blob'))) {
                             $condition[] = "t.{$row->name} LIKE :textSearch";
                             $criteria->params['textSearch'] = "%{$value}%";
                         } elseif (in_array(current(explode('(', $row->dbType)), array('timestamp'))) {
@@ -151,7 +154,8 @@ class ContentBehavior extends AdminBehavior
                         $criteria->with[$val]['together'] = true;
                         $criteria->params['textSearch'] = "%{$value}%";
                     }
-                    $criteria->addCondition(implode(' OR ', $condition));
+                    if(!empty($condition))
+                        $criteria->addCondition(implode(' OR ', $condition));
                 }
             }
         }
