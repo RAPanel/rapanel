@@ -31,7 +31,7 @@ class AdminToolbar extends CWidget
                 'items' => $this->menuRight,
             ));
             echo CHtml::closeTag('nav');
-            echo CHtml::link('RA-panel', '#open', array('class' => 'ra-panel'));
+            echo CHtml::link('RA-panel', '#openRAPanel', array('class' => 'ra-panel'));
         }
     }
 
