@@ -63,7 +63,6 @@ class ContentBehavior extends AdminBehavior
                     $criteria->join .= ' JOIN page p1 ON(p1.id=:parent_id)';
                     $criteria->join .= ' JOIN page p2 ON(p2.lft BETWEEN p1.lft AND p1.rgt)';
                     $criteria->addCondition('t.parent_id=p2.id');
-                    $criteria->addCondition('t.id!=:parent_id');
                 } else $criteria->addCondition('t.parent_id=:parent_id');
                 $criteria->addCondition('t.id!=:parent_id');
                 $criteria->params['parent_id'] = $_GET['parent_id'];
@@ -80,6 +79,8 @@ class ContentBehavior extends AdminBehavior
             $limit = isset($_GET['limit']) ? $_GET['limit'] : 50;
             $criteria->limit = $limit;
             $criteria->offset = $page + $start;
+
+//            var_dump($criteria);
 
             $this->getSearchCriteria($criteria);
 

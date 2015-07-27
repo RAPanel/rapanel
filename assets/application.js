@@ -25,7 +25,7 @@ $(function () {
     });
 
     // сброс кэша на ajax
-    $('.clearMenu ul a').click(function () {
+    $('.clearMenu ul a, .listAction a').click(function () {
         $.get(this.href, {back: 0}, function () {
             window.location.reload();
         });
