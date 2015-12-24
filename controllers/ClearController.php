@@ -87,7 +87,7 @@ class ClearController extends RAdminController
             }
         }
 
-        $this->actionImages(false);
+        $this->actionImages();
     }
 
     public function deleteFilesRecursive($path)
