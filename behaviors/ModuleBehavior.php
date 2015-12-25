@@ -110,7 +110,7 @@ class ModuleBehavior extends AdminBehavior
                         'label' => 'Edit',
                         'url' => 'CHtml::normalizeUrl(array("edit", "url"=>$data->url))',
                         'options' => array(
-                            'onclick' => 'modalIFrame(this);return false;',
+                            'onclick' => 'return modalIFrame(this);',
                             'data-update' => 'modulesGrid',
                         ),
                     ),
@@ -118,7 +118,7 @@ class ModuleBehavior extends AdminBehavior
                         'label' => 'Config',
                         'url' => 'CHtml::normalizeUrl(array("config", "url"=>$data->url))',
                         'options' => array(
-                            'onclick' => 'modalIFrame(this);return false;',
+                            'onclick' => 'return modalIFrame(this);',
                             'data-update' => 'modulesGrid',
                         ),
                     ),

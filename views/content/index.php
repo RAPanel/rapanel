@@ -44,13 +44,13 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
         <div class="rightBlock">
             <div class="buttons"><?=
                 CHtml::htmlButton('Добавить', array(
-                    'onclick' => 'modalIFrame(this)',
+                    'onclick' => 'return modalIFrame(this)',
                     'href' => $this->createUrl('edit', compact('url')),
                     'title' => 'добавить запись',
                 ));
                 $items = array(
-                    array('label' => 'добавить запись', 'url' => array('edit') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this);return false;')),
-                    array('label' => 'добавить категорию', 'visible' => $module->type_id == Module::TYPE_NESTED, 'url' => array('edit', 'type' => 'category') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this);return false;')),
+                    array('label' => 'добавить запись', 'url' => array('edit') + compact('url'), 'linkOptions' => array('onclick' => 'return modalIFrame(this);')),
+                    array('label' => 'добавить категорию', 'visible' => $module->type_id == Module::TYPE_NESTED, 'url' => array('edit', 'type' => 'category') + compact('url'), 'linkOptions' => array('onclick' => 'return modalIFrame(this);')),
                 );
                 $i = 0;
                 foreach ($items as $row) if (!isset($row['visible']) || $row['visible'] == 1) $i++;
@@ -78,14 +78,14 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
 
             <div class="settings"><?=
                 CHtml::htmlButton('настройка', array(
-                        'onclick' => 'modalIFrame(this)',
+                        'onclick' => 'return modalIFrame(this)',
                         'href' => $this->createUrl('module/config', compact('url')),
                         'title' => 'настроить отображение')
                 );
                 $items = array(
-                    array('label' => 'настроить отображение', 'url' => array('module/config') + compact('url'), 'linkOptions' => array('onclick' => 'modalIFrame(this);return false;')),
+                    array('label' => 'настроить отображение', 'url' => array('module/config') + compact('url'), 'linkOptions' => array('onclick' => 'return modalIFrame(this);')),
                     array('label' => 'исправить индексы', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('fix', 'id' => $module->id, 'is_category' => $module->type_id == Module::TYPE_NESTED)),
-                    array('label' => 'редактировать root', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('edit', 'url' => $url, 'id' => $module->config['parent_id']), 'linkOptions' => array('onclick' => 'modalIFrame(this);return false;')),
+                    array('label' => 'редактировать root', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('edit', 'url' => $url, 'id' => $module->config['parent_id']), 'linkOptions' => array('onclick' => 'return modalIFrame(this);')),
                 );
                 $i = 0;
                 foreach ($items as $row) if (!isset($row['visible']) || $row['visible'] == 1) $i++;

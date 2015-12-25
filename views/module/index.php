@@ -17,7 +17,7 @@ echo CHtml::beginForm(array('change'));
         <div class="rightBlock">
             <div class="buttons"><?=
                 CHtml::htmlButton('Создать новый модуль', array(
-                    'onclick' => 'modalIFrame(this)',
+                    'onclick' => 'return modalIFrame(this)',
                     'href' => $this->createUrl('edit'),
                 )); ?>
             </div>

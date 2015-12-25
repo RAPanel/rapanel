@@ -31,12 +31,12 @@ echo CHtml::beginForm($this->createUrl('banner', compact('url')));
     <div class="right">
         <div class="buttons"><?=
             CHtml::htmlButton('Добавить', array(
-                'onclick' => 'modalIFrame(this)',
+                'onclick' => 'return modalIFrame(this)',
                 'href' => $this->createUrl('edit', compact('url')),
                 'title' => 'добавить запись',
             ));
             if ($module->type_id == 1) echo CHtml::htmlButton('+ категория', array(
-                'onclick' => 'modalIFrame(this)',
+                'onclick' => 'return modalIFrame(this)',
                 'href' => $this->createUrl('edit', compact('url') + array('type' => 'category')),
                 'title' => 'добавить категорию',
             ));
@@ -47,7 +47,7 @@ echo CHtml::beginForm($this->createUrl('banner', compact('url')));
             ?></div>
         <div class="settings"><?=
             CHtml::htmlButton('настройка', array(
-                    'onclick' => 'modalIFrame(this)',
+                    'onclick' => 'return modalIFrame(this)',
                     'href' => $this->createUrl('module/config', compact('url')),
                     'title' => 'настроить отображение')
             );
