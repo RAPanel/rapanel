@@ -439,4 +439,10 @@ class ContentController extends RAdminController
 			'text' => $_POST['text'],
 		));
 	}
+
+	public function actionDownload($url)
+	{
+		$this->layout = 'head';
+		$this->actionIndex($url);
+	}
 }

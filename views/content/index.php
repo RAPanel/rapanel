@@ -27,10 +27,10 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
         $this->widget('zii.widgets.CMenu', array(
             'id' => 'breadcrumbs',
             'items' => CMap::mergeArray(array(
-                    array('label' => 'RA-panel', 'url' => array('module/index')),
+                array('label' => 'RA-panel', 'url' => array('module/index')),
 //                array('label' => $module->groupName, 'url' => array('module/index')),
-                    array('label' => $module->name, 'url' => array('content/index', 'url' => $module->url)),
-                ), $additional),
+                array('label' => $module->name, 'url' => array('content/index', 'url' => $module->url)),
+            ), $additional),
         ))
         ?>
     </div>
@@ -57,7 +57,7 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
                 if ($i > 1) $this->widget('zii.widgets.CMenu', array(
                     'htmlOptions' => array('class' => 'listAction'),
                     'items' => array(array('itemOptions' => array('class' => 'dropdown', 'data-toggle' => 'dropdown'), 'items' => $items)),
-                ));?>
+                )); ?>
             </div>
 
             <? if (in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)) && 0): ?>
@@ -71,8 +71,8 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
 
             <? if ($total > 1000): ?>
                 <div class="go-page"><?=
-                    CHtml::htmlButton('назад', array('class' => 'prev', 'name' => 'prev', 'onclick' => 'goPage("prev")', 'disabled' => $_GET['page'] < 2, 'title' => 'предыдущяя страница')) .
-                    CHtml::htmlButton('вперед', array('class' => 'next', 'name' => 'next', 'onclick' => 'goPage("next")', 'disabled' => $_GET['page'] == ceil($total / 1000), 'title' => 'следующая страница'));
+                    CHtml::htmlButton('назад', array('class' => 'prev', 'name' => 'prev', 'onclick' => 'goPage("prev")', 'disabled' => $_GET['page'] < 1, 'title' => 'предыдущяя страница')) .
+                    CHtml::htmlButton('вперед', array('class' => 'next', 'name' => 'next', 'onclick' => 'goPage("next")', 'disabled' => $_GET['page'] + 1 >= ceil($total / 1000), 'title' => 'следующая страница'));
                     ?></div>
             <? endif ?>
 
@@ -86,13 +86,14 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
                     array('label' => 'настроить отображение', 'url' => array('module/config') + compact('url'), 'linkOptions' => array('onclick' => 'return modalIFrame(this);')),
                     array('label' => 'исправить индексы', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('fix', 'id' => $module->id, 'is_category' => $module->type_id == Module::TYPE_NESTED)),
                     array('label' => 'редактировать root', 'visible' => in_array($module->type_id, array(Module::TYPE_SELF_NESTED, Module::TYPE_NESTED)), 'url' => array('edit', 'url' => $url, 'id' => $module->config['parent_id']), 'linkOptions' => array('onclick' => 'return modalIFrame(this);')),
+                    array('label' => 'скачать все', 'url' => array('download') + compact('url'), 'linkOptions' => array('onclick' => 'return modalIFrame(this);')),
                 );
                 $i = 0;
                 foreach ($items as $row) if (!isset($row['visible']) || $row['visible'] == 1) $i++;
                 if ($i > 1) $this->widget('zii.widgets.CMenu', array(
                     'htmlOptions' => array('class' => 'listAction'),
                     'items' => array(array('itemOptions' => array('class' => 'dropdown', 'data-toggle' => 'dropdown'), 'items' => $items)),
-                ));?>
+                )); ?>
             </div>
         </div>
         <div class="centerBlock">
@@ -130,7 +131,7 @@ $total = $model->contentBehavior->getDataProvider()->getTotalItemCount();
                         <button type="button" class="show">активировать</button>
                     </li>
                     <li>
-                        <button type="button" class="export" data-url="<?=$module->url ?>">экспорт</button>
+                        <button type="button" class="export" data-url="<?= $module->url ?>">экспорт</button>
                     </li>
                     <li>
                         <button type="button" class="edit">редактировать</button>
